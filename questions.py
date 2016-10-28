@@ -3,7 +3,7 @@ import os,re,operator
 import json
 filenames = []
 p=re.compile('.*_TRANSCRIPT.csv')
-for (path,dir,files) in os.walk('/Users/Indhu/Downloads/data/'):
+for (path,dir,files) in os.walk('/Volumes/Madhusudhan/Fall 2016/CSCI 535/Project/Data'):
     for each in files:
         if p.match(each):
             filenames.append(path+"/"+each)
