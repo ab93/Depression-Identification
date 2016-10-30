@@ -4,7 +4,7 @@ depressed=[]
 not_depressed=[]
 count=0
 instance=1
-with open('training_split.csv','r') as f:
+with open('data/training_split.csv','r') as f:
 	reader=csv.reader(f)
 	reader.next()
 	for row in reader:
@@ -15,11 +15,11 @@ with open('training_split.csv','r') as f:
 			depressed.append(row[0])
 
 
-d_f=open('liwc_d.csv','w')
-nd_f=open('liwc_nd.csv','w')
+d_f=open('data/liwc_depressed.csv','w')
+nd_f=open('data/liwc_notdepressed.csv','w')
 d_csv=csv.writer(d_f)
 nd_csv=csv.writer(nd_f)
-with open('liwc.csv','r') as f:
+with open('data/liwc.csv','r') as f:
 	reader=csv.reader(f)
 	reader.next()
 	for row in reader:

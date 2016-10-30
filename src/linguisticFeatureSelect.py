@@ -4,12 +4,12 @@ import scipy.stats
 depressed=[]
 not_depressed=[]
 
-with open('liwc_d.csv') as f:
+with open('data/liwc_depressed.csv') as f:
 	reader=csv.reader(f)
 	for row in reader:
 		depressed.append(row[1:])
 
-with open('liwc_nd.csv') as f:
+with open('data/liwc_notdepressed.csv') as f:
 	reader=csv.reader(f)
 	for row in reader:
 		not_depressed.append(row[1:])
