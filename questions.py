@@ -1,9 +1,11 @@
 import pandas as pd
 import os,re,operator
 import json
+import sys
+
 filenames = []
 p=re.compile('.*_TRANSCRIPT.csv')
-for (path,dir,files) in os.walk('/Volumes/Madhusudhan/Fall 2016/CSCI 535/Project/Data'):
+for (path,dir,files) in os.walk(sys.argv[1]):
     for each in files:
         if p.match(each):
             filenames.append(path+"/"+each)
