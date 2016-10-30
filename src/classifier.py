@@ -34,5 +34,3 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         self.named_classifiers = {k:v for k,v in _name_estimators(classifiers)}
         self.vote = vote
         self.weights = weights
-
-    
