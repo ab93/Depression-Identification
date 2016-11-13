@@ -9,11 +9,12 @@ from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 
 class MetaClassifier(BaseEstimator, ClassifierMixin):
-    """ A combined multi-class classifier classifier
+    """ A combined multi-class classifier
 
     Parameters
     ----------
     classifiers : array-like, shape = [n_classifiers]
+    Note: Classifiers need to be well caliberated
 
     vote : str, {'classlabel', 'probability'}
     Default: 'classlabel'
@@ -71,19 +72,56 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         return self
 
     def predict(self, X_list):
+        """ Predict class labels.
+        Parameters
+        ----------
+        X_list : List of {array-like, sparse matrix},
+                length = number of classifiers
+                List of matrices of training samples
+
+        Returns
+        -------
+        maj_vote : array-like, shape = [n_samples]  
+                   Predicted class labels
+        """
+
         num_clfs = len(self.classifiers_)
         preds = []
         for index, X in enumerate(X_list):
             pred = [np.mean(self.classifiers_[index].predict_proba(P), axis=0) for P in X]
             preds.append(pred)
         preds = np.asarray(preds)
-        print preds
         weighted_proba = np.average(preds, axis=0, weights=self.weights) 
-        print weighted_proba
         maj_vote = np.argmax(weighted_proba, axis=1)
         return maj_vote
+
+
+    def predict_proba(self, X_list):
+        """ Predict class probabilities.
+        Parameters
+        ----------
+        X_list : List of {array-like, sparse matrix},
+                length = number of classifiers
+                List of matrices of training samples
+
+        Returns
+        -------
+        weighted_proba : array-like,shape = [n_samples, n_classes]           
+                         Weighted average probability 
+                         for each class per sample.
+        """
+
+        num_clfs = len(self.classifiers_)
+        preds = []
+        for index, X in enumerate(X_list):
+            pred = [np.mean(self.classifiers_[index].predict_proba(P), axis=0) for P in X]
+            preds.append(pred)
+        preds = np.asarray(preds)
+        weighted_proba = np.average(preds, axis=0, weights=self.weights) 
+        return weighted_proba
         
-            
+
+
 
 # Just for debugging and testing
 
@@ -114,3 +152,4 @@ clfs = [LogisticRegression(C=100, penalty='l2'), LogisticRegression(C=10,penalty
 meta_clf = MetaClassifier(clfs)
 meta_clf.fit(X,y)
 print meta_clf.predict(X)
+print meta_clf.predict_proba(X)
