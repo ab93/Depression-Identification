@@ -14,8 +14,6 @@ questionType={}
 
 discriminativeVectors=[]
 nonDiscriminativeVectors=[]
-
-questionAnswers={}
 def readQuestions():
     global followUp, ack, nonIntimate, intimate
     utterrances = pd.read_csv('../Data/IdentifyingFollowUps.csv')
@@ -47,7 +45,6 @@ def readTranscript():
         endTime=0.0
         prevQuestion=""
         participantNo=transcriptFiles[i][11:14]
-        listOfAnswers=[]
 
         for j in xrange(len(t)):
 
@@ -91,8 +88,8 @@ def readTranscript():
 def readFACET():
     facetFiles=glob('../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_FACET_features.csv')
     groupByQuestion={}
-    dFile=open('../data/discriminativeVectors.csv','a')
-    ndFile=open('../data/nonDiscriminativeVectors.csv','a')
+    dFile=open('../data/discriminativeFACET.csv','a')
+    ndFile=open('../data/nonDiscriminativeFACET.csv','a')
     dWriter=csv.writer(dFile)
     ndWriter=csv.writer(ndFile)
     for item in featureList:
