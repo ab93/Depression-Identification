@@ -48,10 +48,11 @@ nonDiscriminativeVectors=[]
 questionAnswers={}
 liwcVectors={}
 
+listofParticipants=[]
 def readUtterances():
     global followUp, ack, nonIntimate, intimate
     utterrances = pd.read_csv('../Data/IdentifyingFollowUps.csv')
-    questions=pd.read_excel('../data/QuestionsClassification.xlsx',sheetname='Annotation-Supervised')
+    questions=pd.read_csv('../data/DND:Annotation-Supervised.csv')
 
     for i in xrange(len(questions)):
         question=questions.iloc[i]['Questions']
@@ -77,6 +78,7 @@ def readTranscript():
         captureStarted=False
         prevUtterance=""
         participantNo=transcriptFiles[i][11:14]
+        listofParticipants.append(participantNo)
         responses=[]
 
         for j in xrange(len(t)):
@@ -126,6 +128,7 @@ def readTranscript():
                 responses.append(utterance)
 
 def readLIWC():
+    global listofParticipants
     answerQuestion={}
     dFile=open('../data/discriminativeLIWC.csv','a')
     ndFile=open('../data/nonDiscriminativeLIWC.csv','a')
@@ -148,24 +151,27 @@ def readLIWC():
     reader=csv.reader(f)
     header=['video','question']
     header+=reader.next()[2:]
-    for row in reader:
 
-        if int(row[0])>=300 and int(row[0])<=492:
+    listofParticipants=[int(i) for i in listofParticipants]
+
+    listofParticipants.sort()
+    
+    for row in reader:
+        if int(row[0])>=listofParticipants[0] and int(row[0])<=listofParticipants[-1]:
             if row[0] not in liwcVectors:
                 liwcVectors[row[0]]=[(row[1], row[2:])]
             else:
                 liwcVectors[row[0]].append((row[1], row[2:]))
 
-    #groupByVideo: (participantNo: [(question, answer)])
-    #liwcVectors: (participantNo: [(answer, vector)])
+    #answerQuestion: answer: [participantNo, question]
+    #liwcVectors: participantNo: [(answer, vector)])
 
     for video in liwcVectors:
         answerPair=liwcVectors[video]
 
         for item in answerPair:
-            if item[0] in answerQuestion and questionType[answerQuestion[item[0]][1]]=='D':
+            if item[0] in answerQuestion and questionType[answerQuestion[item[0]][1]]=='D' :
                 vector=[float(i) for i in item[1]]
-                #vector.insert(0,item[0])
                 vector.insert(0,answerQuestion[item[0]][1])
                 vector.insert(0,str(video))
                 discriminativeMatrix.append(vector)
@@ -173,7 +179,6 @@ def readLIWC():
 
             elif item[0] in answerQuestion and questionType[answerQuestion[item[0]][1]]=='ND':
                 vector=[float(i) for i in item[1]]
-                #vector.insert(0,item[0])
                 vector.insert(0,answerQuestion[item[0]][1])
                 vector.insert(0,str(video))
                 nonDiscriminativeMatrix.append(vector)
