@@ -127,7 +127,7 @@ def readFACET():
             vector.insert(0,instance[0])
             vector.insert(0, item)
             vector=np.asarray(vector)
-            print item, instance[0], instance[1][1], instance[1][2]
+            print item, instance[0], startTime, endTime
             
             if questionType[instance[0]]=='D':
                 dWriter.writerow(vector)
