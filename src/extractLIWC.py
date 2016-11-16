@@ -110,6 +110,15 @@ def readTranscript():
                     prevUtterance=utterance
                     captureStarted=True
 
+                elif utterance in intimate and utterance not in questionType and captureStarted:
+                    if (participantNo, prevUtterance) not in featureList:
+                        questionAnswers[(participantNo, prevUtterance)]=responses
+                    else:
+                        questionAnswers[(participantNo, prevUtterance)]+=responses
+
+                    captureStarted=False
+                    responses=[]
+
                 elif utterance in followUp or utterance in ack and captureStarted:
                     continue
 
@@ -122,6 +131,11 @@ def readLIWC():
     ndFile=open('../data/nonDiscriminativeLIWC.csv','a')
     dWriter=csv.writer(dFile)
     ndWriter=csv.writer(ndFile)
+    discriminativeDF=pd.DataFrame()
+    nonDiscriminativeDF=pd.DataFrame()
+
+    discriminativeMatrix=[]
+    nonDiscriminativeMatrix=[]
     for item in questionAnswers:
         for answer in questionAnswers[item]:
             if answer in answerQuestion:
@@ -132,22 +146,65 @@ def readLIWC():
 
     f=open('../Data/liwc.csv')
     reader=csv.reader(f)
+    header=['video','question']
+    header+=reader.next()[2:]
     for row in reader:
-        if row[0] not in liwcVectors:
-            liwcVectors[row[0]]=[(row[1], row[2:])]
-        else:
-            liwcVectors[row[0]].append((row[1], row[2:]))
+
+        if int(row[0])>=300 and int(row[0])<=492:
+            if row[0] not in liwcVectors:
+                liwcVectors[row[0]]=[(row[1], row[2:])]
+            else:
+                liwcVectors[row[0]].append((row[1], row[2:]))
 
     #groupByVideo: (participantNo: [(question, answer)])
     #liwcVectors: (participantNo: [(answer, vector)])
 
     for video in liwcVectors:
         answerPair=liwcVectors[video]
+
         for item in answerPair:
             if item[0] in answerQuestion and questionType[answerQuestion[item[0]][1]]=='D':
-                dWriter.writerow([video,answerQuestion[item[0]][1],item[0],item[1]])
+                vector=[float(i) for i in item[1]]
+                #vector.insert(0,item[0])
+                vector.insert(0,answerQuestion[item[0]][1])
+                vector.insert(0,str(video))
+                discriminativeMatrix.append(vector)
+
+
             elif item[0] in answerQuestion and questionType[answerQuestion[item[0]][1]]=='ND':
-                ndWriter.writerow([video,answerQuestion[item[0]][1],item[0],item[1]])
+                vector=[float(i) for i in item[1]]
+                #vector.insert(0,item[0])
+                vector.insert(0,answerQuestion[item[0]][1])
+                vector.insert(0,str(video))
+                nonDiscriminativeMatrix.append(vector)
+
+    discriminativeDF=pd.DataFrame(discriminativeMatrix, columns=header)
+    nonDiscriminativeDF=pd.DataFrame(nonDiscriminativeMatrix, columns=header)
+    for k1, k2 in discriminativeDF.groupby(['video','question']):
+        vec=[k1[0],k1[1]]
+        x=k2.mean().values.tolist()
+        vec+=x
+        dWriter.writerow(vec)
+
+    for k1, k2 in nonDiscriminativeDF.groupby(['video','question']):
+        vec=[k1[0],k1[1]]
+        x=k2.mean().values.tolist()
+        vec+=x
+        ndWriter.writerow(vec)
+
+    # discriminativeDF=discriminativeDF.groupby(['video','question']).mean()
+    # nonDiscriminativeDF=nonDiscriminativeDF.groupby(['video','question']).mean()
+    # #pprint(discriminativeDF.iloc[0])
+    
+    # discriminativeDF=discriminativeDF.values.tolist()
+    # nonDiscriminativeDF=nonDiscriminativeDF.values.tolist()
+
+
+    # for vec in discriminativeDF:
+    #     dWriter.writerow(vec)
+
+    # for vec in nonDiscriminativeDF:
+    #     ndWriter.writerow(vec)
 
 
 if __name__=="__main__":

@@ -45,7 +45,6 @@ def readTranscript():
         endTime=0.0
         prevQuestion=""
         participantNo=transcriptFiles[i][11:14]
-
         for j in xrange(len(t)):
 
             question=re.search(".*\((.*)\)$", t.iloc[j]['value'])
@@ -64,6 +63,8 @@ def readTranscript():
                     captureStarted=False
 
                 elif question in intimate and question in questionType and captureStarted:
+                    # if '339' in transcriptFiles[i]:
+                    #     print question
                     if (participantNo, prevQuestion) not in featureList:
                         featureList[(participantNo, prevQuestion)]=[startTime, endTime]
                     else:
@@ -78,6 +79,13 @@ def readTranscript():
                     prevQuestion=question
                     captureStarted=True
 
+                elif question in intimate and question not in questionType and captureStarted:
+                    if (participantNo, prevQuestion) not in featureList:
+                        featureList[(participantNo, prevQuestion)]=[startTime, endTime]
+                    else:
+                        featureList[(participantNo, prevQuestion)][1]=endTime
+                    captureStarted=False
+
                 elif question in followUp or question in ack and captureStarted:
                     endTime=t.iloc[j]['stop_time']
 
@@ -86,12 +94,13 @@ def readTranscript():
 
 
 def readFACET():
-    facetFiles=glob('../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_FACET_features.csv')
     groupByQuestion={}
     dFile=open('../data/discriminativeFACET.csv','a')
     ndFile=open('../data/nonDiscriminativeFACET.csv','a')
     dWriter=csv.writer(dFile)
     ndWriter=csv.writer(ndFile)
+
+
     for item in featureList:
         if item[0] not in groupByQuestion:
             groupByQuestion[item[0]]=[(item[1], featureList[item])]
@@ -106,26 +115,23 @@ def readFACET():
             startTime=instance[1][0]
             endTime=instance[1][1]
 
-            startFrame=0
-            endFrame=0
-            for i in xrange(len(f)):
-                if f.ix[i]['Frametime'] >= startTime and startFrame==0:
-                    startFrame=i
-                elif f.ix[i]['Frametime'] >= endTime and endFrame==0:
-                    endFrame=i-1
+            startFrame=f.ix[(f['Frametime']-startTime).abs().argsort()[:1]].index.tolist()[0]
+            endFrame=f.ix[(f['Frametime']-endTime).abs().argsort()[:1]].index.tolist()[0]
+            # print startFrame, endFrame
+
 
             features=f.ix[startFrame:endFrame].mean(0).tolist()
             vector=instance[1]
             vector+=features
+            vector.insert(0,instance[0])
             vector.insert(0, item)
             vector=np.asarray(vector)
-            print item, instance[0]
+            print item, instance[0], instance[1][1], instance[1][2]
+            
             if questionType[instance[0]]=='D':
                 dWriter.writerow(vector)
             else:
                 ndWriter.writerow(vector)
-
-
 
 
 if __name__=="__main__":
