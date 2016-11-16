@@ -41,65 +41,69 @@ def readQuestions():
 
 def readTranscript():
     global featureList
-    transcriptFiles = glob('../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
-
-    for i in range(0, len(transcriptFiles)):
-        t = pd.read_csv(transcriptFiles[i], delimiter='\t')
+    transcriptFiles=glob('../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
+    for i in range(0,len(transcriptFiles)):
+        t=pd.read_csv(transcriptFiles[i], delimiter='\t')
         t = t.fillna("")
-        #print transcriptFiles[i]
-        captureStarted = False
-        startTime = 0.0
-        endTime = 0.0
-        prevQuestion = ""
-        participantNo = transcriptFiles[i][11:14]
-        listOfAnswers = []
-
+        captureStarted=False
+        startTime=0.0
+        endTime=0.0
+        prevQuestion=""
+        participantNo=transcriptFiles[i][11:14]
         for j in xrange(len(t)):
 
-            #print t.iloc[j]['value']
-            question = re.search(".*\((.*)\)$", t.iloc[j]['value'])
-
+            question=re.search(".*\((.*)\)$", t.iloc[j]['value'])
             if question is not None:
-                question = question.group(1)
+                question=question.group(1)
             else:
-                question = t.iloc[j]['value']
-            question = question.strip()
-            if t.iloc[j]['speaker'] == 'Ellie':
+                question=t.iloc[j]['value']
+            question=question.strip()
+
+            if t.iloc[j]['speaker']=='Ellie':
                 if question in nonIntimate and captureStarted:
                     if (participantNo, prevQuestion) not in featureList:
-                        featureList[(participantNo, prevQuestion)] = [startTime, endTime]
+                        featureList[(participantNo, prevQuestion)]=[startTime, endTime]
                     else:
-                        featureList[(participantNo, prevQuestion)][1] = endTime
-                    captureStarted = False
+                        featureList[(participantNo, prevQuestion)][1]=endTime
+                    captureStarted=False
 
                 elif question in intimate and question in questionType and captureStarted:
+                    # if '339' in transcriptFiles[i]:
+                    #     print question
                     if (participantNo, prevQuestion) not in featureList:
-                        featureList[(participantNo, prevQuestion)] = [startTime, endTime]
+                        featureList[(participantNo, prevQuestion)]=[startTime, endTime]
                     else:
-                        featureList[(participantNo, prevQuestion)][1] = endTime
-                    startTime = t.iloc[j]['start_time']
-                    endTime = t.iloc[j]['stop_time']
-                    prevQuestion = question
+                        featureList[(participantNo, prevQuestion)][1]=endTime
+                    startTime=t.iloc[j]['start_time']
+                    endTime=t.iloc[j]['stop_time']
+                    prevQuestion=question
 
                 elif question in intimate and question in questionType and not captureStarted:
-                    startTime = t.iloc[j]['start_time']
-                    endTime = t.iloc[j]['stop_time']
-                    prevQuestion = question
-                    captureStarted = True
+                    startTime=t.iloc[j]['start_time']
+                    endTime=t.iloc[j]['stop_time']
+                    prevQuestion=question
+                    captureStarted=True
+
+                elif question in intimate and question not in questionType and captureStarted:
+                    if (participantNo, prevQuestion) not in featureList:
+                        featureList[(participantNo, prevQuestion)]=[startTime, endTime]
+                    else:
+                        featureList[(participantNo, prevQuestion)][1]=endTime
+                    captureStarted=False
 
                 elif question in followUp or question in ack and captureStarted:
-                    endTime = t.iloc[j]['stop_time']
+                    endTime=t.iloc[j]['stop_time']
 
-            elif t.iloc[j]['speaker'] == 'Participant' and captureStarted:
-                endTime = t.iloc[j]['stop_time']
-        #print featureList
-        #raw_input()
+            elif t.iloc[j]['speaker']=='Participant' and captureStarted:
+                endTime=t.iloc[j]['stop_time']
+
+
 
 def readFORMANT():
     facetFiles = glob('../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_FORMANT.csv')
     groupByQuestion = {}
-    dFile = open('../data/discriminativeVectors_formant.csv', 'a')
-    ndFile = open('../data/nonDiscriminativeVectors_formant.csv', 'a')
+    dFile = open('../data/discriminative_FORMANT.csv', 'a')
+    ndFile = open('../data/nonDiscriminative_FORMANT.csv', 'a')
     dWriter = csv.writer(dFile)
     ndWriter = csv.writer(ndFile)
     for item in featureList:
@@ -139,8 +143,8 @@ def readFORMANT():
 def readCOVAREP():
     facetFiles = glob('../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_COVAREP.csv')
     groupByQuestion = {}
-    dFile = open('../data/discriminativeVectors_covarep.csv', 'a')
-    ndFile = open('../data/nonDiscriminativeVectors_covarep.csv', 'a')
+    dFile = open('../data/discriminative_COVAREP.csv', 'a')
+    ndFile = open('../data/nonDiscriminative_COVAREP.csv', 'a')
     dWriter = csv.writer(dFile)
     ndWriter = csv.writer(ndFile)
     for item in featureList:

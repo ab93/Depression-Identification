@@ -75,6 +75,7 @@ def readTranscript():
     transcriptFiles=glob('../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
     for i in range(0,len(transcriptFiles)):
         t=pd.read_csv(transcriptFiles[i], delimiter='\t')
+        t = t.fillna("")
         captureStarted=False
         prevUtterance=""
         participantNo=transcriptFiles[i][11:14]
