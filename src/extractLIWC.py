@@ -51,7 +51,7 @@ liwcVectors={}
 listofParticipants=[]
 def readUtterances():
     global followUp, ack, nonIntimate, intimate
-    utterrances = pd.read_csv('../Data/IdentifyingFollowUps.csv')
+    utterrances = pd.read_csv('../data/IdentifyingFollowUps.csv')
     questions=pd.read_csv('../data/DND:Annotation-Supervised.csv')
 
     for i in xrange(len(questions)):
@@ -148,7 +148,7 @@ def readLIWC():
                 answerQuestion[answer]=(item[0], item[1])
 
 
-    f=open('../Data/liwc.csv')
+    f=open('../data/liwc.csv')
     reader=csv.reader(f)
     header=['video','question']
     header+=reader.next()[2:]

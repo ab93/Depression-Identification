@@ -20,7 +20,7 @@ questionAnswers = {}
 
 def readQuestions():
     global followUp, ack, nonIntimate, intimate
-    utterrances = pd.read_csv('../Data/IdentifyingFollowUps.csv')
+    utterrances = pd.read_csv('../data/IdentifyingFollowUps.csv')
     questions = pd.read_csv('../data/DND:Annotation-Supervised.csv')
 
     for i in xrange(len(questions)):
