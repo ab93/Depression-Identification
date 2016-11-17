@@ -41,7 +41,7 @@ def readQuestions():
 
 def readTranscript():
     global featureList
-    transcriptFiles = glob('../../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
+    transcriptFiles = glob('../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
     for i in range(0, len(transcriptFiles)):
         t = pd.read_csv(transcriptFiles[i], delimiter='\t')
         t = t.fillna("")
@@ -49,7 +49,7 @@ def readTranscript():
         startTime = 0.0
         endTime = 0.0
         prevQuestion = ""
-        participantNo = transcriptFiles[i][-18:-15]
+        participantNo=transcriptFiles[i][11:14]
         for j in range(len(t)):
 
             question = re.search(".*\((.*)\)$", t.iloc[j]['value'])
@@ -134,10 +134,10 @@ def readCLM():
             groupByQuestion[item[0]].append((item[1], featureList[item]))
 
     for item in groupByQuestion:
-        fileName = '../../../Data/' + item + '_P/' + item + '_CLM_features.csv'
-        fileName1 = '../../../Data/' + item + '_P/' + item + '_CLM_features3D.csv'
-        fileName2 = '../../../Data/' + item + '_P/' + item + '_CLM_gaze.csv'
-        fileName3 = '../../../Data/' + item + '_P/' + item + '_CLM_pose.csv'
+        fileName = '../../Data/' + item + '_P/' + item + '_CLM_features.csv'
+        fileName1 = '../../Data/' + item + '_P/' + item + '_CLM_features3D.csv'
+        fileName2 = '../../Data/' + item + '_P/' + item + '_CLM_gaze.csv'
+        fileName3 = '../../Data/' + item + '_P/' + item + '_CLM_pose.csv'
 
         #f = pd.read_csv(fileName, separator=',', header=None)
 
@@ -216,7 +216,7 @@ def readCLM():
 
 def renameCLMFilesToCSV():
 
-    rootdir = '../../../Data/'
+    rootdir = '../../Data/'
 
     for root, dirnames, filenames in os.walk(rootdir):
         for filename in fnmatch.filter(filenames, '*CLM*.txt'):
