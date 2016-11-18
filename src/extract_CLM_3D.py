@@ -37,11 +37,12 @@ def readQuestions():
             nonIntimate[item[1]] = item[2]
         elif item[3] == "#int" and item[1] not in intimate:
             intimate[item[1]] = item[2]
+            intimate[item[1]] = item[2]
 
 
 def readTranscript():
     global featureList
-    transcriptFiles = glob('../../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
+    transcriptFiles = glob('../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
     for i in range(0, len(transcriptFiles)):
         t = pd.read_csv(transcriptFiles[i], delimiter='\t')
         t = t.fillna("")
@@ -49,7 +50,7 @@ def readTranscript():
         startTime = 0.0
         endTime = 0.0
         prevQuestion = ""
-        participantNo=transcriptFiles[i][-18:-15]
+        participantNo=transcriptFiles[i][11:14]
         for j in range(len(t)):
 
             question = re.search(".*\((.*)\)$", t.iloc[j]['value'])
@@ -115,7 +116,7 @@ def readCLM():
 
     for item in groupByQuestion:
 
-        fileName2 = '../../../Data/' + item + '_P/' + item + '_CLM_features3D.csv'
+        fileName2 = '../../Data/' + item + '_P/' + item + '_CLM_features3D.csv'
 
         f2 = pd.read_csv(fileName2, delimiter=',')
 
