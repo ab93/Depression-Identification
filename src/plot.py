@@ -22,7 +22,10 @@ def get_combined_data(file1, file2):
         video_id = feature_df.iat[i,0]
         labels[i] = train_split_dict[video_id]['PHQ_Binary']
     feature_df['label'] = pd.Series(labels, index=feature_df.index)
-    feature_df.drop(['video','question','starttime','endtime'], inplace=True, axis=1)
+    try:
+        feature_df.drop(['video','question','starttime','endtime'], inplace=True, axis=1)
+    except ValueError:
+        feature_df.drop(['video','question'], inplace=True, axis=1)
     return feature_df
     
 
