@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import csv
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -30,11 +31,13 @@ def get_combined_data(file1, file2):
     
 
 def calculate_anova(df, filename):
-    filename += '.txt'
+    filename += '.csv'
     columns = df.columns[:-1]
     grouped_df = df.groupby(by='label')
-    with open(os.path.join('../results/',filename), 'w') as outfile:
-        outfile.write("Feature" + "\t\t" + "P-value" + "\t\t" + "F-value" + "\n")
+    with open(os.path.join('../results/',filename), 'w') as csvfile:
+        csv_writer = csv.writer(csvfile, delimiter=',')
+        csv_writer.writerow(["Feature","P-value","F-value"])
+        #outfile.write("Feature" + "\t\t" + "P-value" + "\t\t" + "F-value" + "\n")
         for feature in columns:
             data = []
             for key, item in grouped_df:
@@ -42,7 +45,8 @@ def calculate_anova(df, filename):
                 data.append(temp_df.loc[:,feature].values)
             
             f_val, p_val = stats.f_oneway(data[0], data[1])
-            outfile.write(feature + "\t\t" + str(p_val) + "\t\t" + str(f_val) + "\n")
+            #outfile.write(feature + "\t\t" + str(p_val) + "\t\t" + str(f_val) + "\n")
+            csv_writer.writerow([feature, p_val, f_val])
     
 
 def main():
