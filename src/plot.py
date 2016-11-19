@@ -41,6 +41,7 @@ def plot_boxplot(df, dir_name):
             #raw_input()
             data.append(temp_df.loc[:,feature].values)
         
+        print len(data[0]), len(data[1])
         plt.clf()
         fig = plt.figure(1, figsize=(9, 6))
         fig.clf()
@@ -57,7 +58,7 @@ def plot_boxplot(df, dir_name):
             color='black',
             alpha=0.25)
 
-        colors = ['red', 'blue']
+        colors = ['green', 'red']
         for box,color in zip(bp['boxes'],colors):
             box.set(color='black', linewidth=0.5)
             box.set_facecolor(color)
