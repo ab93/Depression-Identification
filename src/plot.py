@@ -30,6 +30,54 @@ def get_combined_data(file1, file2):
     return feature_df
     
 
+def plot_boxplot(df, dir_name):
+    columns = df.columns[:-1]
+    grouped_df = df.groupby(by='label')
+    for feature in columns:
+        data = []
+        for key, item in grouped_df:
+            temp_df = grouped_df.get_group(key)
+            print temp_df.loc[:,feature].describe()
+            #raw_input()
+            data.append(temp_df.loc[:,feature].values)
+        
+        plt.clf()
+        fig = plt.figure(1, figsize=(9, 6))
+        fig.clf()
+        ax = fig.add_subplot(111)
+        bp = ax.boxplot(data, notch=True, sym='+', vert=True, whis=1.5,
+                        patch_artist=True)
+        ax.set_xticklabels(['Non-depressed','Depressed'])
+        ax.set_ylabel(feature)
+        ax.set_xlabel('Class Label')
+
+        plt.grid(axis='y',
+            linestyle='--',
+            which='major',
+            color='black',
+            alpha=0.25)
+
+        colors = ['red', 'blue']
+        for box,color in zip(bp['boxes'],colors):
+            box.set(color='black', linewidth=0.5)
+            box.set_facecolor(color)
+
+        for whisker in bp['whiskers']:
+            whisker.set(color='grey', linewidth=1.5, linestyle='--')
+
+        for cap in bp['caps']:
+            cap.set(color='black', linewidth=2)
+
+        for median in bp['medians']:
+            median.set(color='black', linewidth=3)
+
+        for flier in bp['fliers']:
+            flier.set(marker='o', color='green', alpha=0.7)
+        #plt.show()
+        #sys.exit(1)
+        fig.savefig('../plots/' + dir_name + '/' + feature + '.png')
+
+
 def calculate_anova(df, filename):
     filename += '.csv'
     columns = df.columns[:-1]
@@ -37,7 +85,6 @@ def calculate_anova(df, filename):
     with open(os.path.join('../results/',filename), 'w') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=',')
         csv_writer.writerow(["Feature","P-value","F-value"])
-        #outfile.write("Feature" + "\t\t" + "P-value" + "\t\t" + "F-value" + "\n")
         for feature in columns:
             data = []
             for key, item in grouped_df:
@@ -45,7 +92,6 @@ def calculate_anova(df, filename):
                 data.append(temp_df.loc[:,feature].values)
             
             f_val, p_val = stats.f_oneway(data[0], data[1])
-            #outfile.write(feature + "\t\t" + str(p_val) + "\t\t" + str(f_val) + "\n")
             csv_writer.writerow([feature, p_val, f_val])
     
 
@@ -53,7 +99,8 @@ def main():
     filename = sys.argv[3]
     features_df = get_combined_data(os.path.join('../data', sys.argv[1]), 
                     os.path.join('../data', sys.argv[2]))
-    calculate_anova(features_df, filename)
+    #calculate_anova(features_df, filename)
+    plot_boxplot(features_df, filename)
 
 if __name__ == '__main__':
     main()
