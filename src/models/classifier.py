@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
 from sklearn.preprocessing import LabelEncoder
 from sklearn.externals import six
+from sklearn.metrics import accuracy_score,f1_score
 from sklearn.pipeline import _name_estimators
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
@@ -119,6 +120,12 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         preds = np.asarray(preds)
         weighted_proba = np.average(preds, axis=0, weights=self.weights) 
         return weighted_proba
+
+    def score(self, X_list, y_list, scoring='f1'):
+        """
+        Returns the f1 score by default
+        """
+        pass #TODO
         
 
 class LateFusionClassifier(BaseEstimator, ClassifierMixin):
@@ -257,31 +264,44 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
 
 # Just for debugging and testing
 
-x1 = np.array([ np.array([[1,5,7], [1,2,4], [1,8,9]]), 
-                np.array([[2,8,6], [2,0,3]]), 
-                np.array([[3,7,5], [3,4,3], [3,9,7]]) 
+def main():
+    # for discriminative
+    x1 = np.array([ np.array([[1,5,7], [1,2,4], [1,8,9]]), # [r1,r2,r3] for p1
+                np.array([[2,8,6], [2,0,3]]),  # [r1,r2] for p2
+                np.array([[3,7,5], [3,4,3], [3,9,7]]) # [r1,r2,r3] for p3
                 ])
 
-x2 = np.array([ np.array([[1,5,7], [1,2,4]]), 
-                np.array([[2,8,6], [2,0,3], [2,5,5]]), 
-                np.array([[3,7,5], [3,4,3], [3,9,7]])
-                ])
+    # for non discriminative
+    x2 = np.array([ np.array([[1,5,7], [1,2,4]]), 
+                    np.array([[2,8,6], [2,0,3], [2,5,5]]), 
+                    np.array([[3,7,5], [3,4,3], [3,9,7]])
+                    ])
 
-y1 = np.array([ np.array([1,1,1]),
-                np.array([1,1]),
-                np.array([0,0,0])
-                ])
+    y1 = np.array([ np.array([1,1,1]),
+                    np.array([1,1]),
+                    np.array([0,0,0])
+                    ])
 
-y2 = np.array([ np.array([0,0]), 
-                np.array([0,0,0]), 
-                np.array([1,1,1])
-                ])
+    y2 = np.array([ np.array([0,0]), 
+                    np.array([0,0,0]), 
+                    np.array([1,1,1])
+                    ])
 
-X = [x1,x2]
-y = [y1,y2]
+    X = [x1,x2]
+    y = [y1,y2]
 
-clfs = [LogisticRegression(C=100, penalty='l2'), LogisticRegression(C=10,penalty='l1')]
-meta_clf = MetaClassifier(clfs)
-meta_clf.fit(X,y)
-print meta_clf.predict(X)
-print meta_clf.predict_proba(X)
+    clfs = [LogisticRegression(C=100, penalty='l2'), LogisticRegression(C=10,penalty='l1')]
+    meta_clf = MetaClassifier(clfs)
+    meta_clf.fit(X,y)
+    print "predict:",meta_clf.predict(X)
+    print "predict_proba:",meta_clf.predict_proba(X)
+
+    X_acou, y_acou = [x1,x2], [y1,y2]
+    X_vis, y_vis = [x2,x1], [y2,y1]
+    X_lin, y_lin = [x1,x1], [y1,y1]
+    
+
+
+if __name__ == '__main__':
+    main()
+
