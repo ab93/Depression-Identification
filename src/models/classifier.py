@@ -299,7 +299,7 @@ def main():
     X_acou, y_acou = [x1,x2], [y1,y2]
     X_vis, y_vis = [x2,x1], [y2,y1]
     X_lin, y_lin = [x1,x1], [y1,y1]
-    
+
 
 
 if __name__ == '__main__':
