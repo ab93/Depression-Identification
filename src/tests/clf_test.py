@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-from ..models.classifier import MetaClassifier
+from ..models.classifier import MetaClassifier, LateFusionClassifier
 
 class MetaClassifierTest(unittest.TestCase):
     """
@@ -33,6 +33,12 @@ class MetaClassifierTest(unittest.TestCase):
         y = [y1,y2]
         return X,y
 
+    def _get_fitted_clf(self,Xs,ys):
+        clfs = [LogisticRegression(C=100, penalty='l2'), LogisticRegression(C=10,penalty='l1')]
+        meta_clf = MetaClassifier(clfs)
+        meta_clf.fit(Xs,ys)
+        return meta_clf
+
     def test_fit_predict(self):
         X_list, y_list = self._set_test_data()
         clfs = [LogisticRegression(C=100, penalty='l2'), LogisticRegression(C=10,penalty='l1')]
@@ -47,6 +53,19 @@ class MetaClassifierTest(unittest.TestCase):
         meta_clf.fit(X_list,y_list)
         print "predict:",meta_clf.predict_proba(X_list)
 
+    def test_late_fusion(self):
+        X1,Y1 = self._set_test_data()
+        X2,Y2 = self._set_test_data()
+        X3,Y3 = self._set_test_data()
+        Xs = [X1,X2,X3]
+        Ys = [Y1,Y2,Y3]
+
+        clf1 = self._get_fitted_clf(X1,Y1)
+        clf2 = self._get_fitted_clf(X2,Y2)
+        clf3 = self._get_fitted_clf(X3,Y3)
+
+        lf_clf = LateFusionClassifier(classifiers=[clf1,clf2,clf3])
+        lf_clf.fit(Xs,Ys)
 
 if __name__ == '__main__':
     unittest.main()
