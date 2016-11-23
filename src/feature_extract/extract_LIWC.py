@@ -5,43 +5,15 @@ from glob import glob
 import numpy as np
 import re
 import csv
-
-# depressed=[]
-# not_depressed=[]
-
-# with open('data/liwc_depressed.csv') as f:
-# 	reader=csv.reader(f)
-# 	for row in reader:
-# 		depressed.append(row[1:])
-
-# with open('data/liwc_notdepressed.csv') as f:
-# 	reader=csv.reader(f)
-# 	for row in reader:
-# 		not_depressed.append(row[1:])
-
-# d_f=[[row[i] for row in depressed] for i in range(len(depressed[0]))]
-# nd_f=[[row[i] for row in not_depressed] for i in range(len(not_depressed[0]))]
-
-# for i in range(0,len(d_f)):
-# 	for j in range(0,len(d_f[0])):
-# 		d_f[i][j]=float(d_f[i][j])
-
-# for i in range(0,len(nd_f)):
-# 	for j in range(0,len(nd_f[0])):
-# 		nd_f[i][j]=float(nd_f[i][j])
-
-# features=[]
-# for i in range(1,len(d_f)):
-# 	t,p=scipy.stats.ttest_ind(d_f[i], nd_f[i], None, False)
-# 	if p<=0.10:
-# 		features.append(i)
+import sys
 
 followUp = {}
 ack = {}
 nonIntimate = {}
 intimate = {}
 featureList={}
-questionType={}
+questionType_DND={}
+questionType_PN={}
 
 discriminativeVectors=[]
 nonDiscriminativeVectors=[]
@@ -49,16 +21,24 @@ questionAnswers={}
 liwcVectors={}
 
 listofParticipants=[]
-def readUtterances():
-    global followUp, ack, nonIntimate, intimate
-    utterrances = pd.read_csv('../data/IdentifyingFollowUps.csv')
-    questions=pd.read_csv('../data/DND:Annotation-Supervised.csv')
+def readHelperData():
+    global followUp, ack, nonIntimate, intimate, questionType_PN, questionType_DND
+    utterrances = pd.read_csv('data/misc/IdentifyingFollowUps.csv')
+    disc_nondisc = pd.read_csv('data/misc/DND_Annotations.csv')
+    pos_neg = pd.read_csv('data/misc/PN_Annotations.csv')
 
-    for i in xrange(len(questions)):
-        question=questions.iloc[i]['Questions']
-        qType=questions.iloc[i]['Annotations']
-        questionType[question]=qType
-        
+    #Discriminative/Non-discriminative annotations
+    for i in xrange(len(disc_nondisc)):
+        question=disc_nondisc.iloc[i]['Questions']
+        qType=disc_nondisc.iloc[i]['Annotations']
+        questionType_DND[question]=qType
+
+    #Positive/Negative annotations
+    for i in xrange(len(pos_neg)):
+        question=pos_neg.iloc[i]['Questions']
+        qType=pos_neg.iloc[i]['Annotations']
+        questionType_PN[question]=qType
+
     for item in utterrances.itertuples():
         if item[3]=="#follow_up" and item[1] not in followUp:
             followUp[item[1]]=item[2]
@@ -72,13 +52,14 @@ def readUtterances():
 
 def readTranscript():
     global featureList
-    transcriptFiles=glob('../../Data/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
+    transcriptFiles=glob(sys.argv[1]+'[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
     for i in range(0,len(transcriptFiles)):
         t=pd.read_csv(transcriptFiles[i], delimiter='\t')
         t = t.fillna("")
         captureStarted=False
         prevUtterance=""
-        participantNo=transcriptFiles[i][11:14]
+        participantNo=transcriptFiles[i][-18:-15]
+
         listofParticipants.append(participantNo)
         responses=[]
 
@@ -100,7 +81,7 @@ def readTranscript():
                     captureStarted=False
                     responses=[]
 
-                elif utterance in intimate and utterance in questionType and captureStarted:
+                elif utterance in intimate and utterance in questionType_DND and captureStarted:
                     if (participantNo, prevUtterance) not in featureList:
                         questionAnswers[(participantNo, prevUtterance)]=responses
                     else:
@@ -109,11 +90,11 @@ def readTranscript():
                     prevUtterance=utterance
                     responses=[]
 
-                elif utterance in intimate and utterance in questionType and not captureStarted:
+                elif utterance in intimate and utterance in questionType_DND and not captureStarted:
                     prevUtterance=utterance
                     captureStarted=True
 
-                elif utterance in intimate and utterance not in questionType and captureStarted:
+                elif utterance in intimate and utterance not in questionType_DND and captureStarted:
                     if (participantNo, prevUtterance) not in featureList:
                         questionAnswers[(participantNo, prevUtterance)]=responses
                     else:
@@ -128,11 +109,11 @@ def readTranscript():
             elif t.iloc[j]['speaker']=='Participant' and captureStarted:
                 responses.append(utterance)
 
-def readLIWC():
+def readLIWC_DND():
     global listofParticipants
     answerQuestion={}
-    dFile=open('../data/discriminativeLIWC.csv','a')
-    ndFile=open('../data/nonDiscriminativeLIWC.csv','a')
+    dFile=open('data/disc_nondisc/discriminative_LIWC.csv','w')
+    ndFile=open('data/disc_nondisc/nondiscriminative_LIWC.csv','w')
     dWriter=csv.writer(dFile)
     ndWriter=csv.writer(ndFile)
     discriminativeDF=pd.DataFrame()
@@ -148,15 +129,16 @@ def readLIWC():
                 answerQuestion[answer]=(item[0], item[1])
 
 
-    f=open('../data/liwc.csv')
+    f=open('data/misc/liwc.csv')
     reader=csv.reader(f)
     header=['video','question']
     header+=reader.next()[2:]
-
+    dWriter.writerow(header)
+    ndWriter.writerow(header)
     listofParticipants=[int(i) for i in listofParticipants]
 
     listofParticipants.sort()
-    
+
     for row in reader:
         if int(row[0])>=listofParticipants[0] and int(row[0])<=listofParticipants[-1]:
             if row[0] not in liwcVectors:
@@ -169,16 +151,15 @@ def readLIWC():
 
     for video in liwcVectors:
         answerPair=liwcVectors[video]
-
         for item in answerPair:
-            if item[0] in answerQuestion and questionType[answerQuestion[item[0]][1]]=='D' :
+            if item[0] in answerQuestion and questionType_DND[answerQuestion[item[0]][1]]=='D':
                 vector=[float(i) for i in item[1]]
                 vector.insert(0,answerQuestion[item[0]][1])
                 vector.insert(0,str(video))
                 discriminativeMatrix.append(vector)
 
 
-            elif item[0] in answerQuestion and questionType[answerQuestion[item[0]][1]]=='ND':
+            elif item[0] in answerQuestion and questionType_DND[answerQuestion[item[0]][1]]=='ND':
                 vector=[float(i) for i in item[1]]
                 vector.insert(0,answerQuestion[item[0]][1])
                 vector.insert(0,str(video))
@@ -198,22 +179,80 @@ def readLIWC():
         vec+=x
         ndWriter.writerow(vec)
 
-    # discriminativeDF=discriminativeDF.groupby(['video','question']).mean()
-    # nonDiscriminativeDF=nonDiscriminativeDF.groupby(['video','question']).mean()
-    # #pprint(discriminativeDF.iloc[0])
+def readLIWC_PN():
+    global listofParticipants
+    answerQuestion={}
+    pFile=open('data/pos_neg/positive_LIWC.csv','w')
+    nFile=open('data/pos_neg/negative_LIWC.csv','w')
+    pWriter=csv.writer(pFile)
+    nWriter=csv.writer(nFile)
+    positiveDF=pd.DataFrame()
+    negativeDF=pd.DataFrame()
+
+    positiveMatrix=[]
+    negativeMatrix=[]
+    for item in questionAnswers:
+        for answer in questionAnswers[item]:
+            if answer in answerQuestion:
+                pass
+            else:
+                answerQuestion[answer]=(item[0], item[1])
+
+
+    f=open('data/misc/liwc.csv')
+    reader=csv.reader(f)
+    header=['video','question']
+    header+=reader.next()[2:]
+    pWriter.writerow(header)
+    nWriter.writerow(header)
+    listofParticipants=[int(i) for i in listofParticipants]
+
+    listofParticipants.sort()
     
-    # discriminativeDF=discriminativeDF.values.tolist()
-    # nonDiscriminativeDF=nonDiscriminativeDF.values.tolist()
+    for row in reader:
+        if int(row[0])>=listofParticipants[0] and int(row[0])<=listofParticipants[-1]:
+            if row[0] not in liwcVectors:
+                liwcVectors[row[0]]=[(row[1], row[2:])]
+            else:
+                liwcVectors[row[0]].append((row[1], row[2:]))
+
+    #answerQuestion: answer: [participantNo, question]
+    #liwcVectors: participantNo: [(answer, vector)])
+
+    for video in liwcVectors:
+        answerPair=liwcVectors[video]
+
+        for item in answerPair:
+            if item[0] in answerQuestion and questionType_PN[answerQuestion[item[0]][1]]=='P':
+                vector=[float(i) for i in item[1]]
+                vector.insert(0,answerQuestion[item[0]][1])
+                vector.insert(0,str(video))
+                positiveMatrix.append(vector)
 
 
-    # for vec in discriminativeDF:
-    #     dWriter.writerow(vec)
+            elif item[0] in answerQuestion and questionType_PN[answerQuestion[item[0]][1]]=='N':
+                vector=[float(i) for i in item[1]]
+                vector.insert(0,answerQuestion[item[0]][1])
+                vector.insert(0,str(video))
+                negativeMatrix.append(vector)
 
-    # for vec in nonDiscriminativeDF:
-    #     ndWriter.writerow(vec)
+    positiveDF=pd.DataFrame(positiveMatrix, columns=header)
+    negativeDF=pd.DataFrame(negativeMatrix, columns=header)
+    for k1, k2 in positiveDF.groupby(['video','question']):
+        vec=[k1[0],k1[1]]
+        x=k2.mean().values.tolist()
+        vec+=x
+        pWriter.writerow(vec)
+
+    for k1, k2 in negativeDF.groupby(['video','question']):
+        vec=[k1[0],k1[1]]
+        x=k2.mean().values.tolist()
+        vec+=x
+        nWriter.writerow(vec)
 
 
 if __name__=="__main__":
-    readUtterances()
+    readHelperData()
     readTranscript()
-    readLIWC()
+    readLIWC_DND()
+    readLIWC_PN()

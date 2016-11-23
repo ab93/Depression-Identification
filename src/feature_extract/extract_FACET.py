@@ -47,7 +47,7 @@ def readHelperData():
 
 def readTranscript():
     global featureList
-    transcriptFiles=glob(sys.argv[1]+'/[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
+    transcriptFiles=glob(sys.argv[1]+'[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
     for i in range(0,len(transcriptFiles)):
         t=pd.read_csv(transcriptFiles[i], delimiter='\t')
         t = t.fillna("")
@@ -73,8 +73,6 @@ def readTranscript():
                     captureStarted=False
 
                 elif question in intimate and question in questionType_DND and captureStarted:
-                    # if '339' in transcriptFiles[i]:
-                    #     print question
                     if (participantNo, prevQuestion) not in featureList:
                         featureList[(participantNo, prevQuestion)]=[startTime, endTime]
                     else:
