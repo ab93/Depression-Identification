@@ -121,6 +121,138 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         return weighted_proba
         
 
+class LateFusionClassifier(BaseEstimator, ClassifierMixin):
+    """
+    Plurality/Majority voting based Combined Classifier. Supports both
+    single feature set/multiple feature set based Classification.
+    """
+    def __init__(self,classifiers,vote='classlabel',weights=None,multi_data=False):
+        self.classifiers = classifiers  # list of classifiers
+        self.vote = vote    # 'probability' or 'classlabel'
+        self.named_classifiers = {key: value for key, value in _name_estimators(classifiers)}
+        self.weights = weights  # weights for each of the classifiers
+        self.multi_data = multi_data    # Whether multi_data is set
+
+    def fit(self,X,y):
+        """
+        Trains on the data.
+
+        Args:
+            X: Matrix of feature vectors and instances
+                OR
+               List consisting of matrices of feature vectors and instances
+               (if multi_data = True)
+            y: Lables vector
+
+        Returns: self
+        """
+        self.lablenc_ = LabelEncoder()
+        self.lablenc_.fit(y)
+        self.classes_ = self.lablenc_.classes_
+        self.classifiers_ = []
+
+        # If multi_data is set True
+        if self.multi_data:
+            if self.weights:
+                for i in range(len(X)-1):
+                    self.weights.extend(self.weights)   # change the length of weights
+            for x in X:
+                classifiers = []
+                for clf in self.classifiers:
+                    fitted_clf = clone(clf).fit(x,self.lablenc_.transform(y))
+                    classifiers.append(fitted_clf)
+                self.classifiers_.append(classifiers)
+        # If multi_data is set False
+        else:
+            for clf in self.classifiers:
+                fitted_clf = clone(clf).fit(X,self.lablenc_.transform(y))
+                self.classifiers_.append(fitted_clf)
+        return self
+
+    def predict(self,X):
+        """
+        Predicts new data instances.
+
+        Args:
+            X: Matrix of feature vectors and instances
+                OR
+               List consisting of matrices of feature vectors and instances
+               (if multi_data = True)
+
+        Returns:
+            maj_vote: Predicted class
+        """
+        if self.vote == 'probability':
+            maj_vote = np.argmax(self.predict_proba(X),axis=1)
+
+        else: # classlabel
+            # If multi_data is set True
+            if self.multi_data:
+                for clf_grp_index in range(len(self.classifiers_)):
+                    x = X[clf_grp_index]
+                    classifiers = self.classifiers_[clf_grp_index]
+                    pred = np.asarray([clf.predict(x) for clf in classifiers]).T
+                    if clf_grp_index == 0:
+                        predictions = pred.copy()
+                    else:
+                        predictions = np.hstack((predictions,pred))
+                    maj_vote = np.apply_along_axis(lambda x: np.argmax(np.bincount(x,
+                                weights=self.weights)),axis=1,arr=predictions)
+
+            # If multi_data is set False
+            else:
+                predictions = np.asarray([clf.predict(X) for clf in self.classifiers_]).T
+                maj_vote = np.apply_along_axis(lambda x: np.argmax(np.bincount(x,
+                            weights=self.weights)),axis=1,arr=predictions)
+
+        maj_vote = self.lablenc_.inverse_transform(maj_vote)
+        return maj_vote
+
+
+    def predict_proba(self,X):
+        """
+        Returns probability estimates for test data
+        """
+        # If multi_data is set True
+        if self.multi_data:
+            for clf_grp_index in range(len(self.classifiers_)):
+                x = X[clf_grp_index]
+                classifiers = self.classifiers_[clf_grp_index]
+                p = np.asarray([clf.predict_proba(x) for clf in classifiers])
+                if clf_grp_index == 0:
+                    probas = p.copy()
+                else:
+                    probas = np.vstack((probas,p))
+        # If multi_data is set False
+        else:
+            probas = np.asarray([clf.predict_proba(X) for clf in self.classifiers_])
+
+        avg_proba = np.average(probas, axis=0, weights=self.weights)
+        return avg_proba
+
+
+    def get_params(self,deep=True):
+        """
+        Returns the parameters of the base classifiers.
+        """
+        if not deep:
+            return super(PluralityVoteClassifier,self).get_params(deep=False)
+        else:
+            out = self.named_classifiers.copy()
+            for name, step in six.iteritems(self.named_classifiers):
+                for key,value in six.iteritems(step.get_params(deep=True)):
+                    out['%s__%s' % (name, key)] = value
+            return out
+
+
+    def score(self,X,y,sample_weight=None,scoring='f1'):
+        """
+        Returns the weighted F1-score (default)
+        """
+        if scoring == 'f1':
+            return f1_score(y,self.predict(X),average='weighted',sample_weight=sample_weight,pos_label=None)
+        elif scoring == 'accuracy':
+            return accuracy_score(y, self.predict(X), sample_weight=sample_weight)
 
 
 # Just for debugging and testing
