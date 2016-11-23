@@ -121,8 +121,6 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         return weighted_proba
         
 
-#class MajorityVotingClassifier()
-
 
 
 # Just for debugging and testing
