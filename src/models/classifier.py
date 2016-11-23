@@ -133,47 +133,29 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
     Plurality/Majority voting based Combined Classifier. Supports both
     single feature set/multiple feature set based Classification.
     """
-    def __init__(self,classifiers,vote='classlabel',weights=None,multi_data=False):
+    def __init__(self,classifiers,vote='classlabel',weights=None):
         self.classifiers = classifiers  # list of classifiers
         self.vote = vote    # 'probability' or 'classlabel'
         self.named_classifiers = {key: value for key, value in _name_estimators(classifiers)}
         self.weights = weights  # weights for each of the classifiers
-        self.multi_data = multi_data    # Whether multi_data is set
 
-    def fit(self,X,y):
+    def fit(self,Xs,ys): 
         """
         Trains on the data.
-
-        Args:
-            X: Matrix of feature vectors and instances
-                OR
-               List consisting of matrices of feature vectors and instances
-               (if multi_data = True)
-            y: Lables vector
+        Xs = [[], [], []]
+        ys = [[], [], []]
 
         Returns: self
         """
-        self.lablenc_ = LabelEncoder()
-        self.lablenc_.fit(y)
-        self.classes_ = self.lablenc_.classes_
+        if isinstance(Xs,list) and isinstance(ys,list):
+            assert(len(X_list) == len(y_list) == len(self.classifiers))
         self.classifiers_ = []
-
-        # If multi_data is set True
-        if self.multi_data:
-            if self.weights:
-                for i in range(len(X)-1):
-                    self.weights.extend(self.weights)   # change the length of weights
-            for x in X:
-                classifiers = []
-                for clf in self.classifiers:
-                    fitted_clf = clone(clf).fit(x,self.lablenc_.transform(y))
-                    classifiers.append(fitted_clf)
-                self.classifiers_.append(classifiers)
-        # If multi_data is set False
-        else:
+        for i in range(len(Xs)):
+            classifiers = []
             for clf in self.classifiers:
-                fitted_clf = clone(clf).fit(X,self.lablenc_.transform(y))
-                self.classifiers_.append(fitted_clf)
+                fitted_clf = clone(clf).fit(Xs[i],ys[i])
+                classifiers.append(fitted_clf)
+            self.classifiers_.append(classifiers)
         return self
 
     def predict(self,X):
