@@ -121,11 +121,23 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         weighted_proba = np.average(preds, axis=0, weights=self.weights) 
         return weighted_proba
 
-    def score(self, X_list, y_list, scoring='f1'):
+    def score(self, Xs, y_true, scoring='f1'):
         """
         Returns the f1 score by default
+
+        Parameters
+        ----------
+        Xs : List of {array-like, sparse matrix},
+             length = number of classifiers
+             List of matrices of training samples
+
+        y_true: Single vectors of target class labels.
+        
         """
-        pass #TODO
+        if scoring == 'f1':
+            return f1_score(y_true,self.predict(Xs),average='binary')
+        elif scoring == 'accuracy':
+            return accuracy_score(y_true, self.predict(Xs))
         
 
 class LateFusionClassifier(BaseEstimator, ClassifierMixin):
@@ -193,56 +205,13 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
         return avg_proba
 
 
-    def score(self,X,y,sample_weight=None,scoring='f1'):
+    def score(self,Xs,y_true,scoring='f1'):
         """
         Returns the weighted F1-score (default)
         """
         if scoring == 'f1':
-            return f1_score(y,self.predict(X),average='weighted',sample_weight=sample_weight,pos_label=None)
+            return f1_score(y_true,self.predict(Xs),average='binary')
         elif scoring == 'accuracy':
-            return accuracy_score(y, self.predict(X), sample_weight=sample_weight)
+            return accuracy_score(y_true, self.predict(Xs))
 
-
-# Just for debugging and testing
-
-def main():
-    # for discriminative
-    x1 = np.array([ np.array([[1,5,7], [1,2,4], [1,8,9]]), # [r1,r2,r3] for p1
-                np.array([[2,8,6], [2,0,3]]),  # [r1,r2] for p2
-                np.array([[3,7,5], [3,4,3], [3,9,7]]) # [r1,r2,r3] for p3
-                ])
-
-    # for non discriminative
-    x2 = np.array([ np.array([[1,5,7], [1,2,4]]), 
-                    np.array([[2,8,6], [2,0,3], [2,5,5]]), 
-                    np.array([[3,7,5], [3,4,3], [3,9,7]])
-                    ])
-
-    y1 = np.array([ np.array([1,1,1]),
-                    np.array([1,1]),
-                    np.array([0,0,0])
-                    ])
-
-    y2 = np.array([ np.array([0,0]), 
-                    np.array([0,0,0]), 
-                    np.array([1,1,1])
-                    ])
-
-    X = [x1,x2]
-    y = [y1,y2]
-
-    clfs = [LogisticRegression(C=100, penalty='l2'), LogisticRegression(C=10,penalty='l1')]
-    meta_clf = MetaClassifier(clfs)
-    meta_clf.fit(X,y)
-    print "predict:",meta_clf.predict(X)
-    print "predict_proba:",meta_clf.predict_proba(X)
-
-    X_acou, y_acou = [x1,x2], [y1,y2]
-    X_vis, y_vis = [x2,x1], [y2,y1]
-    X_lin, y_lin = [x1,x1], [y1,y1]
-
-
-
-if __name__ == '__main__':
-    main()
 
