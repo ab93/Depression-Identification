@@ -124,7 +124,7 @@ def readCLM_DND():
 
         fileName2 = sys.argv[1] + item + '_P/' + item + '_CLM_pose.txt'
 
-        f2 = pd.read_csv(fileName2, delimiter=',')
+        f2 = pd.read_csv(fileName2, delimiter=', ')
 
         for instance in groupByQuestion[item]:
 
@@ -170,7 +170,7 @@ def readCLM_PN():
 
         fileName2 = sys.argv[1] + item + '_P/' + item + '_CLM_pose.txt'
 
-        f2 = pd.read_csv(fileName2, delimiter=',')
+        f2 = pd.read_csv(fileName2, delimiter=', ')
 
         for instance in groupByQuestion[item]:
 

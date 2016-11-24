@@ -22,7 +22,7 @@ header = ["video","question","starttime","endtime",'F0','VUV','NAQ','QOQ','H1H2'
     'HMPDM_19','HMPDM_20','HMPDM_21','HMPDM_22','HMPDM_23','HMPDM_24',
     'HMPDD_0','HMPDD_1','HMPDD_2','HMPDD_3','HMPDD_4','HMPDD_5',
     'HMPDD_6','HMPDD_7','HMPDD_8','HMPDD_9','HMPDD_10','HMPDD_11','HMPDD_12']
-
+header_f = ["video","question","starttime","endtime","formant1",'formant2','formant3','formant4',"formant5"]
 
 questionType_DND={}
 questionType_PN={}
@@ -120,8 +120,8 @@ def readFORMANT_DND():
     ndFile = open('data/disc_nondisc/nondiscriminative_FORMANT.csv', 'w')
     dWriter = csv.writer(dFile)
     ndWriter = csv.writer(ndFile)
-    dWriter.writerow(header)
-    ndWriter.writerow(header)
+    dWriter.writerow(header_f)
+    ndWriter.writerow(header_f)
     for item in featureList:
         if item[0] not in groupByQuestion:
             groupByQuestion[item[0]] = [(item[1], featureList[item])]
@@ -162,8 +162,8 @@ def readFORMANT_PN():
     nFile = open('data/pos_neg/negative_FORMANT.csv', 'w')
     pWriter = csv.writer(pFile)
     nWriter = csv.writer(nFile)
-    pWriter.writerow(header)
-    nWriter.writerow(header)
+    pWriter.writerow(header_f)
+    nWriter.writerow(header_f)
     for item in featureList:
         if item[0] not in groupByQuestion:
             groupByQuestion[item[0]] = [(item[1], featureList[item])]

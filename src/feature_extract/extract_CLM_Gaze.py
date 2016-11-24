@@ -104,8 +104,8 @@ def readTranscript():
 def readCLM_DND():
     groupByQuestion = {}
 
-    dFile2 = open('data/disc_nondisc/discriminativeCLM_Gaze.csv', 'w')
-    ndFile2 = open('data/disc_nondisc/nondiscriminativeCLM_Gaze.csv', 'w')
+    dFile2 = open('data/disc_nondisc/discriminative_CLM_Gaze.csv', 'w')
+    ndFile2 = open('data/disc_nondisc/nondiscriminative_CLM_Gaze.csv', 'w')
 
     dWriter2 = csv.writer(dFile2)
     ndWriter2 = csv.writer(ndFile2)
@@ -122,7 +122,7 @@ def readCLM_DND():
 
         fileName2 = sys.argv[1] + item + '_P/' + item + '_CLM_gaze.txt'
 
-        f2 = pd.read_csv(fileName2, delimiter=',')
+        f2 = pd.read_csv(fileName2, delimiter=', ')
 
         for instance in groupByQuestion[item]:
 
@@ -149,8 +149,8 @@ def readCLM_DND():
 def readCLM_PN():
     groupByQuestion = {}
 
-    pFile2 = open('data/pos_neg/positiveCLM_Gaze.csv', 'w')
-    nFile2 = open('data/pos_neg/negativeCLM_Gaze.csv', 'w')
+    pFile2 = open('data/pos_neg/positive_CLM_Gaze.csv', 'w')
+    nFile2 = open('data/pos_neg/negative_CLM_Gaze.csv', 'w')
 
     pWriter2 = csv.writer(pFile2)
     nWriter2 = csv.writer(nFile2)
@@ -167,7 +167,7 @@ def readCLM_PN():
 
         fileName2 = sys.argv[1] + item + '_P/' + item + '_CLM_gaze.txt'
 
-        f2 = pd.read_csv(fileName2, delimiter=',')
+        f2 = pd.read_csv(fileName2, delimiter=', ')
 
         for instance in groupByQuestion[item]:
 

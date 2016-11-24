@@ -144,14 +144,14 @@ def readCLM3D_DND():
 
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_CLM_features3D.txt'
-        f = pd.read_csv(fileName, delimiter=',')
+        f = pd.read_csv(fileName, delimiter=' ,')
 
         for instance in groupByQuestion[item]:
             startTime = instance[1][0]
             endTime = instance[1][1]
 
-            startFrame = f.ix[(f[' timestamp'] - startTime).abs().argsort()[:1]].index.tolist()[0]
-            endFrame = f.ix[(f[' timestamp'] - endTime).abs().argsort()[:1]].index.tolist()[0]
+            startFrame = f.ix[(f['timestamp'] - startTime).abs().argsort()[:1]].index.tolist()[0]
+            endFrame = f.ix[(f['timestamp'] - endTime).abs().argsort()[:1]].index.tolist()[0]
             features = f.ix[startFrame:endFrame].mean(0).tolist()
             vector = instance[1][:]
             vector += features
@@ -186,14 +186,14 @@ def readCLM3D_PN():
 
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_CLM_features3D.txt'
-        f = pd.read_csv(fileName, delimiter=',')
+        f = pd.read_csv(fileName, delimiter=', ')
 
         for instance in groupByQuestion[item]:
             startTime = instance[1][0]
             endTime = instance[1][1]
 
-            startFrame = f.ix[(f[' timestamp'] - startTime).abs().argsort()[:1]].index.tolist()[0]
-            endFrame = f.ix[(f[' timestamp'] - endTime).abs().argsort()[:1]].index.tolist()[0]
+            startFrame = f.ix[(f['timestamp'] - startTime).abs().argsort()[:1]].index.tolist()[0]
+            endFrame = f.ix[(f['timestamp'] - endTime).abs().argsort()[:1]].index.tolist()[0]
 
             features = f.ix[startFrame:endFrame].mean(0).tolist()
             vector = instance[1][:]
