@@ -148,25 +148,19 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
         Returns: self
         """
         if isinstance(Xs,list) and isinstance(ys,list):
-            assert(len(X_list) == len(y_list) == len(self.classifiers))
-        self.classifiers_ = []
-        for i in range(len(Xs)):
-            classifiers = []
-            for clf in self.classifiers:
-                fitted_clf = clone(clf).fit(Xs[i],ys[i])
-                classifiers.append(fitted_clf)
-            self.classifiers_.append(classifiers)
+            assert(len(Xs) == len(ys) == len(self.classifiers))
+        self.classifiers_ = [] # store trained classifiers
+        for idx, clf in enumerate(self.classifiers):
+            fitted_clf = clone(clf).fit(Xs[idx],ys[idx])
+            self.classifiers_.append(fitted_clf)
         return self
 
-    def predict(self,X):
+    def predict(self,Xs):
         """
         Predicts new data instances.
 
         Args:
-            X: Matrix of feature vectors and instances
-                OR
-               List consisting of matrices of feature vectors and instances
-               (if multi_data = True)
+            Xs = [[], [], []]
 
         Returns:
             maj_vote: Predicted class
@@ -175,32 +169,22 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
             maj_vote = np.argmax(self.predict_proba(X),axis=1)
 
         else: # classlabel
-            # If multi_data is set True
-            if self.multi_data:
-                for clf_grp_index in range(len(self.classifiers_)):
-                    x = X[clf_grp_index]
-                    classifiers = self.classifiers_[clf_grp_index]
-                    pred = np.asarray([clf.predict(x) for clf in classifiers]).T
-                    if clf_grp_index == 0:
-                        predictions = pred.copy()
-                    else:
-                        predictions = np.hstack((predictions,pred))
-                    maj_vote = np.apply_along_axis(lambda x: np.argmax(np.bincount(x,
-                                weights=self.weights)),axis=1,arr=predictions)
-
-            # If multi_data is set False
-            else:
-                predictions = np.asarray([clf.predict(X) for clf in self.classifiers_]).T
-                maj_vote = np.apply_along_axis(lambda x: np.argmax(np.bincount(x,
-                            weights=self.weights)),axis=1,arr=predictions)
-
-        maj_vote = self.lablenc_.inverse_transform(maj_vote)
+            predictions = np.asarray([clf.predict(Xs[mode_idx]) for mode_idx,clf in enumerate(self.classifiers_)]).T
+            print '\n',predictions
+            maj_vote = np.apply_along_axis(lambda x: np.argmax(np.bincount(x,
+                        weights=self.weights)),axis=1,arr=predictions)
         return maj_vote
 
 
     def predict_proba(self,X):
         """
-        Returns probability estimates for test data
+        Predicts new data instances.
+
+        Args:
+            Xs = [[], [], []]
+
+        Returns:
+            avg_proba: Average probabilities of the class
         """
         # If multi_data is set True
         if self.multi_data:
