@@ -66,7 +66,8 @@ class MetaClassifierTest(unittest.TestCase):
 
         lf_clf = LateFusionClassifier(classifiers=[clf1,clf2,clf3])
         lf_clf.fit(Xs,Ys)
-        print "predict:", lf_clf.predict(Xs)
+        print "\npredict:\n", lf_clf.predict(Xs)
+        print "\npredict_proba:\n",lf_clf.predict_proba(Xs)
 
 if __name__ == '__main__':
     unittest.main()

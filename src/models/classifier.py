@@ -176,7 +176,7 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
         return maj_vote
 
 
-    def predict_proba(self,X):
+    def predict_proba(self,Xs):
         """
         Predicts new data instances.
 
@@ -186,36 +186,11 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
         Returns:
             avg_proba: Average probabilities of the class
         """
-        # If multi_data is set True
-        if self.multi_data:
-            for clf_grp_index in range(len(self.classifiers_)):
-                x = X[clf_grp_index]
-                classifiers = self.classifiers_[clf_grp_index]
-                p = np.asarray([clf.predict_proba(x) for clf in classifiers])
-                if clf_grp_index == 0:
-                    probas = p.copy()
-                else:
-                    probas = np.vstack((probas,p))
-        # If multi_data is set False
-        else:
-            probas = np.asarray([clf.predict_proba(X) for clf in self.classifiers_])
 
+        probas = np.asarray([clf.predict_proba(Xs[mode_idx]) 
+                            for mode_idx,clf in enumerate(self.classifiers_)])
         avg_proba = np.average(probas, axis=0, weights=self.weights)
         return avg_proba
-
-
-    def get_params(self,deep=True):
-        """
-        Returns the parameters of the base classifiers.
-        """
-        if not deep:
-            return super(PluralityVoteClassifier,self).get_params(deep=False)
-        else:
-            out = self.named_classifiers.copy()
-            for name, step in six.iteritems(self.named_classifiers):
-                for key,value in six.iteritems(step.get_params(deep=True)):
-                    out['%s__%s' % (name, key)] = value
-            return out
 
 
     def score(self,X,y,sample_weight=None,scoring='f1'):
