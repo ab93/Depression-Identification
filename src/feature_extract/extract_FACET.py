@@ -100,7 +100,6 @@ def readTranscript():
             elif t.iloc[j]['speaker']=='Participant' and captureStarted:
                 endTime=t.iloc[j]['stop_time']
 
-
 def readFACET_DND():
     groupByQuestion={}
     dFile=open('data/disc_nondisc/discriminative_FACET.csv','w')

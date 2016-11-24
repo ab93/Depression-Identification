@@ -17,7 +17,6 @@ questionType_PN = {}
 discriminativeVectors = []
 nonDiscriminativeVectors = []
 
-
 def readHelperData():
     global followUp, ack, nonIntimate, intimate, questionType_PN, questionType_DND
     utterrances = pd.read_csv('data/misc/IdentifyingFollowUps.csv')
@@ -45,7 +44,6 @@ def readHelperData():
             nonIntimate[item[1]] = item[2]
         elif item[3] == "#int" and item[1] not in intimate:
             intimate[item[1]] = item[2]
-
 
 def readTranscript():
     global featureList
@@ -102,16 +100,12 @@ def readTranscript():
             elif t.iloc[j]['speaker'] == 'Participant' and captureStarted:
                 endTime = t.iloc[j]['stop_time']
 
-
 def readCLM_DND():
     groupByQuestion = {}
-
     dFile = open('data/disc_nondisc/discriminative_CLM.csv', 'w')
     ndFile = open('data/disc_nondisc/nondiscriminative_CLM.csv', 'w')
-
     dWriter = csv.writer(dFile)
     ndWriter = csv.writer(ndFile)
-
     header = ["frame", "timestamp", "confidence", "success", "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9",
               "x10", "x11", "x12", "x13", "x14", "x15", "x16", "x17", "x18", "x19", "x20", "x21", "x22", "x23", "x24",
               "x25", "x26", "x27", "x28", "x29", "x30", "x31", "x32", "x33", "x34", "x35", "x36", "x37", "x38", "x39",
@@ -122,12 +116,8 @@ def readCLM_DND():
               "y34", "y35", "y36", "y37", "y38", "y39", "y40", "y41", "y42", "y43", "y44", "y45", "y46", "y47", "y48",
               "y49", "y50", "y51", "y52", "y53", "y54", "y55", "y56", "y57", "y58", "y59", "y60", "y61", "y62", "y63",
               "y64", "y65", "y66", "y67"]
-
-
-
     dWriter.writerow(header)
     ndWriter.writerow(header)
-
     for item in featureList:
         if item[0] not in groupByQuestion:
             groupByQuestion[item[0]] = [(item[1], featureList[item])]
