@@ -286,25 +286,25 @@ def acous_dev():
             x_d_acoustic_dev.append(x_d_acoustic[key])
             temp = []
             for i in range(len(x_d_acoustic[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_d_acoustic_dev.append(temp)
         if key in x_nd_acoustic:
             x_nd_acoustic_dev.append(x_nd_acoustic[key])
             temp = []
             for i in range(len(x_nd_acoustic[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_nd_acoustic_dev.append(temp)
         if key in x_p_acoustic:
             x_p_acoustic_dev.append(x_p_acoustic[key])
             temp = []
             for i in range(len(x_p_acoustic[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_p_acoustic_dev.append(temp)
         if key in x_n_acoustic:
             x_n_acoustic_dev.append(x_n_acoustic[key])
             temp = []
             for i in range(len(x_n_acoustic[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_n_acoustic_dev.append(temp)
 
 def visual_train():
@@ -345,25 +345,25 @@ def visual_dev():
             x_d_visual_dev.append(x_d_visual[key])
             temp = []
             for i in range(len(x_d_visual[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_d_visual_dev.append(temp)
         if key in x_nd_visual:
             x_nd_visual_dev.append(x_nd_visual[key])
             temp = []
             for i in range(len(x_nd_visual[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_nd_visual_dev.append(temp)
         if key in x_p_visual:
             x_p_visual_dev.append(x_p_visual[key])
             temp = []
             for i in range(len(x_p_visual[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_p_visual_dev.append(temp)
         if key in x_n_visual:
             x_n_visual_dev.append(x_n_visual[key])
             temp = []
             for i in range(len(x_n_visual[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_n_visual_dev.append(temp)
 def linguistic_train():
     for key in sorted(train.keys()):
@@ -401,25 +401,25 @@ def linguistic_dev():
             x_d_linguistic_dev.append(x_d_linguistic[key])
             temp = []
             for i in range(len(x_d_linguistic[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_d_linguistic_dev.append(temp)
         if key in x_nd_linguistic:
             x_nd_linguistic_dev.append(x_nd_linguistic[key])
             temp = []
             for i in range(len(x_nd_linguistic[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_nd_linguistic_dev.append(temp)
         if key in x_p_linguistic:
             x_p_linguistic_dev.append(x_p_linguistic[key])
             temp = []
             for i in range(len(x_p_linguistic[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_p_linguistic_dev.append(temp)
         if key in x_n_linguistic:
             x_n_linguistic_dev.append(x_n_linguistic[key])
             temp = []
             for i in range(len(x_n_linguistic[key])):
-                temp.append(train[key])
+                temp.append(dev[key])
             y_n_linguistic_dev.append(temp)
 
 def return_acou_train():
@@ -428,8 +428,7 @@ def return_acou_train():
     features_acoustic = [["video", 'F0', 'VUV', 'NAQ', 'QOQ'], ["video", "formant1", "formant2"]]
     process_acoustic(features_acoustic)
     acous_train()
-    return map(np.asarray,x_d_acoustic_train),map(np.asarray,y_d_acoustic_train)
-        #,x_nd_acoustic_train,y_nd_acoustic_train,x_p_acoustic_train,y_p_acoustic_train,x_n_acoustic_train,y_n_acoustic_train
+    return x_d_acoustic_train,y_d_acoustic_train,x_nd_acoustic_train,y_nd_acoustic_train,x_p_acoustic_train,y_p_acoustic_train,x_n_acoustic_train,y_n_acoustic_train
 
 def return_vis_train():
     readLabels()
@@ -470,5 +469,5 @@ def return_lin_dev():
     process_ling(features_linguistic)
     linguistic_dev()
 
-pprint(type(return_acou_dev()[0]))
+pprint(return_acou_dev())
 
