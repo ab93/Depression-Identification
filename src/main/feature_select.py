@@ -4,7 +4,13 @@ import sys
 import csv
 import numpy as np
 import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+
 import config
+import sklearn
+from sklearn.decomposition import PCA
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.svm import LinearSVC
 
 def get_feature_df(file_, *files):
     feature_df = pd.read_csv(file_)
@@ -32,13 +38,46 @@ def get_feature_df(file_, *files):
         feature_df.drop(['video','question'], inplace=True, axis=1)
     return feature_df
 
+def performPCA(df):
+    pca = PCA(n_components=10)
+    df = df.drop(['frame', 'timestamp','confidence','success','label'], axis=1)
+    X=df.as_matrix()
+    pca.fit(X)
+    return pca.components_
+
+def removeLowVariance(df):
+    df = df.drop(['frame', 'timestamp','confidence','success','label'], axis=1)
+    X=df.as_matrix()
+    sel = VarianceThreshold(0.95)
+    sel.fit(X)
+    idxs = sel.get_support(indices=True)
+    #print idxs
+
+def performL1(df):
+    #vectorizer = CountVectorizer(ngram_range=(1,1), min_df=1)
+    df1 = df.drop(['frame', 'timestamp','confidence','success','label'], axis=1)
+    X = df1.as_matrix()
+    df2 = df[['label']]
+    Y = df2.as_matrix()
+    print X.shape
+    svc = LinearSVC(C=1., penalty='l1', dual=False)
+    #svc.fit(X, Y)
+    X_train_new = svc.fit_transform(X, Y)
+    print X_train_new.shape
+    selected_feature_names = svc.coef_
+    #selected_feature_names = np.asarray(vectorizer.get_feature_names())[np.flatnonzero(svc.coef_)]
+    print selected_feature_names
+
 def analyze_features(df):
     pass
 
 def main():
     file1 = os.path.join(config.D_ND_DIR,sys.argv[1])
     files = [os.path.join(config.D_ND_DIR,argv) for argv in sys.argv[2:]]
-    print get_feature_df(file1, files)
+    df = get_feature_df(file1, files)
+    performPCA(df)
+    removeLowVariance(df)
+    performL1(df)
 
 if __name__ == '__main__':
     main()
