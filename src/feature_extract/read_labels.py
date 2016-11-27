@@ -309,7 +309,7 @@ def acous_dev():
 def visual_train():
     for key in sorted(train.keys(),):
 
-        if key in x_d_visual:
+        if key in x_d_visual and key in x_nd_visual:
             x_d_visual_train.append(x_d_visual[key])
             temp = []
             for i in range(len(x_d_visual[key])):
@@ -369,18 +369,20 @@ def visual_dev():
 def linguistic_train():
     for key in sorted(train.keys()):
 
-        if key in x_d_linguistic:
+        if key in x_d_linguistic and key in x_nd_linguistic:
             x_d_linguistic_train.append(x_d_linguistic[key])
+            x_nd_linguistic_train.append(x_nd_linguistic[key])
             temp = []
             for i in range(len(x_d_linguistic[key])):
                 temp.append(train[key])
             y_d_linguistic_train.append(temp)
-        if key in x_nd_linguistic:
-            x_nd_linguistic_train.append(x_nd_linguistic[key])
-            temp = []
-            for i in range(len(x_nd_linguistic[key])):
-                temp.append(train[key])
             y_nd_linguistic_train.append(temp)
+        # if key in x_nd_linguistic:
+        #     x_nd_linguistic_train.append(x_nd_linguistic[key])
+        #     temp = []
+        #     for i in range(len(x_nd_linguistic[key])):
+        #         temp.append(train[key])
+        #     y_nd_linguistic_train.append(temp)
         if key in x_p_linguistic:
             x_p_linguistic_train.append(x_p_linguistic[key])
             temp = []
@@ -399,16 +401,18 @@ def linguistic_dev():
 
         if key in x_d_linguistic:
             x_d_linguistic_dev.append(x_d_linguistic[key])
+            x_nd_linguistic_dev.append(x_nd_linguistic[key])
             temp = []
             for i in range(len(x_d_linguistic[key])):
                 temp.append(dev[key])
             y_d_linguistic_dev.append(temp)
-        if key in x_nd_linguistic:
-            x_nd_linguistic_dev.append(x_nd_linguistic[key])
-            temp = []
-            for i in range(len(x_nd_linguistic[key])):
-                temp.append(dev[key])
             y_nd_linguistic_dev.append(temp)
+        # if key in x_nd_linguistic:
+        #     x_nd_linguistic_dev.append(x_nd_linguistic[key])
+        #     temp = []
+        #     for i in range(len(x_nd_linguistic[key])):
+        #         temp.append(dev[key])
+        #     y_nd_linguistic_dev.append(temp)
         if key in x_p_linguistic:
             x_p_linguistic_dev.append(x_p_linguistic[key])
             temp = []
