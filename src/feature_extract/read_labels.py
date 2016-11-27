@@ -369,65 +369,86 @@ def visual_dev():
 def linguistic_train():
     for key in sorted(train.keys()):
 
-        if key in x_d_linguistic and key in x_nd_linguistic:
+        if (key in x_d_linguistic) and (key in x_nd_linguistic):
             x_d_linguistic_train.append(x_d_linguistic[key])
             x_nd_linguistic_train.append(x_nd_linguistic[key])
-            temp = []
+            temp_d = []
+            temp_nd = []
             for i in range(len(x_d_linguistic[key])):
-                temp.append(train[key])
-            y_d_linguistic_train.append(temp)
-            y_nd_linguistic_train.append(temp)
+                temp_d.append(train[key])
+            for i in range(len(x_nd_linguistic[key])):
+                temp_nd.append(train[key])
+            y_d_linguistic_train.append(temp_d)
+            y_nd_linguistic_train.append(temp_nd)
         # if key in x_nd_linguistic:
         #     x_nd_linguistic_train.append(x_nd_linguistic[key])
         #     temp = []
         #     for i in range(len(x_nd_linguistic[key])):
         #         temp.append(train[key])
         #     y_nd_linguistic_train.append(temp)
-        if key in x_p_linguistic:
+        if key in (x_p_linguistic) and (key in x_n_linguistic):
             x_p_linguistic_train.append(x_p_linguistic[key])
-            temp = []
-            for i in range(len(x_p_linguistic[key])):
-                temp.append(train[key])
-            y_p_linguistic_train.append(temp)
-        if key in x_n_linguistic:
             x_n_linguistic_train.append(x_n_linguistic[key])
-            temp = []
+            temp_p = []
+            temp_n = []
+            for i in range(len(x_p_linguistic[key])):
+                temp_p.append(train[key])
+            y_p_linguistic_train.append(temp_p)
             for i in range(len(x_n_linguistic[key])):
-                temp.append(train[key])
-            y_n_linguistic_train.append(temp)
+                temp_n.append(train[key])
+            y_n_linguistic_train.append(temp_n)
+        # if key in x_n_linguistic:
+        #     x_n_linguistic_train.append(x_n_linguistic[key])
+        #     temp = []
+        #     for i in range(len(x_n_linguistic[key])):
+        #         temp.append(train[key])
+        #     y_n_linguistic_train.append(temp)
 
 def linguistic_dev():
     for key in sorted(dev.keys()):
 
-        if key in x_d_linguistic:
+        if (key in x_d_linguistic) and (key in x_nd_linguistic_dev):
             x_d_linguistic_dev.append(x_d_linguistic[key])
             x_nd_linguistic_dev.append(x_nd_linguistic[key])
-            temp = []
+            temp_d = []
+            temp_nd = []
             for i in range(len(x_d_linguistic[key])):
-                temp.append(dev[key])
-            y_d_linguistic_dev.append(temp)
-            y_nd_linguistic_dev.append(temp)
+                temp_d.append(dev[key])
+            y_d_linguistic_dev.append(temp_d)
+            for i in range(len(x_d_linguistic[key])):
+                temp_nd.append(dev[key])
+            y_nd_linguistic_dev.append(temp_nd)
         # if key in x_nd_linguistic:
         #     x_nd_linguistic_dev.append(x_nd_linguistic[key])
         #     temp = []
         #     for i in range(len(x_nd_linguistic[key])):
         #         temp.append(dev[key])
         #     y_nd_linguistic_dev.append(temp)
-        if key in x_p_linguistic:
+        if (key in x_p_linguistic) and (key in x_n_linguistic):
             x_p_linguistic_dev.append(x_p_linguistic[key])
-            temp = []
-            for i in range(len(x_p_linguistic[key])):
-                temp.append(dev[key])
-            y_p_linguistic_dev.append(temp)
-        if key in x_n_linguistic:
             x_n_linguistic_dev.append(x_n_linguistic[key])
-            temp = []
+            temp_p = []
+            temp_n = []
+            for i in range(len(x_p_linguistic[key])):
+                temp_p.append(dev[key])
+            y_p_linguistic_dev.append(temp_p)
             for i in range(len(x_n_linguistic[key])):
-                temp.append(dev[key])
-            y_n_linguistic_dev.append(temp)
+                temp_n.append(dev[key])
+            y_n_linguistic_dev.append(temp_n)
+            
+            
+
+        # if key in x_n_linguistic:
+        #     x_n_linguistic_dev.append(x_n_linguistic[key])
+        #     temp = []
+        #     for i in range(len(x_n_linguistic[key])):
+        #         temp.append(dev[key])
+        #     y_n_linguistic_dev.append(temp)
 
 #features_acoustic = [["video", 'F0', 'VUV', 'NAQ', 'QOQ'], ["video", "formant1", "formant2"]]
 def return_acou_dnd(features_acoustic):
+    for i in features_acoustic:
+        i.insert(0,"video")
     readLabels()
     # [[covarep],[formant]]
     process_acoustic(features_acoustic)
@@ -436,6 +457,8 @@ def return_acou_dnd(features_acoustic):
     return x_d_acoustic_train,y_d_acoustic_train,x_nd_acoustic_train,y_nd_acoustic_train,x_d_acoustic_dev,y_d_acoustic_dev,x_nd_acoustic_dev,y_nd_acoustic_dev
 
 def return_acou_pn(features_acoustic):
+    for i in features_acoustic:
+        i.insert(0,"video")
     readLabels()
     process_acoustic(features_acoustic)
     acous_train()
@@ -443,6 +466,8 @@ def return_acou_pn(features_acoustic):
     return x_p_acoustic_train,y_p_acoustic_train,x_n_acoustic_train,y_n_acoustic_train,x_p_acoustic_dev,y_p_acoustic_dev,x_n_acoustic_dev,y_n_acoustic_dev
 
 def return_vis_dnd(features_visual):
+    for i in features_visual:
+        i.insert(0,"video")
     readLabels()
     # [[clm],[clm3d],[clmgaze],[clmpose],[facet]]
     #features_visual = [['video', 'x0', ], ['video', 'X0'], ['video', 'x_0'], ['video', 'Tx'], ['video', 'Face X']]
@@ -452,6 +477,8 @@ def return_vis_dnd(features_visual):
     return x_d_visual_train,y_d_visual_train,x_nd_visual_train,y_nd_visual_train,x_d_visual_dev,y_d_visual_dev,x_nd_visual_dev,y_nd_visual_dev
 
 def return_vis_pn(features_visual):
+    for i in features_visual:
+        i.insert(0,"video")
     readLabels()
     # [[clm],[clm3d],[clmgaze],[clmpose],[facet]]
     #features_visual = [['video', 'x0', ], ['video', 'X0'], ['video', 'x_0'], ['video', 'Tx'], ['video', 'Face X']]
@@ -461,6 +488,8 @@ def return_vis_pn(features_visual):
     return x_p_visual_train,y_p_visual_train,x_n_visual_train,y_n_visual_train,x_p_visual_dev,y_p_visual_dev,x_n_visual_dev,y_n_visual_dev
 
 def return_lin_dnd(features_linguistic):
+    for i in features_linguistic:
+        i.insert(0,"video") 
     readLabels()
     # [[LIWC]]
     #features_linguistic = [['video', 'u_tag']]
@@ -471,6 +500,8 @@ def return_lin_dnd(features_linguistic):
 
 
 def return_lin_pn(features_linguistic):
+    for i in features_linguistic:
+        i.insert(0,"video") 
     readLabels()
     # [[LIWC]]
     #features_linguistic = [['video', 'u_tag']]
