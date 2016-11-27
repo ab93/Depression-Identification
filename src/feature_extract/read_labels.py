@@ -444,19 +444,29 @@ def somefunc():
     #pprint(x_d_acoustic)
     readLabels()
     create_x_y_matrix()
+
 def return_acou_train():
+    somefunc()
     return x_d_acoustic_train,y_d_acoustic_train,x_nd_acoustic_train,y_nd_acoustic_train,x_p_acoustic_train,y_p_acoustic_train,x_n_acoustic_train,y_n_acoustic_train
+
 def return_vis_train():
+    somefunc()
     return x_d_visual_train,y_d_visual_train,x_nd_visual_train,y_nd_visual_train,x_p_visual_train,y_p_visual_train,x_n_visual_train,y_n_visual_train
+
 def return_lin_train():
+    somefunc()
     return x_d_linguistic_train,y_d_linguistic_train,x_nd_linguistic_train,y_nd_linguistic_train,x_p_linguistic_train,y_p_linguistic_train,x_n_linguistic_train,y_n_linguistic_train
 
-
 def return_acou_dev():
+    somefunc()
     return x_d_acoustic_dev,y_d_acoustic_dev,x_nd_acoustic_dev,y_nd_acoustic_dev,x_p_acoustic_dev,y_p_acoustic_dev,x_n_acoustic_dev,y_n_acoustic_dev
+
 def return_vis_dev():
+    somefunc()
     return x_d_visual_dev,y_d_visual_dev,x_nd_visual_dev,y_nd_visual_dev,x_p_visual_dev,y_p_visual_dev,x_n_visual_dev,y_n_visual_dev
+
 def return_lin_dev():
+    somefunc()
     return x_d_linguistic_dev,y_d_linguistic_dev,x_nd_linguistic_dev,y_nd_linguistic_dev,x_p_linguistic_dev,y_p_linguistic_dev,x_n_linguistic_dev,y_n_linguistic_dev
 
 
