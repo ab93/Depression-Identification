@@ -12,8 +12,11 @@ features={}
 
 x_d_acoustic, x_nd_acoustic, x_d_visual, x_nd_visual, x_d_linguistic, x_nd_linguistic={},{},{},{},{},{}
 x_p_acoustic, x_n_acoustic, x_p_visual, x_n_visual, x_p_linguistic, x_n_linguistic={},{},{},{},{},{}
-y_acoustic_train, y_visual_train, y_linguistic_train=[],[],[]
-y_acoustic_dev, y_visual_dev, y_linguistic_dev=[],[],[]
+y_d_acoustic_train, y_nd_acoustic_train, y_d_visual_train,y_nd_visual_train, y_d_linguistic_train,y_nd_linguistic_train=[],[],[],[],[],[]
+y_p_acoustic_train, y_n_acoustic_train, y_p_visual_train,y_n_visual_train, y_p_linguistic_train,y_n_linguistic_train=[],[],[],[],[],[]
+y_p_acoustic_dev, y_n_acoustic_dev, y_p_visual_dev,y_n_visual_dev, y_p_linguistic_dev,y_n_linguistic_dev=[],[],[],[],[],[]
+y_d_acoustic_dev, y_nd_acoustic_dev, y_d_visual_dev,y_nd_visual_dev, y_d_linguistic_dev,y_nd_linguistic_dev=[],[],[],[],[],[]
+
 x_d_acoustic_train, x_nd_acoustic_train, x_d_visual_train, x_nd_visual_train, x_d_linguistic_train, x_nd_linguistic_train=[],[],[],[],[],[]
 x_p_acoustic_train, x_n_acoustic_train, x_p_visual_train, x_n_visual_train, x_p_linguistic_train, x_n_linguistic_train=[],[],[],[],[],[]
 x_d_acoustic_dev, x_nd_acoustic_dev, x_d_visual_dev, x_nd_visual_dev, x_d_linguistic_dev, x_nd_linguistic_dev=[],[],[],[],[],[]
@@ -254,53 +257,179 @@ def process_visual(features_visual):
 def create_x_y_matrix():
 
     for key in sorted(train.keys()):
-        print key
-        x_d_acoustic_train.append(key)
-        x_nd_acoustic_train.append(key)
-        x_p_acoustic_train.append(key)
-        x_n_acoustic_train.append(key)
 
-        y_acoustic_train.append(train[key] * len(x_d_acoustic[key][0]))
+        if key in x_d_acoustic:
+            x_d_acoustic_train.append(x_d_acoustic[key])
+            temp = []
+            for i in range(len(x_d_acoustic[key])):
 
-        x_d_visual_train.append(key)
-        x_nd_visual_train.append(key)
-        x_p_visual_train.append(key)
-        x_n_visual_train.append(key)
+                temp.append([train[key]] * len(x_d_acoustic[key][i]))
+            y_d_acoustic_train.append(temp)
+        if key in x_nd_acoustic:
+            x_nd_acoustic_train.append(x_nd_acoustic[key])
+            temp = []
+            for i in range(len(x_nd_acoustic[key])):
+                #print "print ",[[train[key]] * len(x_nd_acoustic[key][i])]
+                temp.append([train[key]] * len(x_nd_acoustic[key][i]))
+            y_nd_acoustic_train.append(temp)
+        if key in x_p_acoustic:
+            x_p_acoustic_train.append(x_p_acoustic[key])
+            temp = []
+            for i in range(len(x_p_acoustic[key])):
+                #print "print ",[[train[key]] * len(x_p_acoustic[key][i])]
+                temp.append([train[key]] * len(x_p_acoustic[key][i]))
+            y_p_acoustic_train.append(temp)
+        if key in x_n_acoustic:
+            x_n_acoustic_train.append(x_n_acoustic[key])
+            temp = []
+            for i in range(len(x_n_acoustic[key])):
+                #print "print ",[[train[key]] * len(x_n_acoustic[key][i])]
+                temp.append([train[key]] * len(x_n_acoustic[key][i]))
+            y_n_acoustic_train.append(temp)
 
-        y_visual_train.append(train[key] * len(x_d_visual[key][0]))
+        if key in x_d_visual:
+            x_d_visual_train.append(x_d_visual[key])
+            temp = []
+            for i in range(len(x_d_visual[key])):
+                #print "print ",[[train[key]] * len(x_d_visual[key][i])]
+                temp.append([train[key]] * len(x_d_visual[key][i]))
+            y_d_visual_train.append(temp)
+        if key in x_nd_visual:
+            x_nd_visual_train.append(x_nd_visual[key])
+            temp = []
+            for i in range(len(x_nd_visual[key])):
+                #print "print ",[[train[key]] * len(x_nd_visual[key][i])]
+                temp.append([train[key]] * len(x_nd_visual[key][i]))
+            y_nd_visual_train.append(temp)
+        if key in x_p_visual:
+            x_p_visual_train.append(x_p_visual[key])
+            temp = []
+            for i in range(len(x_p_visual[key])):
+                #print "print ",[[train[key]] * len(x_p_visual[key][i])]
+                temp.append([train[key]] * len(x_p_visual[key][i]))
+            y_p_visual_train.append(temp)
+        if key in x_n_visual:
+            x_n_visual_train.append(x_n_visual[key])
+            temp = []
+            for i in range(len(x_n_visual[key])):
+                #print "print ",[[train[key]] * len(x_n_visual[key][i])]
+                temp.append([train[key]] * len(x_n_visual[key][i]))
+            y_n_visual_train.append(temp)
 
-        # x_d_linguistic_train.append(key)
-        # x_nd_linguistic_train.append(key)
-        # x_p_linguistic_train.append(key)
-        # x_n_linguistic_train.append(key)
-        #
-        # y_linguistic_train.append(train[key] * len(x_d_linguistic[key][0]))
+
+        if key in x_d_linguistic:
+            x_d_linguistic_train.append(x_d_linguistic[key])
+            temp = []
+            for i in range(len(x_d_linguistic[key])):
+
+                temp.append([train[key]] * len(x_d_linguistic[key][i]))
+            y_d_linguistic_train.append(temp)
+        if key in x_nd_linguistic:
+            x_nd_linguistic_train.append(x_nd_linguistic[key])
+            temp = []
+            for i in range(len(x_nd_linguistic[key])):
+
+                temp.append([train[key]] * len(x_nd_linguistic[key][i]))
+            y_nd_linguistic_train.append(temp)
+        if key in x_p_linguistic:
+            x_p_linguistic_train.append(x_p_linguistic[key])
+            temp = []
+            for i in range(len(x_p_linguistic[key])):
+
+                temp.append([train[key]] * len(x_p_linguistic[key][i]))
+            y_p_linguistic_train.append(temp)
+        if key in x_n_linguistic:
+            x_n_linguistic_train.append(x_n_linguistic[key])
+            temp = []
+            for i in range(len(x_n_linguistic[key])):
+
+                temp.append([train[key]] * len(x_n_linguistic[key][i]))
+            y_n_linguistic_train.append(temp)
 
     for key in sorted(dev.keys()):
-        print key
-        x_d_acoustic_dev.append(key)
-        x_nd_acoustic_dev.append(key)
-        x_p_acoustic_dev.append(key)
-        x_n_acoustic_dev.append(key)
 
-        y_acoustic_dev.append([dev[key] * len(x_d_acoustic[key][0])])
+        if key in x_d_acoustic:
+            x_d_acoustic_dev.append(x_d_acoustic[key])
+            temp = []
+            for i in range(len(x_d_acoustic[key])):
+                temp.append([dev[key]] * len(x_d_acoustic[key][i]))
+            y_d_acoustic_dev.append(temp)
+        if key in x_nd_acoustic:
+            x_nd_acoustic_dev.append(x_nd_acoustic[key])
+            temp = []
+            for i in range(len(x_nd_acoustic[key])):
 
-        x_d_visual_dev.append(key)
-        x_nd_visual_dev.append(key)
-        x_p_visual_dev.append(key)
-        x_n_visual_dev.append(key)
+                temp.append([dev[key]] * len(x_nd_acoustic[key][i]))
+            y_nd_acoustic_dev.append(temp)
+        if key in x_p_acoustic:
+            x_p_acoustic_dev.append(x_p_acoustic[key])
+            temp = []
+            for i in range(len(x_p_acoustic[key])):
 
-        y_visual_dev.append(dev[key] * len(x_d_visual[key][0]))
-        #
-        # x_d_linguistic_dev.append(key)
-        # x_nd_linguistic_dev.append(key)
-        # x_p_linguistic_dev.append(key)
-        # x_n_linguistic_dev.append(key)
-        #
-        # y_linguistic_dev.append(dev[key] * len(x_d_linguistic[key][0]))
+                temp.append([dev[key]] * len(x_p_acoustic[key][i]))
+            y_p_acoustic_dev.append(temp)
+        if key in x_n_acoustic:
+            x_n_acoustic_dev.append(x_n_acoustic[key])
+            temp = []
+            for i in range(len(x_n_acoustic[key])):
 
-if __name__=="__main__":
+                temp.append([dev[key]] * len(x_n_acoustic[key][i]))
+            y_n_acoustic_dev.append(temp)
 
+        if key in x_d_visual:
+            x_d_visual_dev.append(x_d_visual[key])
+            temp = []
+            for i in range(len(x_d_visual[key])):
+
+                temp.append([dev[key]] * len(x_d_visual[key][i]))
+            y_d_visual_dev.append(temp)
+        if key in x_nd_visual:
+            x_nd_visual_dev.append(x_nd_visual[key])
+            temp = []
+            for i in range(len(x_nd_visual[key])):
+
+                temp.append([dev[key]] * len(x_nd_visual[key][i]))
+            y_nd_visual_dev.append(temp)
+        if key in x_p_visual:
+            x_p_visual_dev.append(x_p_visual[key])
+            temp = []
+            for i in range(len(x_p_visual[key])):
+
+                temp.append([dev[key]] * len(x_p_visual[key][i]))
+            y_p_visual_dev.append(temp)
+        if key in x_n_visual:
+            x_n_visual_dev.append(x_n_visual[key])
+            temp = []
+            for i in range(len(x_n_visual[key])):
+                temp.append([dev[key]] * len(x_n_visual[key][i]))
+            y_n_visual_dev.append(temp)
+
+        if key in x_d_linguistic:
+            x_d_linguistic_dev.append(x_d_linguistic[key])
+            temp = []
+            for i in range(len(x_d_linguistic[key])):
+                temp.append([dev[key]] * len(x_d_linguistic[key][i]))
+            y_d_linguistic_dev.append(temp)
+        if key in x_nd_linguistic:
+            x_nd_linguistic_dev.append(x_nd_linguistic[key])
+            temp = []
+            for i in range(len(x_nd_linguistic[key])):
+                temp.append([dev[key]] * len(x_nd_linguistic[key][i]))
+            y_nd_linguistic_dev.append(temp)
+        if key in x_p_linguistic:
+            x_p_linguistic_dev.append(x_p_linguistic[key])
+            temp = []
+            for i in range(len(x_p_linguistic[key])):
+                temp.append([dev[key]] * len(x_p_linguistic[key][i]))
+            y_p_linguistic_dev.append(temp)
+        if key in x_n_linguistic:
+            x_n_linguistic_dev.append(x_n_linguistic[key])
+            temp = []
+            for i in range(len(x_n_linguistic[key])):
+                temp.append([dev[key]] * len(x_n_linguistic[key][i]))
+            y_n_linguistic_dev.append(temp)
+
+def somefunc():
     #please keep video in the featurelist!!!!
     #[[covarep],[formant]]
 
@@ -315,8 +444,20 @@ if __name__=="__main__":
     #pprint(x_d_acoustic)
     readLabels()
     create_x_y_matrix()
-    print x_d_acoustic_dev
-    print y_acoustic_dev
+def return_acou_train():
+    return x_d_acoustic_train,y_d_acoustic_train,x_nd_acoustic_train,y_nd_acoustic_train,x_p_acoustic_train,y_p_acoustic_train,x_n_acoustic_train,y_n_acoustic_train
+def return_vis_train():
+    return x_d_visual_train,y_d_visual_train,x_nd_visual_train,y_nd_visual_train,x_p_visual_train,y_p_visual_train,x_n_visual_train,y_n_visual_train
+def return_lin_train():
+    return x_d_linguistic_train,y_d_linguistic_train,x_nd_linguistic_train,y_nd_linguistic_train,x_p_linguistic_train,y_p_linguistic_train,x_n_linguistic_train,y_n_linguistic_train
+
+
+def return_acou_dev():
+    return x_d_acoustic_dev,y_d_acoustic_dev,x_nd_acoustic_dev,y_nd_acoustic_dev,x_p_acoustic_dev,y_p_acoustic_dev,x_n_acoustic_dev,y_n_acoustic_dev
+def return_vis_dev():
+    return x_d_visual_dev,y_d_visual_dev,x_nd_visual_dev,y_nd_visual_dev,x_p_visual_dev,y_p_visual_dev,x_n_visual_dev,y_n_visual_dev
+def return_lin_dev():
+    return x_d_linguistic_dev,y_d_linguistic_dev,x_nd_linguistic_dev,y_nd_linguistic_dev,x_p_linguistic_dev,y_p_linguistic_dev,x_n_linguistic_dev,y_n_linguistic_dev
 
 
 
