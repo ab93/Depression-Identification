@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 import matplotlib.pyplot as plt
-import config
+from src.main import config
 
 def get_combined_data(file1, file2):
     feature_df = pd.read_csv(file1)
@@ -76,14 +76,14 @@ def plot_boxplot(df, dir_name):
             flier.set(marker='o', color='green', alpha=0.7)
         #plt.show()
         #sys.exit(1)
-        fig.savefig('../plots/' + dir_name + '/' + feature + '.png')
+        fig.savefig('plots/' + dir_name + '/' + feature + '.png')
 
 
 def calculate_anova(df, filename):
     filename += '.csv'
     columns = df.columns[:-1]
     grouped_df = df.groupby(by='label')
-    with open(os.path.join('../results/',filename), 'w') as csvfile:
+    with open(os.path.join('results/',filename), 'w') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=',')
         csv_writer.writerow(["Feature","P-value","F-value"])
         for feature in columns:
@@ -98,9 +98,9 @@ def calculate_anova(df, filename):
 
 def main():
     filename = sys.argv[3]
-    features_df = get_combined_data(os.path.join('../data', sys.argv[1]), 
-                    os.path.join('../data', sys.argv[2]))
-    #calculate_anova(features_df, filename)
+    features_df = get_combined_data(os.path.join(config.D_ND_DIR, sys.argv[1]), 
+                    os.path.join(config.D_ND_DIR, sys.argv[2]))
+    calculate_anova(features_df, filename)
     plot_boxplot(features_df, filename)
 
 if __name__ == '__main__':
