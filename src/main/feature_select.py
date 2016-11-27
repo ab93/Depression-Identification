@@ -6,8 +6,14 @@ import numpy as np
 import pandas as pd
 import config
 
-def get_feature_df(file_):
+def get_feature_df(file_, *files):
     feature_df = pd.read_csv(file_)
+    if len(files):
+        for f in files[0]:
+            print f
+            feature_df = pd.concat([feature_df, pd.read_csv(f)], axis=1)
+            feature_df = feature_df.T.drop_duplicates().T
+    
     train_split_df = pd.read_csv(config.TRAIN_SPLIT_FILE, 
                     usecols=['Participant_ID', 'PHQ_Binary'])
     feature_df = feature_df[feature_df['video'].isin(train_split_df['Participant_ID'])]
@@ -30,7 +36,9 @@ def analyze_features(df):
     pass
 
 def main():
-    print get_feature_df(os.path.join(config.D_ND_DIR,sys.argv[1]))
+    file1 = os.path.join(config.D_ND_DIR,sys.argv[1])
+    files = [os.path.join(config.D_ND_DIR,argv) for argv in sys.argv[2:]]
+    print get_feature_df(file1, files)
 
 if __name__ == '__main__':
     main()
