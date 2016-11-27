@@ -1,3 +1,5 @@
-TRAIN_SPLIT_FILE = '../data/training_split.csv'
-TEST_SPLIT_FILE = '../data/test_split.csv'
-VAL_SPLIT_FILE = '../data/dev_split.csv'
+TRAIN_SPLIT_FILE = 'data/classification_data/training_split.csv'
+TEST_SPLIT_FILE = 'data/classification_data/test_split.csv'
+VAL_SPLIT_FILE = 'data/classification_data/dev_split.csv'
+D_ND_DIR = 'data/disc_nondisc'
+POS_NEG_DIR = 'data/pos_neg'
