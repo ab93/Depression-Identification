@@ -39,7 +39,7 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         self.weights = weights
         self.method = method
 
-    def fit(self, X_list, y_list):
+    def fit(self, X_list, y_list, nested=True):
         """ Fit classifiers.
         Parameters
         ----------
@@ -61,8 +61,9 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
             raise TypeError
             sys.exit()
         self.lablenc_ = LabelEncoder()
-        X_list = map(np.vstack, X_list)
-        y_list = map(np.hstack, y_list)
+        if nested:
+            X_list = map(np.vstack, X_list)
+            y_list = map(np.hstack, y_list)
         self.lablenc_.fit(y_list[0]) # make sure both y vectors have both the classes
         self.classes_ = self.lablenc_.classes_
         self.classifiers_ = []
@@ -97,7 +98,7 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         return maj_vote
 
 
-    def predict_proba(self, X_list):
+    def predict_proba(self, X_list, get_all=False):
         """ Predict class probabilities.
         Parameters
         ----------
@@ -118,7 +119,9 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
             pred = [np.mean(self.classifiers_[index].predict_proba(P), axis=0) for P in X]
             preds.append(pred)
         preds = np.asarray(preds)
-        weighted_proba = np.average(preds, axis=0, weights=self.weights) 
+        weighted_proba = np.average(preds, axis=0, weights=self.weights)
+        if get_all: 
+            return preds[0], preds[1], weighted_proba
         return weighted_proba
 
     def score(self, Xs, y_true, scoring='f1'):
@@ -134,6 +137,7 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         y_true: Single vectors of target class labels.
         
         """
+        y_true = np.asarray(y_true)
         if scoring == 'f1':
             return f1_score(y_true,self.predict(Xs),average='binary')
         elif scoring == 'accuracy':
@@ -188,7 +192,7 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
         return maj_vote
 
 
-    def predict_proba(self,Xs):
+    def predict_proba(self, Xs, get_all=False):
         """
         Predicts new data instances.
 
@@ -202,6 +206,8 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
         probas = np.asarray([clf.predict_proba(Xs[mode_idx]) 
                             for mode_idx,clf in enumerate(self.classifiers_)])
         avg_proba = np.average(probas, axis=0, weights=self.weights)
+        if get_all:
+            return probas[0], probas[1], probas[2], avg_proba
         return avg_proba
 
 
