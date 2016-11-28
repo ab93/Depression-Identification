@@ -83,7 +83,7 @@ def calculate_anova(df, filename):
     filename += '.csv'
     columns = df.columns[:-1]
     grouped_df = df.groupby(by='label')
-    with open(os.path.join('results/',filename), 'w') as csvfile:
+    with open(os.path.join(config.ANOVA_DIR,filename), 'w') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=',')
         csv_writer.writerow(["Feature","P-value","F-value"])
         for feature in columns:
