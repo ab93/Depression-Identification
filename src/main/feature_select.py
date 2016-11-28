@@ -1,16 +1,16 @@
 import os
-import re
 import sys
-import csv
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 
 import config
-import sklearn
 from sklearn.decomposition import PCA
 from sklearn.feature_selection import VarianceThreshold
-from sklearn.svm import LinearSVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.feature_selection import SelectFromModel
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_classif
+from sklearn.ensemble import RandomForestClassifier
 
 def get_feature_df(file_, *files):
     feature_df = pd.read_csv(file_)
@@ -40,44 +40,109 @@ def get_feature_df(file_, *files):
 
 def performPCA(df):
     pca = PCA(n_components=10)
-    df = df.drop(['frame', 'timestamp','confidence','success','label'], axis=1)
-    X=df.as_matrix()
+    #df1 = df.drop(['frame', 'timestamp','confidence','success','label'], axis=1)
+    df1 = df.drop(['label'], axis=1)
+    X=df1.as_matrix()
     pca.fit(X)
     return pca.components_
 
 def removeLowVariance(df):
-    df = df.drop(['frame', 'timestamp','confidence','success','label'], axis=1)
-    X=df.as_matrix()
-    sel = VarianceThreshold(0.95)
+    #df1 = df.drop(['frame', 'timestamp','confidence','success','label'], axis=1)
+    df1 = df.drop(['label'], axis=1)
+    column_names=list(df1.columns.values)
+    X=df1.as_matrix()
+    sel = VarianceThreshold(0.5)
     sel.fit(X)
-    idxs = sel.get_support(indices=True)
-    #print idxs
+    selected_feature_idxs = sel.get_support(indices=True)
+    selected_features = [column_names[i] for i in selected_feature_idxs]
+    print selected_features
+    #final_selection = ['frame', 'timestamp','confidence','success']
+    final_selection = []
+    final_selection.extend(selected_features)
+    final_selection.extend(['label'])
+    print "First Level: ",len(final_selection)
+    final_df = df[final_selection]
+    return final_df
 
 def performL1(df):
-    #vectorizer = CountVectorizer(ngram_range=(1,1), min_df=1)
-    df1 = df.drop(['frame', 'timestamp','confidence','success','label'], axis=1)
+    #df1 = df.drop(['frame', 'timestamp','confidence','success','label'], axis=1)
+    df1 = df.drop(['label'], axis=1)
+    column_names=list(df1.columns.values)
     X = df1.as_matrix()
-    df2 = df[['label']]
-    Y = df2.as_matrix()
-    print X.shape
-    svc = LinearSVC(C=1., penalty='l1', dual=False)
-    #svc.fit(X, Y)
-    X_train_new = svc.fit_transform(X, Y)
-    print X_train_new.shape
-    selected_feature_names = svc.coef_
-    #selected_feature_names = np.asarray(vectorizer.get_feature_names())[np.flatnonzero(svc.coef_)]
-    print selected_feature_names
+    y = df['label'].values
+    svc = LogisticRegression(C=1., penalty='l1', dual=False).fit(X,y)
+    model = SelectFromModel(svc,prefit=True)
+    selected_feature_idxs = model.get_support(indices=True)
+    selected_features = [column_names[i] for i in selected_feature_idxs]
+    #final_selection = ['frame', 'timestamp','confidence','success']
+    final_selection = []
+    final_selection.extend(selected_features)
+    final_selection.extend(['label'])
+    final_df = df[final_selection]
+    print "Second Level: ",len(final_selection)
+    return final_df
 
-def analyze_features(df):
-    pass
+def selectBestK(df):
+    #df1 = df.drop(['frame', 'timestamp','confidence','success','label'], axis=1)
+    df1 = df.drop(['label'], axis=1)
+    column_names=list(df1.columns.values)
+    X = df1.as_matrix()
+    y = df['label'].values
+    kbest = SelectKBest(f_classif, k=20)
+    kbest.fit(X, y)
+    selected_feature_idxs = kbest.get_support(indices=True)
+    selected_features = [column_names[i] for i in selected_feature_idxs]
+    print selected_features
+    #final_selection = ['frame', 'timestamp','confidence','success']
+    final_selection = []
+    final_selection.extend(selected_features)
+    final_selection.extend(['label'])
+    final_df = df[final_selection]
+    print "Fourth Level: ",len(final_selection)
+    return final_df
+
+def performRandomForest(df):
+    #df1 = df.drop(['frame', 'timestamp', 'confidence', 'success', 'label'], axis=1)
+    df1 = df.drop(['label'], axis=1)
+    column_names=list(df1.columns.values)
+    X = df1.as_matrix()
+    y = df['label'].values
+    forest = RandomForestClassifier(n_estimators = 100)
+    forest = forest.fit(X, y)
+    #print forest.feature_importances_
+    important_features = forest.feature_importances_
+    ind = [i for i in range(len(important_features))]
+    all_pairs = []
+    for a, b in zip(important_features, ind):
+        all_pairs.append((a, b))
+    sorted_pairs=sorted(all_pairs,key=lambda p:p[0],reverse=True)
+    selected_feature_idxs = []
+    for a, b in sorted_pairs:
+        selected_feature_idxs.append(b)
+    selected_feature_idxs = selected_feature_idxs[:50]
+    selected_features = [column_names[i] for i in selected_feature_idxs]
+    print selected_features
+    #final_selection = ['frame', 'timestamp','confidence','success']
+    final_selection = []
+    final_selection.extend(selected_features)
+    final_selection.extend(['label'])
+    final_df = df[final_selection]
+    print "Third Level: ",len(final_selection)
+    return final_df
 
 def main():
     file1 = os.path.join(config.D_ND_DIR,sys.argv[1])
     files = [os.path.join(config.D_ND_DIR,argv) for argv in sys.argv[2:]]
     df = get_feature_df(file1, files)
-    performPCA(df)
-    removeLowVariance(df)
-    performL1(df)
+    print df
+    #performPCA(df)
+    #df = removeLowVariance(df)
+    df = performL1(df)
+    df = performRandomForest(df)
+    df = selectBestK(df)
+    #print df
+    fileOP = os.path.join(config.SEL_FEAT,"nondiscriminative_linguistic_selected.csv")
+    df.to_csv(fileOP,sep=",",index=False)
 
 if __name__ == '__main__':
     main()
