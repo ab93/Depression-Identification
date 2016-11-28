@@ -156,8 +156,6 @@ def grid_search(mode='acoustic'):
 
 
 
-
-
 def train_classify():
     data = read_labels.return_lin_pn([['word76','word87',
                                     '50cogproc_(Cognitive_Processes)',
