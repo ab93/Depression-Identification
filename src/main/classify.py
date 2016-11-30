@@ -103,7 +103,40 @@ def late_fusion_classify():
         print preds[0][i], preds[1][i], preds[2][i], y_true[i]
 
 
-def grid_search(mode='acoustic'):
+def grid_search_lf():
+    Xs_train, ys_train, Xs_val, ys_val = get_data()
+    y_true_val = map(int,map(np.mean,ys_val[0][0]))
+
+    clf_A_D = LogisticRegression(C=1.0, penalty='l2', class_weight={1:4})
+    clf_A_ND = LogisticRegression(C=1.0, penalty='l2', class_weight={1:4})
+
+    clf_V_D = LogisticRegression(C=1.0, penalty='l2', class_weight={1:3})
+    clf_V_ND = LogisticRegression(C=1.0, penalty='l2', class_weight={1:3})
+
+    clf_L_D = LogisticRegression(C=1.0, penalty='l2', class_weight={1:3})
+    clf_L_ND = LogisticRegression(C=1.0, penalty='l2', class_weight={1:3})
+
+    clf_A = MetaClassifier(classifiers=[clf_A_D, clf_A_ND])
+    clf_V = MetaClassifier(classifiers=[clf_V_D, clf_V_ND])
+    clf_L = MetaClassifier(classifiers=[clf_L_D, clf_L_ND])
+
+    mode_weights = [None, [0.6, 0.3, 0.1], [0.3, 0.6, 0.1], [0.4, 0.4, 0.2]]
+
+    with open(os.path.join(config.GRID_SEARCH_DIR, 'late_fusion.csv'),'w') as outfile:
+        outfile.write('A_wt' + ',' + 'V_wt' + ',' +  'L_wt' + ',' + 'f1_score' + '\n')
+        for mode_wt in mode_weights:
+            lf_clf = LateFusionClassifier(classifiers=[clf_A, clf_V, clf_L], weights=mode_wt)
+            lf_clf.fit(Xs_train, ys_train)
+            f1_score = lf_clf.score(Xs_val,y_true_val,scoring='f1')
+            if not mode_wt:
+                mode_wt = [0.3, 0.3, 0.3]
+            outfile.write(str(mode_wt[0]) + ',' + str(mode_wt[1]) + ',' + 
+                            str(mode_wt[2]) + ',' +str(f1_score) + '\n')
+            print f1_score
+
+
+
+def grid_search_meta(mode='acoustic'):
     # Read data
     if mode == 'acoustic':
         data = read_labels.return_acou_dnd([[ 'MCEP_11','F0', 'HMPDM_10','HMPDM_9','HMPDD_9','HMPDD_11'],
@@ -133,26 +166,28 @@ def grid_search(mode='acoustic'):
     gammas = np.logspace(-3,3,num=5)
     penalties = ('l1','l2')
     clf_weights = [None, [0.7,0.3], [0.3,0.7]]
-    #mode_weights = [None, [0.6, 0.3, 0.1], [0.3, 0.6, 0.1], [0.4, 0.4, 0.2]]
 
     results = {}
     with open(os.path.join(config.GRID_SEARCH_DIR, mode + '.csv'),'w') as outfile:
-        for clf_wt in clf_weights:
-            for class_wt in class_weights:
-                for C1 in C_vals:
-                    for C2 in C_vals: 
-                    #for gamma in gammas:
-                        clf_D = LogisticRegression(C=C1, penalty='l2', n_jobs=-1, class_weight={1:class_wt})
-                        clf_ND = LogisticRegression(C=C2, penalty='l2', n_jobs=-1, class_weight={1:class_wt})
-                        meta_clf = MetaClassifier(classifiers=[clf_D, clf_ND], weights=clf_wt)
-                        meta_clf.fit(X_train, y_train)
-                        f1_score = meta_clf.score(X_val, y_true_val)
-                        if not clf_wt:
-                            clf_wt = [0.5, 0.5]
-                        outfile.write(str(clf_wt[0]) + ' ' + str(clf_wt[1]) + ',' + 
-                                    str(class_wt) + ',' + str(C1) + ',' + str(C2) + ',' 
-                                    + str(f1_score) + '\n')
-                        print f1_score
+        for p1 in penalties:
+            for p2 in penalties:
+                for clf_wt in clf_weights:
+                    for class_wt in class_weights:
+                        for C1 in C_vals:
+                            for C2 in C_vals: 
+                            #for gamma in gammas:
+                                clf_D = LogisticRegression(C=C1, penalty=p1, n_jobs=-1, class_weight={1:class_wt})
+                                clf_ND = LogisticRegression(C=C2, penalty=p2, n_jobs=-1, class_weight={1:class_wt})
+                                meta_clf = MetaClassifier(classifiers=[clf_D, clf_ND], weights=clf_wt)
+                                meta_clf.fit(X_train, y_train)
+                                f1_score = meta_clf.score(X_val, y_true_val)
+                                if not clf_wt:
+                                    clf_wt = [0.5, 0.5]
+                                outfile.write(str(clf_wt[0]) + ' ' + str(clf_wt[1]) + ',' + 
+                                            str(class_wt) + ',' + str(C1) + ',' + str(C2) + ',' 
+                                            + p1 + ',' + p2 + ','
+                                            + str(f1_score) + '\n')
+                                print f1_score
 
 
 
@@ -209,9 +244,10 @@ def train_classify():
 def main():
     #train_classify()
     #late_fusion_classify()
-    grid_search(mode='visual')
-    grid_search(mode='acoustic')
-    grid_search(mode='linguistic')
+    #grid_search_meta(mode='visual')
+    #grid_search_meta(mode='acoustic')
+    #grid_search_meta(mode='linguistic')
+    grid_search_lf()
 
 if __name__ == '__main__':
     main()
