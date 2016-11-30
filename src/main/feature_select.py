@@ -1,5 +1,4 @@
 import os
-import sys
 import numpy as np
 import pandas as pd
 
@@ -11,25 +10,35 @@ from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_classif
 from sklearn.ensemble import RandomForestClassifier
 
-def get_feature_df(file_, *files):
+def get_feature_df(train, file_, *files):
+    # Set directory based on Train and Validation
+    if train == 'y':
+        split_file = config.TRAIN_SPLIT_FILE
+    else:
+        split_file = config.VAL_SPLIT_FILE
+
+    # Append file columns to a single data frame
     feature_df = pd.read_csv(file_)
     if len(files):
         for f in files[0]:
             print f
             feature_df = pd.concat([feature_df, pd.read_csv(f)], axis=1)
             feature_df = feature_df.T.drop_duplicates().T
-    
-    train_split_df = pd.read_csv(config.TRAIN_SPLIT_FILE,usecols=['Participant_ID', 'PHQ_Binary'])
-    feature_df = feature_df[feature_df['video'].isin(train_split_df['Participant_ID'])]
-    #print "features: ", feature_df.shape
-    #print "train_split: ", train_split_df.shape
-    train_split_dict = train_split_df.set_index('Participant_ID').T.to_dict()
-    del train_split_df
+
+    # Trim data frame to hole only train/validation records
+    split_df = pd.read_csv(split_file,usecols=['Participant_ID', 'PHQ_Binary'])
+    feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
+
+    # Populate labels accordingly
+    split_dict = split_df.set_index('Participant_ID').T.to_dict()
+    del split_df
     labels = np.zeros(feature_df.shape[0])
     for i in xrange(feature_df.shape[0]):
         video_id = feature_df.iat[i,0]
-        labels[i] = train_split_dict[video_id]['PHQ_Binary']
+        labels[i] = split_dict[video_id]['PHQ_Binary']
     feature_df['label'] = pd.Series(labels, index=feature_df.index)
+
+    # Drop common (unwanted) columns - question, starttime, endtime
     try:
         feature_df.drop(['question','starttime','endtime'], inplace=True, axis=1)
     except ValueError:
@@ -48,8 +57,6 @@ def remove_low_variance(df):
 
     # Obtain feature name list for indices
     selected_features = [column_names[i] for i in selected_feature_idxs]
-    print "Features Selected: ",selected_features
-    print "First Level: ",len(selected_features)
 
     # Return data frame with selected features
     final_df = df[selected_features]
@@ -68,8 +75,6 @@ def perform_l1(df,labels):
 
     # Obtain feature name list for indices
     selected_features = [column_names[i] for i in selected_feature_idxs]
-    print "Features Selected: ", selected_features
-    print "Second Level: ",len(selected_features)
 
     # Return data frame with selected features
     final_df = df[selected_features]
@@ -99,8 +104,6 @@ def select_best_K(df,labels,K):
 
     # Obtain feature name list for indices
     selected_features = [column_names[i] for i in selected_feature_idxs]
-    print "Features Selected (sorted): ", selected_features
-    print "Fourth Level: ",len(selected_features)
 
     # Return data frame with selected features
     final_df = df[selected_features]
@@ -130,8 +133,6 @@ def perform_random_forest(df,labels,N):
 
     # Obtain feature name list for indices
     selected_features = [column_names[i] for i in selected_feature_idxs]
-    print "Features Selected (sorted): ", selected_features
-    print "Third Level: ", len(selected_features)
 
     # Return data frame with selected features
     final_df = df[selected_features]
@@ -171,27 +172,27 @@ def main(qtype,mode):
     file1 = os.path.join(dir,file_list[0])
     files = [os.path.join(dir,arg) for arg in file_list[1:]]
 
-    # Obtain data frame containing all features of given from determind file list
-    df = get_feature_df(file1, files)
-    print "Columns of DF: ",list(df.columns.values)
+    # Obtain data frame containing all features from determined file list for TRAINING SET
+    TRAIN = "y"
+    df = get_feature_df(TRAIN,file1,files)
+
+    # Obtain data frame containing all features from determined file list for VALIDATION SET
+    TRAIN = "n"
+    val_df = get_feature_df(TRAIN, file1, files)
 
     # If mode is visual, drop the extra columns from file - standardizes structure of data frame between all modes
     if mode=="V":
-        print "Dropping 4 more columns.."
         df = df.drop(['frame', 'timestamp', 'confidence', 'success'], axis=1)
-        print list(df.columns.values)
+        val_df = val_df.drop(['frame', 'timestamp', 'confidence', 'success'], axis=1)
 
     # Obtain labels
     labels = df['label'].values
 
     # Make copy of data frame
     copy_df = df.copy() # copy_df contains values for - 'video', all features, 'label' columns
-    print "Copy of df: ",list(copy_df.columns.values)
 
     # Remove 'video' and 'label' column from data frame
     df.drop(['video', 'label'], inplace=True , axis=1)
-    print "Dropped video and label: ",list(df.columns.values)
-    print "Copy is still: ",list(copy_df.columns.values)
 
     # Pick 'N' to pick from Random Forest method, based on Mode
     if mode=="V":
@@ -216,12 +217,12 @@ def main(qtype,mode):
     final_feature_list = list(df.columns.values)
     print "Final Feature List (Sorted): ",final_feature_list
 
-    # Obtain data frame to write into files
+    # Obtain data frame (for TRAIN and VALIDATION) to write into files
     final_selection = ['video']
     final_selection.extend(final_feature_list)
     final_selection.extend(['label'])
-    print "Final selection: ",final_selection
     op_df = copy_df[final_selection]
+    op_val_df = val_df[final_selection]
 
     # To construct Output File Name
     if mode=="V":
@@ -230,18 +231,43 @@ def main(qtype,mode):
         output_file="_acoustic"
     else:
         output_file="_linguistic"
-    file_suffix="_selected.csv"
+    file_suffix_train="_train.csv"
+    file_suffix_val="_val.csv"
 
-    # Write output df into output file
-    fileOP = os.path.join(config.SEL_FEAT,file_prefix+output_file+file_suffix)
+    # Write output dfs into output files - TRAIN AND VALIDATION
+    fileOP = os.path.join(config.SEL_FEAT_TRAIN,file_prefix + output_file + file_suffix_train)
     op_df.to_csv(fileOP,sep=",",index=False)
+    fileOP = os.path.join(config.SEL_FEAT_VAL, file_prefix + output_file + file_suffix_val)
+    op_val_df.to_csv(fileOP, sep=",", index=False)
 
-    # Return Final Feature List
     return final_feature_list
 
+def feature_select():
+    all_feature_lists = []
+
+    # Call feature select function for all question types and modes
+    question_types = ["D","ND","P","N"]
+    modes = ["V","A","L"]
+    for qtype in question_types:
+        for mode in modes:
+            print "Feature Selection for ",qtype," and ",mode
+            feature_list = main(qtype,mode)
+            all_feature_lists.append(feature_list)
+    print "All features: ",all_feature_lists
+
+    # Write all feature lists into output file
+    file = os.path.join(config.SEL_FEAT, "all_selected_features.csv")
+    fileOP = open(file,"w")
+    for each_list in all_feature_lists:
+        for feature in each_list:
+            fileOP.write(feature)
+            fileOP.write(",")
+        fileOP.write("\n")
+
 if __name__ == '__main__':
-    qtype = sys.argv[1] # D- discriminative, ND- nondiscriminative, P-positive, N- negative
-    mode = sys.argv[2] # A- acoustic, V- visual, L- linguistic
+    #qtype = sys.argv[1] # D- discriminative, ND- nondiscriminative, P-positive, N- negative
+    #mode = sys.argv[2] # A- acoustic, V- visual, L- linguistic
 
     # Call main function
-    main(qtype,mode)
+    #main(qtype,mode)
+    feature_select()
