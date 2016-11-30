@@ -15,22 +15,17 @@ def get_features(data):
     return X, y
 
 
-def features(mode,classifier):
+def features(mode,classifier,split):
     if mode == "visual":
-        file = "data/selected_features/train/"+classifier+"_visual_train.csv"
-        file_v = "data/selected_features/validation/"+classifier+"_visual_val.csv"
+        file = "data/selected_features/train/"+classifier+"_visual_"+split+".csv"
     elif mode == "acoustic":
-        file = "data/selected_features/train/"+classifier+"_acoustic_train.csv"
-        file_v = "data/selected_features/validation/"+classifier+"_acoustic_val.csv"
+        file = "data/selected_features/train/"+classifier+"_acoustic_"+split+".csv"
     elif mode == "linguistic":
-        file = "data/selected_features/train/"+classifier+"_linguistic_train.csv"
-        file_v = "data/selected_features/validation/"+classifier+"_linguistic_val.csv"
+        file = "data/selected_features/train/"+classifier+"_linguistic_"+split+".csv"
     print file
-    print file_v
     data = pd.read_csv(file)
-    data_v = pd.read_csv(file_v)
-    return get_features(data),get_features(data_v)
-#print features("visual","discriminative")
+    return get_features(data)
+print features("visual","discriminative","train")
 
 
 
