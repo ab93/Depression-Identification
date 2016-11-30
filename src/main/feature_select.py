@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 
 import config
-from sklearn.decomposition import PCA
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import SelectFromModel
@@ -36,15 +35,7 @@ def get_feature_df(file_, *files):
     except ValueError:
         feature_df.drop(['question'], inplace=True, axis=1)
     return feature_df
-'''
-def performPCA(df):
-    pca = PCA(n_components=10)
-    #df1 = df.drop(['frame', 'timestamp','confidence','success','label'], axis=1)
-    df1 = df.drop(['label'], axis=1)
-    X=df1.as_matrix()
-    pca.fit(X)
-    return pca.components_
-'''
+
 def remove_low_variance(df):
     # Store feature names
     column_names=list(df.columns.values)
@@ -225,7 +216,7 @@ def main(qtype,mode):
     final_feature_list = list(df.columns.values)
     print "Final Feature List (Sorted): ",final_feature_list
 
-    # Obatin data frame to write into files
+    # Obtain data frame to write into files
     final_selection = ['video']
     final_selection.extend(final_feature_list)
     final_selection.extend(['label'])
@@ -251,4 +242,6 @@ def main(qtype,mode):
 if __name__ == '__main__':
     qtype = sys.argv[1] # D- discriminative, ND- nondiscriminative, P-positive, N- negative
     mode = sys.argv[2] # A- acoustic, V- visual, L- linguistic
+
+    # Call main function
     main(qtype,mode)
