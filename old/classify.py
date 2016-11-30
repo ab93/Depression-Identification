@@ -141,6 +141,20 @@ def grid_search_lf():
 
 
 def grid_search_meta(mode='acoustic',category='DND'):
+    # Read data
+    # if mode == 'acoustic':
+    #     data_d = features(mode,"discriminative","train")
+    #     data_nd = features(mode,"nondiscriminative","train")
+    # elif mode == 'visual':
+    #     data = read_labels.return_vis_dnd([['x2','x3','x4','x5','x6'], 
+    #                                         ['Z9','Z54','Z64','Z10'], 
+    #                                         [], 
+    #                                         ['Rx','Ry','Tz'], 
+    #                                         ['AU17Evidence']])
+    # else:
+    #     data = read_labels.return_lin_pn([['word76','word87',
+    #                                 '50cogproc_(Cognitive_Processes)',
+    #                                 '31posemo_(Positive_Emotions)']])
     if category == 'PN':
         cat_1 = "positive"
         cat_2 = "negative"
