@@ -6,8 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.externals import six
 from sklearn.metrics import accuracy_score,f1_score
 from sklearn.pipeline import _name_estimators
-from sklearn.svm import SVC
-from sklearn.linear_model import LogisticRegression
+
 
 class MetaClassifier(BaseEstimator, ClassifierMixin):
     """ A combined multi-class classifier
@@ -49,7 +48,9 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
 
         y_list : List of array-like,
                 length = number of classifiers
-                List of vectors of target class labels.
+                List of vectors of target class labels
+
+        nested: Bool (default = True)
 
         Returns
         -------
