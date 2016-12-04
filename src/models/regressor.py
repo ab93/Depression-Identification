@@ -3,6 +3,7 @@ import operator
 import numpy as np
 from sklearn.base import BaseEstimator, RegressorMixin, clone
 from sklearn.externals import six
+from sklearn.metrics import r2_score, mean_absolute_error
 
 class MetaRegressor(BaseEstimator, RegressorMixin):
     """ A combined multi-class regressor
@@ -23,15 +24,15 @@ class MetaRegressor(BaseEstimator, RegressorMixin):
         self.regressors = regressors
         self.weights = weights
 
-    def fit(self, X_list, y_list, nested=True):
+    def fit(self, Xs, ys, nested=True):
         """ Fit regressors
         Parameters
         ----------
-        X_list : List of {array-like, sparse matrix},
+        Xs : List of {array-like, sparse matrix},
                 length = number of classifiers
                 List of matrices of training samples
 
-        y_list : List of array-like,
+        ys : List of array-like,
                 length = number of classifiers
                 List of vectors of target class labels
 
@@ -41,17 +42,61 @@ class MetaRegressor(BaseEstimator, RegressorMixin):
         -------
         self : object
         """        
-        assert(len(X_list) == len(y_list) == len(self.regressors))
-        if (not isinstance(X_list,list)) or (not isinstance(y_list,list)):
+        assert(len(Xs) == len(ys) == len(self.regressors))
+        if (not isinstance(Xs,list)) or (not isinstance(ys,list)):
             raise TypeError
             sys.exit()
         if nested:
-            X_list = map(np.vstack, X_list)
-            y_list = map(np.hstack, y_list)
+            Xs = map(np.vstack, Xs)
+            ys = map(np.hstack, ys)
         self.regressors_ = []
         for i,reg in enumerate(self.regressors):
-            fitted_reg = clone(reg).fit(X_list[i], y_list[i])
+            fitted_reg = clone(reg).fit(Xs[i], ys[i])
             self.regressors_.append(fitted_reg)
         return self
 
+    def predict(self, Xs):
+        """ Predict class labels.
+        Parameters
+        ----------
+        Xs : List of {array-like, sparse matrix},
+                length = number of classifiers
+                List of matrices of training samples
+
+        Returns
+        -------
+        weighted_pred : array-like, shape = [n_samples]  
+                Predicted (weighted) target values
+        """
+
+        num_regs = len(self.regressors_)
+        preds = []
+        for index, X in enumerate(Xs):
+            pred = [np.mean(self.regressors_[index].predict(P), axis=0) for P in X]
+            preds.append(pred)
+        preds = np.asarray(preds)
+        weighted_pred = np.average(preds, axis=0, weights=self.weights) 
+        return weighted_pred
+
+    def score(self, Xs, y_true, scoring='r2'):
+        """
+        Returns the f1 score by default
+
+        Parameters
+        ----------
+        Xs : List of {array-like, sparse matrix},
+             length = number of regressors
+             List of matrices of training samples
+
+        y_true: Single vectors of true y values
+        
+        """
+        y_true = np.asarray(y_true)
+        if scoring == 'r2':
+            return r2_score(y_true,self.predict(Xs))
+        elif scoring == 'mean_abs_error':
+            return mean_absolute_error(y_true, self.predict(Xs))
+
+
+        
     
