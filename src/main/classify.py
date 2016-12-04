@@ -14,6 +14,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import _name_estimators
 from ..feature_extract.read_labels import features
 import config
+import feature_select
 
 def oversample(X,y):
     X = np.vstack(X)
@@ -30,7 +31,7 @@ def oversample(X,y):
     return X, y
 
 
-def get_single_mode_data(mode='acoustic', category='PN'):
+def get_single_mode_data(mode='acoustic', category='PN', problem_type='C', normalize='regular'):
     """
     Get training and validation data for a single mode int
     a particular category
@@ -53,14 +54,14 @@ def get_single_mode_data(mode='acoustic', category='PN'):
         cat_1 = "discriminative"
         cat_2 = "nondiscriminative"
 
-    X_train = [map(np.asarray, features(mode,cat_1,"train")[0]), 
-            map(np.asarray, features(mode,cat_2,"train")[0])]
-    y_train = [map(np.asarray,features(mode,cat_1,"train")[1] ), 
-            map(np.asarray, features(mode,cat_2,"train")[1])]
-    X_val = [map(np.asarray, features(mode,cat_1,"val")[0]), 
-            map(np.asarray, features(mode,cat_2,"val")[0])]
-    y_val = [map(np.asarray, features(mode,cat_1,"val")[1]), 
-            map(np.asarray, features(mode,cat_2,"val")[1])]
+    X_train = [map(np.asarray, features(mode,cat_1,"train", problem_type, normalize)[0]),
+            map(np.asarray, features(mode,cat_2,"train", problem_type, normalize)[0])]
+    y_train = [map(np.asarray,features(mode,cat_1,"train", problem_type, normalize)[1] ),
+            map(np.asarray, features(mode,cat_2,"train", problem_type, normalize)[1])]
+    X_val = [map(np.asarray, features(mode,cat_1,"val", problem_type, normalize)[0]),
+            map(np.asarray, features(mode,cat_2,"val", problem_type, normalize)[0])]
+    y_val = [map(np.asarray, features(mode,cat_1,"val", problem_type, normalize)[1]),
+            map(np.asarray, features(mode,cat_2,"val", problem_type, normalize)[1])]
 
     return X_train, y_train, X_val, y_val
 
@@ -194,12 +195,12 @@ def grid_search_lf(category='PN'):
 
 
 def main():
-    #train_classify()
-    #late_fusion_classify()
+    feature_select.feature_select("C")
     grid_search_meta(mode='visual', category='PN')
-    #grid_search_meta(mode='acoustic', category='PN')
-    #grid_search_meta(mode='linguistic', category='PN')
-    #grid_search_lf(category='PN')
+    grid_search_meta(mode='acoustic', category='PN')
+    grid_search_meta(mode='linguistic', category='PN')
+    grid_search_lf(category='PN')
+
 
 if __name__ == '__main__':
     main()

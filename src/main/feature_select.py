@@ -26,17 +26,21 @@ def get_feature_df(train, file_, *files):
             feature_df = feature_df.T.drop_duplicates().T
 
     # Trim data frame to hole only train/validation records
-    split_df = pd.read_csv(split_file,usecols=['Participant_ID', 'PHQ_Binary'])
+    split_df = pd.read_csv(split_file,usecols=['Participant_ID', 'PHQ_Binary','PHQ_Score'])
     feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
 
     # Populate labels accordingly
     split_dict = split_df.set_index('Participant_ID').T.to_dict()
     del split_df
     labels = np.zeros(feature_df.shape[0])
+    scores = np.zeros(feature_df.shape[0])
     for i in xrange(feature_df.shape[0]):
         video_id = feature_df.iat[i,0]
         labels[i] = split_dict[video_id]['PHQ_Binary']
+        scores[i] = split_dict[video_id]['PHQ_Score']
     feature_df['label'] = pd.Series(labels, index=feature_df.index)
+    feature_df['score'] = pd.Series(scores, index=feature_df.index)
+
 
     # Drop common (unwanted) columns - question, starttime, endtime
     try:
@@ -138,7 +142,7 @@ def perform_random_forest(df,labels,N):
     final_df = df[selected_features]
     return final_df
 
-def main(qtype,mode):
+def main(qtype,mode,classifier_type):
     # Determine file name prefixes based on Question Type passed
     if qtype=="D":
         file_prefix="discriminative"
@@ -187,12 +191,12 @@ def main(qtype,mode):
 
     # Obtain labels
     labels = df['label'].values
-
+    scores = df['score'].values
     # Make copy of data frame
     copy_df = df.copy() # copy_df contains values for - 'video', all features, 'label' columns
 
     # Remove 'video' and 'label' column from data frame
-    df.drop(['video', 'label'], inplace=True , axis=1)
+    df.drop(['video', 'label','score'], inplace=True , axis=1)
 
     # Pick 'N' to pick from Random Forest method, based on Mode
     if mode=="V":
@@ -204,14 +208,18 @@ def main(qtype,mode):
 
     # Set 'K' to pick from Select Best K method
     K = 20
+    if(classifier_type == "C"):
+        feature_type = labels
+    elif(classifier_type == "R"):
+        feature_type = scores
 
     # Call pipeline of feature selection methods on data frame - different pipeline for each Question Type and Mode combination
     if mode=="V":
         df = remove_low_variance(df)
-    df = perform_l1(df,labels)
-    df = perform_random_forest(df,labels,N)
+    df = perform_l1(df,feature_type)
+    df = perform_random_forest(df,feature_type,N)
     if mode!="A":
-        df = select_best_K(df,labels,K)
+        df = select_best_K(df,feature_type,K)
 
     # Obtain Final feature list
     final_feature_list = list(df.columns.values)
@@ -221,6 +229,7 @@ def main(qtype,mode):
     final_selection = ['video']
     final_selection.extend(final_feature_list)
     final_selection.extend(['label'])
+    final_selection.extend(['score'])
     op_df = copy_df[final_selection]
     op_val_df = val_df[final_selection]
 
@@ -235,14 +244,14 @@ def main(qtype,mode):
     file_suffix_val="_val.csv"
 
     # Write output dfs into output files - TRAIN AND VALIDATION
-    fileOP = os.path.join(config.SEL_FEAT_TRAIN,file_prefix + output_file + file_suffix_train)
+    fileOP = os.path.join(config.SEL_FEAT_TRAIN_REGULAR,file_prefix + output_file + file_suffix_train)
     op_df.to_csv(fileOP,sep=",",index=False)
-    fileOP = os.path.join(config.SEL_FEAT_VAL, file_prefix + output_file + file_suffix_val)
+    fileOP = os.path.join(config.SEL_FEAT_VAL_REGULAR, file_prefix + output_file + file_suffix_val)
     op_val_df.to_csv(fileOP, sep=",", index=False)
 
     return final_feature_list
 
-def feature_select():
+def feature_select(classifier_type):
     all_feature_lists = []
 
     # Call feature select function for all question types and modes
@@ -251,7 +260,7 @@ def feature_select():
     for qtype in question_types:
         for mode in modes:
             print "Feature Selection for ",qtype," and ",mode
-            feature_list = main(qtype,mode)
+            feature_list = main(qtype,mode,classifier_type)
             all_feature_lists.append(feature_list)
     print "All features: ",all_feature_lists
 
@@ -264,10 +273,10 @@ def feature_select():
             fileOP.write(",")
         fileOP.write("\n")
 
-if __name__ == '__main__':
-    #qtype = sys.argv[1] # D- discriminative, ND- nondiscriminative, P-positive, N- negative
-    #mode = sys.argv[2] # A- acoustic, V- visual, L- linguistic
-
-    # Call main function
-    #main(qtype,mode)
-    feature_select()
+# if __name__ == '__main__':
+#     #qtype = sys.argv[1] # D- discriminative, ND- nondiscriminative, P-positive, N- negative
+#     #mode = sys.argv[2] # A- acoustic, V- visual, L- linguistic
+#
+#     # Call main function
+#     #main(qtype,mode)
+#     feature_select()
