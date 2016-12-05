@@ -187,7 +187,7 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
 
         else: # classlabel
             predictions = np.asarray([clf.predict(Xs[mode_idx]) for mode_idx,clf in enumerate(self.classifiers_)]).T
-            print '\n',predictions
+            ## print '\n',predictions
             maj_vote = np.apply_along_axis(lambda x: np.argmax(np.bincount(x,
                         weights=self.weights)),axis=1,arr=predictions)
         return maj_vote

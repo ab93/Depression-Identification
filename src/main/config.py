@@ -16,6 +16,8 @@ SEL_FEAT_VAL_REGULAR_ESTIMATE = os.path.join('data','selected_features','regular
 # SEL_FEAT_TRAIN_NORMALIZED_ESTIMATE = os.path.join('data','selected_features','normalize','estimate','train')
 # SEL_FEAT_VAL_NORMALIZED_ESTIMATE = os.path.join('data','selected_features','normalize','estimate','val')
 
+RESULTS_CLASSIFY = os.path.join('results','grid_search','classification')
+RESULTS_ESTIMATE = os.path.join('results','grid_search','regression')
 
 
 SEL_FEAT = os.path.join('data','selected_features')
