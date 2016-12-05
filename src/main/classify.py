@@ -7,6 +7,7 @@ from src.models.classifier import MetaClassifier, LateFusionClassifier
 from src.feature_extract import read_labels
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import AdaBoostClassifier
@@ -38,17 +39,16 @@ def grid_search_meta(mode='acoustic',category='PN',normalize='regular'):
     max_depths = np.arange(3,6)
     min_samples_leaves = np.arange(2,6)
 
-    estimators = [LogisticRegression, DecisionTreeClassifier]
+    estimators = [LogisticRegression, SVC]
     named_clfs = _name_estimators(estimators)
     named_clfs = [x[0] for x in named_clfs]
     dt_vals = [{'max_features': x, 'max_depth': y, 'min_samples_leaf': z}
                 for x in max_features_ for y in max_depths for z in min_samples_leaves]
-    svm_vals = [{'C':x, 'gamma':y} for x in C_vals for y in gammas]
+    svm_vals = [{'C':x, 'gamma':y, 'probability':True} for x in C_vals for y in gammas]
     max_ent_vals = [{'C':x, 'penalty':y } for x in C_vals for y in penalties]
-    all_params = [max_ent_vals, dt_vals]
-    #clf_params = {named_clfs[i]:all_params[i] for i in range(len(all_params))}
+    all_params = [max_ent_vals, svm_vals]
 
-    # with open(os.path.join(config.GRID_SEARCH_DIR, mode + '_test_' + category + '.txt'),'w') as outfile:
+    # with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_test_' + category + '.txt'),'w') as outfile:
     #     for clf_wt in clf_weights:
     #         for class_wt in class_weights:
     #             for i,clf1 in enumerate(estimators):
@@ -60,30 +60,69 @@ def grid_search_meta(mode='acoustic',category='PN',normalize='regular'):
     #                             meta_clf = MetaClassifier(classifiers=[clf_1, clf_2], weights=clf_wt)
     #                             meta_clf.fit(X_train, y_train)
     #                             f1_score = meta_clf.score(X_val, y_true_val)
-    #                             print f1_score
+    #                             print i,j,f1_score
     #                             if not clf_wt:
     #                                 clf_wt = [0.5, 0.5]
-    #                             outfile.write( str(clf1) + '\t' + str(clf2) + '\t' + str(f1_score) +'\n')
+    #                             outfile.write( str(clf_wt[0]) + ' ' +
+    #                             str(clf_wt[1]) + '\t' +str(param1) + '\t' + str(class_wt)
+    #                             '\t' + str(param2)
+    #                             + '\t' + str(f1_score) +'\n')
 
-    with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_' + category + '.csv'),'w') as outfile:
-        for p1 in penalties:
-            for p2 in penalties:
-                for clf_wt in clf_weights:
-                    for class_wt in class_weights:
-                        for C1 in C_vals:
-                            for C2 in C_vals:
-                                clf_D = LogisticRegression(C=C1, penalty=p1, n_jobs=-1, class_weight={1:class_wt})
-                                clf_ND = LogisticRegression(C=C2, penalty=p2, n_jobs=-1, class_weight={1:class_wt})
-                                meta_clf = MetaClassifier(classifiers=[clf_D, clf_ND], weights=clf_wt)
-                                meta_clf.fit(X_train, y_train)
-                                f1_score = meta_clf.score(X_val, y_true_val)
-                                if not clf_wt:
-                                    clf_wt = [0.5, 0.5]
-                                outfile.write(str(clf_wt[0]) + ' ' + str(clf_wt[1]) + ',' +
-                                            str(class_wt) + ',' + str(C1) + ',' + str(C2) + ','
-                                            + p1 + ',' + p2 + ','
-                                            + str(f1_score) + '\n')
-                                print f1_score
+    # with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_SVM_' + category + '.txt'),'w') as outfile:
+    #     for clf_wt in clf_weights:
+    #         for class_wt in class_weights:
+    #             for param1 in svm_vals:
+    #                 for param2 in svm_vals:
+    #                     clf_1 = SVC(class_weight={1:class_wt}, **param1)
+    #                     clf_2 = SVC(class_weight={1:class_wt}, **param2)
+    #                     meta_clf = MetaClassifier(classifiers=[clf_1, clf_2], weights=clf_wt)
+    #                     meta_clf.fit(X_train, y_train)
+    #                     f1_score = meta_clf.score(X_val, y_true_val)
+    #                     print f1_score
+    #                     if not clf_wt:
+    #                         clf_wt = [0.5, 0.5]
+    #                     outfile.write(str(clf_wt[0]) + ' ' + str(clf_wt[1]) + '\t' +
+    #                     str(param1) + '\t' + str(param2) + '\t' +
+    #                     str(class_wt) + '\t' + str(f1_score) +'\n')
+
+    with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_DT_' + category + '.txt'),'w') as outfile:
+        for clf_wt in clf_weights:
+            for class_wt in class_weights:
+                for param1 in dt_vals:
+                    for param2 in dt_vals:
+                        clf_1 = DecisionTreeClassifier(class_weight={1:class_wt}, **param1)
+                        clf_2 = DecisionTreeClassifier(class_weight={1:class_wt}, **param2)
+                        meta_clf = MetaClassifier(classifiers=[clf_1, clf_2], weights=clf_wt)
+                        meta_clf.fit(X_train, y_train)
+                        f1_score = meta_clf.score(X_val, y_true_val)
+                        print f1_score
+                        if not clf_wt:
+                            clf_wt = [0.5, 0.5]
+                        outfile.write(str(clf_wt[0]) + ' ' + str(clf_wt[1]) + '\t' +
+                        str(param1) + '\t' + str(param2) + '\t' +
+                        str(class_wt) + '\t' + str(f1_score) +'\n')
+
+    # with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_' + category + '.csv'),'w') as outfile:
+    #     for p1 in penalties:
+    #         for p2 in penalties:
+    #             for clf_wt in clf_weights:
+    #                 for class_wt in class_weights:
+    #                     for C1 in C_vals:
+    #                         for C2 in C_vals:
+    #                             clf_D = LogisticRegression(C=C1, penalty=p1, n_jobs=-1, class_weight={1:class_wt})
+    #                             clf_ND = LogisticRegression(C=C2, penalty=p2, n_jobs=-1, class_weight={1:class_wt})
+    #                             meta_clf = MetaClassifier(classifiers=[clf_D, clf_ND], weights=clf_wt)
+    #                             meta_clf.fit(X_train, y_train)
+    #                             f1_score = meta_clf.score(X_val, y_true_val)
+    #                             if not clf_wt:
+    #                                 clf_wt = [0.5, 0.5]
+    #                             outfile.write(str(clf_wt[0]) + ' ' + str(clf_wt[1]) + ',' +
+    #                                         str(class_wt) + ',' + str(C1) + ',' + str(C2) + ','
+    #                                         + p1 + ',' + p2 + ','
+    #                                         + str(f1_score) + '\n')
+    #                             print f1_score
+
+
 
 
 
@@ -140,14 +179,14 @@ def main():
     #print "Normalizing features...\n"
     #normalize_features()
     norm = 'normalize'
-    print "Performing Grid Search for visual...\n"
-    grid_search_meta(mode='visual', category='PN', normalize=norm)
-    print "Performing Grid Search for acoustic...\n"
-    grid_search_meta(mode='acoustic', category='PN', normalize=norm)
+    #print "Performing Grid Search for visual...\n"
+    #grid_search_meta(mode='visual', category='PN', normalize=norm)
+    #print "Performing Grid Search for acoustic...\n"
+    #grid_search_meta(mode='acoustic', category='PN', normalize=norm)
     print "Performing Grid Search for linguistic...\n"
     grid_search_meta(mode='linguistic', category='PN', normalize=norm)
-    print "Performing Grid Search for Late Fusion...\n"
-    grid_search_lf(category='PN')
+    # print "Performing Grid Search for Late Fusion...\n"
+    # grid_search_lf(category='PN')
 
 
 if __name__ == '__main__':
