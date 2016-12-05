@@ -244,9 +244,16 @@ def main(qtype,mode,classifier_type):
     file_suffix_val="_val.csv"
 
     # Write output dfs into output files - TRAIN AND VALIDATION
-    fileOP = os.path.join(config.SEL_FEAT_TRAIN_REGULAR,file_prefix + output_file + file_suffix_train)
+    if classifier_type == "C":
+        directory_path_train = config.SEL_FEAT_TRAIN_REGULAR_CLASSIFY
+        directory_path_val = config.SEL_FEAT_VAL_REGULAR_CLASSIFY
+    else:
+        directory_path_train = config.SEL_FEAT_TRAIN_REGULAR_ESTIMATE
+        directory_path_val = config.SEL_FEAT_VAL_REGULAR_ESTIMATE
+
+    fileOP = os.path.join(directory_path_train,file_prefix + output_file + file_suffix_train)
     op_df.to_csv(fileOP,sep=",",index=False)
-    fileOP = os.path.join(config.SEL_FEAT_VAL_REGULAR, file_prefix + output_file + file_suffix_val)
+    fileOP = os.path.join(directory_path_val, file_prefix + output_file + file_suffix_val)
     op_val_df.to_csv(fileOP, sep=",", index=False)
 
     return final_feature_list
@@ -273,10 +280,11 @@ def feature_select(classifier_type):
             fileOP.write(",")
         fileOP.write("\n")
 
-# if __name__ == '__main__':
-#     #qtype = sys.argv[1] # D- discriminative, ND- nondiscriminative, P-positive, N- negative
-#     #mode = sys.argv[2] # A- acoustic, V- visual, L- linguistic
-#
-#     # Call main function
-#     #main(qtype,mode)
-#     feature_select()
+if __name__ == '__main__':
+    #qtype = sys.argv[1] # D- discriminative, ND- nondiscriminative, P-positive, N- negative
+    #mode = sys.argv[2] # A- acoustic, V- visual, L- linguistic
+
+    # Call main function
+    #main(qtype,mode)
+    feature_select("C")
+    feature_select("R")
