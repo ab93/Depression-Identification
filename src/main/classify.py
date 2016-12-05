@@ -16,9 +16,11 @@ from ..feature_extract.read_labels import features
 import config
 import feature_select
 from utils import get_multi_data, get_single_mode_data
+from ..helpers.normalized_features import normalize_features
 
-def grid_search_meta(mode='acoustic',category='PN'):
-    X_train, y_train, X_val, y_val = get_single_mode_data(mode, category)
+def grid_search_meta(mode='acoustic',category='PN',normalize='regular'):
+    X_train, y_train, X_val, y_val = get_single_mode_data(mode=mode,
+                                    category=category, normalize=normalize)
 
     # Set y_true for validation
     y_true_val = map(int,map(np.mean,y_val[0]))
@@ -63,7 +65,7 @@ def grid_search_meta(mode='acoustic',category='PN'):
     #                                 clf_wt = [0.5, 0.5]
     #                             outfile.write( str(clf1) + '\t' + str(clf2) + '\t' + str(f1_score) +'\n')
 
-    with open(os.path.join(config.GRID_SEARCH_DIR, mode + '_' + category + '.csv'),'w') as outfile:
+    with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_' + category + '.csv'),'w') as outfile:
         for p1 in penalties:
             for p2 in penalties:
                 for clf_wt in clf_weights:
@@ -86,8 +88,8 @@ def grid_search_meta(mode='acoustic',category='PN'):
 
 
 
-def grid_search_lf(category='PN'):
-    Xs_train, ys_train, Xs_val, ys_val = get_multi_data(category)
+def grid_search_lf(category='PN', normalize='regular'):
+    Xs_train, ys_train, Xs_val, ys_val = get_multi_data(category, normalize=normalize)
     y_true_val = map(int,map(np.mean,ys_val[0][0]))
 
     # For Positive Negative
@@ -119,7 +121,7 @@ def grid_search_lf(category='PN'):
     mode_weights = [None, [0.6, 0.3, 0.1], [0.3, 0.6, 0.1], [0.4, 0.4, 0.2],
                     [0.5, 0.4, 0.1], [0.4, 0.5, 0.1], [0.25, 0.25, 0.5]]
 
-    with open(os.path.join(config.GRID_SEARCH_DIR, 'late_fusion_DND.csv'),'w') as outfile:
+    with open(os.path.join(config.GRID_SEARCH_CLF_DIR, 'late_fusion_DND.csv'),'w') as outfile:
         outfile.write('A_wt' + ',' + 'V_wt' + ',' +  'L_wt' + ',' + 'f1_score' + '\n')
         for mode_wt in mode_weights:
             lf_clf = LateFusionClassifier(classifiers=[clf_A, clf_V, clf_L], weights=mode_wt)
@@ -135,12 +137,15 @@ def grid_search_lf(category='PN'):
 def main():
     #print "Selecting features...\n"
     #feature_select.feature_select("C")
+    #print "Normalizing features...\n"
+    #normalize_features()
+    norm = 'normalize'
     print "Performing Grid Search for visual...\n"
-    grid_search_meta(mode='visual', category='PN')
+    grid_search_meta(mode='visual', category='PN', normalize=norm)
     print "Performing Grid Search for acoustic...\n"
-    grid_search_meta(mode='acoustic', category='PN')
+    grid_search_meta(mode='acoustic', category='PN', normalize=norm)
     print "Performing Grid Search for linguistic...\n"
-    grid_search_meta(mode='linguistic', category='PN')
+    grid_search_meta(mode='linguistic', category='PN', normalize=norm)
     print "Performing Grid Search for Late Fusion...\n"
     grid_search_lf(category='PN')
 

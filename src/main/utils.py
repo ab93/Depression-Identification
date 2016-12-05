@@ -42,7 +42,8 @@ def get_single_mode_data(mode='acoustic', category='PN', problem_type='C', norma
     else:
         cat_1 = "discriminative"
         cat_2 = "nondiscriminative"
-    
+
+    #print mode,category,problem_type,normalize
     X_train = [map(np.asarray, features(mode,cat_1,"train", problem_type, normalize)[0]),
             map(np.asarray, features(mode,cat_2,"train", problem_type, normalize)[0])]
     y_train = [map(np.asarray,features(mode,cat_1,"train", problem_type, normalize)[1] ),
