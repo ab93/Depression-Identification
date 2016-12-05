@@ -21,6 +21,7 @@ def get_features(data,classifier_type="C"):
     return X,y
 
 def features(mode,category,split,problem_type='C',normalize="regular"):
+    #print mode,category,split,problem_type,normalize
     if problem_type == "C":
         directory = "classify"
     else:

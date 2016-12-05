@@ -49,4 +49,4 @@ def normalize_features():
         get_normalized_features(list_train_estimate[i])
 
 
-normalize_features()
+#normalize_features()
