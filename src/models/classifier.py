@@ -75,7 +75,7 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         return self
 
     def predict(self, X_list):
-        """ Predict class labels.
+        """ Predict class labels
         Parameters
         ----------
         X_list : List of {array-like, sparse matrix},
@@ -84,7 +84,7 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
 
         Returns
         -------
-        maj_vote : array-like, shape = [n_samples]  
+        maj_vote : array-like, shape = [n_samples]
                    Predicted class labels
         """
 
@@ -94,7 +94,7 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
             pred = [np.mean(self.classifiers_[index].predict_proba(P), axis=0) for P in X]
             preds.append(pred)
         preds = np.asarray(preds)
-        weighted_proba = np.average(preds, axis=0, weights=self.weights) 
+        weighted_proba = np.average(preds, axis=0, weights=self.weights)
         maj_vote = np.argmax(weighted_proba, axis=1)
         return maj_vote
 
@@ -109,8 +109,8 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
 
         Returns
         -------
-        weighted_proba : array-like,shape = [n_samples, n_classes]           
-                         Weighted average probability 
+        weighted_proba : array-like,shape = [n_samples, n_classes]
+                         Weighted average probability
                          for each class per sample.
         """
 
@@ -121,7 +121,7 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
             preds.append(pred)
         preds = np.asarray(preds)
         weighted_proba = np.average(preds, axis=0, weights=self.weights)
-        if get_all: 
+        if get_all:
             return preds[0], preds[1], weighted_proba
         return weighted_proba
 
@@ -136,14 +136,14 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
              List of matrices of training samples
 
         y_true: Single vectors of target class labels.
-        
+
         """
         y_true = np.asarray(y_true)
         if scoring == 'f1':
             return f1_score(y_true,self.predict(Xs),average='binary')
         elif scoring == 'accuracy':
             return accuracy_score(y_true, self.predict(Xs))
-        
+
 
 class LateFusionClassifier(BaseEstimator, ClassifierMixin):
     """
@@ -156,7 +156,7 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
         self.named_classifiers = {key: value for key, value in _name_estimators(classifiers)}
         self.weights = weights  # weights for each of the classifiers
 
-    def fit(self,Xs,ys): 
+    def fit(self,Xs,ys):
         """
         Trains on the data.
         Xs = [[], [], []]
@@ -204,7 +204,7 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
             avg_proba: Average probabilities of the class
         """
 
-        probas = np.asarray([clf.predict_proba(Xs[mode_idx]) 
+        probas = np.asarray([clf.predict_proba(Xs[mode_idx])
                             for mode_idx,clf in enumerate(self.classifiers_)])
         avg_proba = np.average(probas, axis=0, weights=self.weights)
         if get_all:
@@ -220,5 +220,3 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
             return f1_score(y_true,self.predict(Xs),average='binary')
         elif scoring == 'accuracy':
             return accuracy_score(y_true, self.predict(Xs))
-
-
