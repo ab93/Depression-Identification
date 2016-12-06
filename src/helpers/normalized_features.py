@@ -1,4 +1,3 @@
-import pprint
 import pandas as pd
 import os
 from sklearn import preprocessing
@@ -15,10 +14,10 @@ def get_normalized_features(filename):
     X_train = data_train.as_matrix(columns=column)
     X_val = data_val.as_matrix(columns = column)
 
-    normalizer = preprocessing.Normalizer().fit(X_train)
+    scalar = preprocessing.StandardScaler().fit(X_train)
 
-    transformed_train = normalizer.transform(X_train)
-    transformed_val = normalizer.transform(X_val)
+    transformed_train = scalar.transform(X_train)
+    transformed_val = scalar.transform(X_val)
 
     data_normalized_train = pd.DataFrame(transformed_train,columns=column)
     data_normalized_val = pd.DataFrame(transformed_val, columns=column)
@@ -49,4 +48,4 @@ def normalize_features():
         get_normalized_features(list_train_estimate[i])
 
 
-#normalize_features()
+normalize_features()
