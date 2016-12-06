@@ -183,10 +183,10 @@ def main():
     #grid_search_meta(mode='visual', category='PN', normalize=norm)
     #print "Performing Grid Search for acoustic...\n"
     #grid_search_meta(mode='acoustic', category='PN', normalize=norm)
-    print "Performing Grid Search for linguistic...\n"
-    grid_search_meta(mode='linguistic', category='PN', normalize=norm)
-    # print "Performing Grid Search for Late Fusion...\n"
-    # grid_search_lf(category='PN')
+    #print "Performing Grid Search for linguistic...\n"
+    #grid_search_meta(mode='linguistic', category='PN', normalize=norm)
+    print "Performing Grid Search for Late Fusion...\n"
+    grid_search_lf(category='PN')
 
 
 if __name__ == '__main__':
