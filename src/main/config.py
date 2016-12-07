@@ -7,9 +7,12 @@ D_ND_DIR = os.path.join('data','disc_nondisc')
 POS_NEG_DIR = os.path.join('data','pos_neg')
 
 SEL_FEAT_TRAIN_REGULAR_CLASSIFY = os.path.join('data','selected_features','regular','classify','train')
+SEL_FEAT_TEST_REGULAR_CLASSIFY = os.path.join('data','selected_features','regular','classify','test')
 SEL_FEAT_VAL_REGULAR_CLASSIFY = os.path.join('data','selected_features','regular','classify','val')
 SEL_FEAT_TRAIN_REGULAR_ESTIMATE = os.path.join('data','selected_features','regular','estimate','train')
 SEL_FEAT_VAL_REGULAR_ESTIMATE = os.path.join('data','selected_features','regular','estimate','val')
+SEL_FEAT_TEST_REGULAR_ESTIMATE = os.path.join('data','selected_features','regular','estimate','test')
+
 
 # SEL_FEAT_TRAIN_NORMALIZED_CLASSIFY = os.path.join('data','selected_features','normalize','classify','train')
 # SEL_FEAT_VAL_NORMALIZED_CLASSIFY = os.path.join('data','selected_features','normalize','classify','val')

@@ -12,10 +12,12 @@ from sklearn.ensemble import RandomForestClassifier
 
 def get_feature_df(train, file_, *files):
     # Set directory based on Train and Validation
-    if train == 'y':
+    if train == 'train':
         split_file = config.TRAIN_SPLIT_FILE
-    else:
+    elif train == "val":
         split_file = config.VAL_SPLIT_FILE
+    else:
+        split_file = config.TEST_SPLIT_FILE
 
     # Append file columns to a single data frame
     feature_df = pd.read_csv(file_)
@@ -26,20 +28,29 @@ def get_feature_df(train, file_, *files):
             feature_df = feature_df.T.drop_duplicates().T
 
     # Trim data frame to hole only train/validation records
-    split_df = pd.read_csv(split_file,usecols=['Participant_ID', 'PHQ_Binary','PHQ_Score'])
-    feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
 
-    # Populate labels accordingly
-    split_dict = split_df.set_index('Participant_ID').T.to_dict()
-    del split_df
-    labels = np.zeros(feature_df.shape[0])
-    scores = np.zeros(feature_df.shape[0])
-    for i in xrange(feature_df.shape[0]):
-        video_id = feature_df.iat[i,0]
-        labels[i] = split_dict[video_id]['PHQ_Binary']
-        scores[i] = split_dict[video_id]['PHQ_Score']
-    feature_df['label'] = pd.Series(labels, index=feature_df.index)
-    feature_df['score'] = pd.Series(scores, index=feature_df.index)
+    if train == "test":
+        split_df = pd.read_csv(split_file, usecols=['participant_ID'])
+        feature_df = feature_df[feature_df['video'].isin(split_df['participant_ID'])]
+
+    else:
+        split_df = pd.read_csv(split_file,usecols=['Participant_ID', 'PHQ_Binary','PHQ_Score'])
+        feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
+
+        # Populate labels accordingly
+        split_dict = split_df.set_index('Participant_ID').T.to_dict()
+        del split_df
+        labels = np.zeros(feature_df.shape[0])
+        scores = np.zeros(feature_df.shape[0])
+        for i in xrange(feature_df.shape[0]):
+            video_id = feature_df.iat[i, 0]
+            labels[i] = split_dict[video_id]['PHQ_Binary']
+            scores[i] = split_dict[video_id]['PHQ_Score']
+        feature_df['label'] = pd.Series(labels, index=feature_df.index)
+        feature_df['score'] = pd.Series(scores, index=feature_df.index)
+
+
+
 
 
     # Drop common (unwanted) columns - question, starttime, endtime
@@ -177,17 +188,21 @@ def main(qtype,mode,classifier_type):
     files = [os.path.join(dir,arg) for arg in file_list[1:]]
 
     # Obtain data frame containing all features from determined file list for TRAINING SET
-    TRAIN = "y"
+    TRAIN = "train"
     df = get_feature_df(TRAIN,file1,files)
 
     # Obtain data frame containing all features from determined file list for VALIDATION SET
-    TRAIN = "n"
+    TRAIN = "val"
     val_df = get_feature_df(TRAIN, file1, files)
+
+    TRAIN = "test"
+    test_df = get_feature_df(TRAIN,file1,files)
 
     # If mode is visual, drop the extra columns from file - standardizes structure of data frame between all modes
     if mode=="V":
         df = df.drop(['frame', 'timestamp', 'confidence', 'success'], axis=1)
         val_df = val_df.drop(['frame', 'timestamp', 'confidence', 'success'], axis=1)
+        test_df = test_df.drop(['frame', 'timestamp', 'confidence', 'success'], axis=1)
 
     # Obtain labels
     labels = df['label'].values
@@ -232,7 +247,9 @@ def main(qtype,mode,classifier_type):
     final_selection.extend(['score'])
     op_df = copy_df[final_selection]
     op_val_df = val_df[final_selection]
-
+    final_selection.remove('label')
+    final_selection.remove('score')
+    op_test_df = test_df[final_selection]
     # To construct Output File Name
     if mode=="V":
         output_file="_visual"
@@ -242,19 +259,26 @@ def main(qtype,mode,classifier_type):
         output_file="_linguistic"
     file_suffix_train="_train.csv"
     file_suffix_val="_val.csv"
+    file_suffix_test = "_test.csv"
 
     # Write output dfs into output files - TRAIN AND VALIDATION
     if classifier_type == "C":
         directory_path_train = config.SEL_FEAT_TRAIN_REGULAR_CLASSIFY
         directory_path_val = config.SEL_FEAT_VAL_REGULAR_CLASSIFY
+        directory_path_test = config.SEL_FEAT_TEST_REGULAR_CLASSIFY
     else:
         directory_path_train = config.SEL_FEAT_TRAIN_REGULAR_ESTIMATE
         directory_path_val = config.SEL_FEAT_VAL_REGULAR_ESTIMATE
+        directory_path_test = config.SEL_FEAT_TEST_REGULAR_ESTIMATE
+
 
     fileOP = os.path.join(directory_path_train,file_prefix + output_file + file_suffix_train)
     op_df.to_csv(fileOP,sep=",",index=False)
     fileOP = os.path.join(directory_path_val, file_prefix + output_file + file_suffix_val)
     op_val_df.to_csv(fileOP, sep=",", index=False)
+
+    fileOP = os.path.join(directory_path_test, file_prefix + output_file + file_suffix_test)
+    op_test_df.to_csv(fileOP, sep=",", index=False)
 
     return final_feature_list
 
