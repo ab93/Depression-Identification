@@ -1,350 +1,356 @@
-Questions,Count,Label
-can you tell me about that,169,#follow_up
-why,168,#follow_up
-yeah,167,#ack
-where are you from originally,127,#non_int
-have you ever been diagnosed with p_t_s_d,125,#int
-goodbye,123,#ack
-what are some things you really like about l_a,122,#non_int
-how are you at controlling your temper,121,#int
-when was the last time you argued with someone and what was it about,119,#int
-is there anything you regret,116,#int
-so how are you doing today,114,#non_int
-how easy is it for you to get a good night's sleep,114,#int
-what are you most proud of in your life,112,#int
-what are some things you don't really like about l_a,112,#non_int
-have you been diagnosed with depression,109,#int
-thanks for sharing your thoughts with me,102,#ack
-how would your best friend describe you,100,#int
-how have you been feeling lately,99,#int
-what's your dream job,90,#int
-tell me about the last time you felt really happy,88,#int
-who's someone that's been a positive influence in your life,88,#int
-what are you like when you don't sleep well,87,#int
-sometimes when i'm feeling tense i turn on the fish tank screensaver hey i know it's not hawaii but it's the best i've got what do you do to relax,86,#int
-what advice would you give to yourself ten or twenty years ago,85,#int
-uh huh,84,#ack
-have you noticed any changes in your behavior or thoughts lately,83,#int
-what's one of your most memorable experiences,83,#int
-do you consider yourself more shy or outgoing,83,#int
-how did you feel in that moment,81,#follow_up
-what did you study at school,79,#non_int
-how hard is that,79,#follow_up
-tell me about the hardest decision you've ever had to make,78,#int
-what do you enjoy about traveling,78,#non_int
-i'm sure you can tell by my shoes i'm not much of a world explorer do you travel a lot,77,#non_int
-tell me about a situation that you wish you had handled differently,76,#int
-i'd love to hear about one of your trips,75,#follow_up
-how did you decide to do that,71,#follow_up
-what would you say are some of your best qualities,67,#int
-what are some things you wish you could change about yourself,67,#int
-tell me about an event or something that you wish you could erase from your memory,65,#int
-that's good,65,#ack
-that's great,64,#ack
-what made you decide to do that,64,#follow_up
-tell me about your relationship with your family,63,#int
-that sounds really hard,57,#ack
-like what,57,#follow_up
-wow,55,#ack
-can you give me an example of that,54,#follow_up
-what's something you feel guilty about,54,#int
-tell me about something you did recently that you really enjoyed,53,#int
-how easy was it for you to get used to living in l_a,52,#non_int
-laughter),50,#ack
-are you still working in that,49,#follow_up
-i see what you mean,49,#ack
-okay i think i have asked everything i need to,49,#ack
-tell me more about that,48,#follow_up
-do you still go to therapy now,45,#follow_up
-when was the last time that happened,44,#follow_up
-how often do you go back to your hometown,44,#non_int
-do you travel a lot,44,#non_int
-when did you move to l_a,43,#non_int
-how long ago were you diagnosed,43,#follow_up
-how does it compare to l_a,43,#non_int
-yes,42,#ack
-what got you to seek help,41,#follow_up
-what are some things that make you really mad,41,#int
-that sucks,41,#ack
-whatever comes to your mind,41,#follow_up
-tell me how you spend your ideal weekend,39,#non_int
-how do you cope with them,38,#follow_up
-are you okay with this,37,#follow_up
-that's so good to hear,36,#ack
-are you happy you did that,35,#follow_up
-when was the last time you felt really happy,34,#int
-aw,34,#ack
-what advice would you give yourself ten or twenty years ago,33,#int
-do you consider yourself an introvert,33,#int
-are they triggered by something,33,#follow_up
-why did you move to l_a,32,#non_int
-what are some things that usually put you in a good mood,32,#int
-how close are you to your family,31,#int
-tell me about a time when someone made you feel really badly about yourself,31,#int
-what do you do now,31,#follow_up
-do you find it easy to be a parent,31,#int
-how would your best friend describe you,30,#int
-has that gotten you in trouble,30,#follow_up
-mm,30,#ack
-what do you do to relax,30,#int
-could you have done anything to avoid it,30,#follow_up
-why'd you move to l_a,30,#non_int
-what's the hardest thing about being a parent,30,#int
-okay i think i've asked everything i need to,30,#ack
-do you feel like therapy is useful,29,#int
-who's someone that's been a positive influence in your life,29,#int
-how have you been feeling lately,28,#int
-yeah,28,#ack
-what'd you study at school,27,#non_int
-have you ever served in the military,27,#non_int
-have you ever served in the military,27,#non_int
-what do you think of today's kids,27,#non_int
-what advice would you give yourself ten or twenty years ago,27,#int
-what are you most proud of in your life,26,#int
-thanks for sharing your thoughts with me,26,#ack
-what do you do when you're annoyed,26,#int
-what's the best thing about being a parent,26,#int
-what'd you study at school,25,#non_int
-that sounds like a great situation,25,#ack
-i'm sorry,25,#ack
-how do you know them,25,#follow_up
-when was the last time you felt really happy,24,#int
-i'm sorry to hear that,24,#ack
-have you noticed any changes in your behavior or thoughts lately,24,#int
-that makes sense,24,#ack
-that's good,24,#ack
-what would you say are some of your best qualities,24,#int
-what sort of changes have you noticed since you've been going to therapy,23,#int
-when was the last time you argued with someone and what was it about,23,#int
-how easy is it for you to get a good night's sleep,22,#int
-what are some things you like to do for fun,22,#int
-what's your dream job,22,#int
-do you feel down,21,#int
-what were your symptoms,21,#follow_up
-what's one of your most memorable experiences,21,#int
-how close are you to your family,21,#int
-have you been diagnosed with depression,21,#int
-right,21,#ack
-<laughter>,21,#ack
-tell me about your kids,20,#int
-where are you from originally,20,#non_int
-how are you at controlling your temper,20,#int
-how close are you to them,20,#follow_up
-tell me about something you did recently that you really enjoyed,20,#int
-what do you do when you're annoyed,19,#int
-why did you stop,19,#follow_up
-tell me more about that,19,#follow_up
-what are some ways that you're different as a parent than your parents,18,#int
-i understand,18,#ack
-do you consider yourself an introvert,18,#int
-what are you like when you don't sleep well,18,#int
-are you still working in that,17,#follow_up
-what are some things that make you really mad,17,#int
-what got you to seek help,16,#follow_up
-that's a long time,16,#ack
-that's great,16,#ack
-are you still doing that,16,#follow_up
-how did you decide to do that,16,#follow_up
-hmm,16,#ack
-okay,16,#ack
-are you okay with this,15,#follow_up
-did you think you had a problem before you found out,15,#follow_up
-that sucks,15,#ack
-when'd you move to l_a,15,#non_int
-do you feel that way often,15,#follow_up
-it can be tough to find a good job these days,14,#ack
-so how are you doing today,14,#non_int
-how hard is that,13,#follow_up
-what do you enjoy about traveling,13,#non_int
-what do you do to relax,12,#int
-i love my job you could almost say it's virtually made for me what's your dream job,12,#int
-oh no,12,#ack
-goodbye,12,#ack
-how do you like your living situation,12,#non_int
-that sounds interesting,12,#ack
-how do you cope with them,12,#follow_up
-can you tell me about that,12,#follow_up
-is there anything you regret,12,#int
-i'd love to hear about one of your trips,12,#follow_up
-tell me about that,12,#follow_up
-can you give me an example of that,11,#follow_up
-i see,11,#ack
-how long ago were you diagnosed,11,#follow_up
-is going to a therapist helping you,11,#follow_up
-that sounds like a great situation,11,#ack
-uh huh,11,#ack
-<laughter>,10,#ack
-are they triggered by something,10,#follow_up
-let's come back to that later,10,#ack
-could you say a little more about that,10,#follow_up
-that sounds really hard,10,#ack
-i'm sorry to hear that,10,#ack
-do you travel a lot,10,#non_int
-you were very young weren't you,10,#follow_up
-how has seeing a therapist affected you,10,#follow_up
-what are some things that usually put you in a good mood,9,#int
-did you think you had a problem before you found out,9,#follow_up
-what was it about,9,#follow_up
-do you have disturbing thoughts,9,#int
-how did you feel in that moment,8,#follow_up
-what are some things you like to do for fun,8,#int
-why don't we talk about that later,8,#follow_up
-do you have roommates,8,#non_int
-let's come back to that later,8,#follow_up
-that's so good to hear,8,#ack
-do you feel like therapy's useful,8,#int
-how often do you go back to your home town,8,#non_int
-there are always trade offs in life aren't there,8,#follow_up
-is it uncomfortable for you to talk about this,8,#follow_up
-how are you doing today,7,#non_int
-do you feel like therapy's useful,7,#int
-when was the last time that happened,7,#follow_up
-how do you know them,7,#follow_up
-do you think that maybe you're being a little hard on yourself,7,#follow_up
-i see what you mean,7,#ack
-do you still go to therapy now,7,#follow_up
-what's it like for you living with them,7,#follow_up
-why did you stop,7,#follow_up
-okay so how are you doing today,6,#non_int
-have you ever been diagnosed with p_t_s_d,6,#int
-i'd love to hear all about it,6,#follow_up
-what's the hardest thing about being a parent,6,#int
-what did you do after the military,6,#int
-how did serving in the military change you,6,#follow_up
-where do you live,6,#non_int
-are you happy you did that,6,#follow_up
-what do you do now,6,#follow_up
-okay i think i've asked everything i need to,6,#ack
-what do you think of today's kids,6,#non_int
-what's the best thing about being a parent,6,#int
-do you find it easy to be a parent,6,#int
-i'm sorry,6,#ack
-what were your symptoms,5,#follow_up
-how old were you when you joined the military,5,#follow_up
-what sort of changes have you noticed since you've been going to therapy,5,#follow_up
-is it uncomfortable for you to talk about this,5,#follow_up
-what made you decide to do that,5,#follow_up
-could you have done anything to avoid it,5,#follow_up
-i'm great thanks,5,#ack
-what are some things you really like about l_a,5,#non_int
-that sounds interesting,5,#ack
-there are always trade-offs in life aren't there,5,#follow_up
-really,4,#ack
-did you ever see combat,4,#non_int
-what are some things you don't really like about l_a,4,#non_int
-has that gotten you in trouble,4,#follow_up
-okay so how are you doing today,4,#non_int
-how often do you go back to your hometown,4,#non_int
-how do you like your living situation,4,#non_int
-how has seeing a therapist affected you,4,#follow_up
-i'd love to hear all about it,4,#follow_up
-how close are you to them,4,#follow_up
-what do you do when you are annoyed,4,#int
-why,4,#follow_up
-oh my gosh,4,#ack
-so how are you doing today,3,#non_int
-is going to a therapist helping you,3,#follow_up
-like what,3,#follow_up
-yeah i see what you mean,3,#ack
-how easy was it for you to go back to civilian life,3,#int
-thanks it was great chatting with you,3,#ack
-can you tell me more about that,3,#follow_up
-tell me about that,3,#follow_up
-are you still doing that,3,#follow_up
-uh oh,3,#ack
-aww,3,#ack
-how easy was it for you to get used to living in l_a,3,#non_int
-why'd you decide to enlist in the military,3,#int
-oh,3,#ack
-when was the last time you argued with someone and what was it about,3,#int
-do you feel down,3,#int
-that's a long time,2,#ack
-why'd you move to l_a,2,#non_int
-whatever comes to your mind,2,#follow_up
-thank you,2,#ack
-do you feel that way often,2,#follow_up
-awesome,2,#ack
-why why,2,#follow_up
-that's good where are you from originally,2,#non_int
-do you consider yourself an introvert,2,#int
-you were very young weren't you,2,#follow_up
-how do you like l_a,2,#non_int
-me too,2,#ack
-i'm ellie,2,#ack
-i understand,2,#ack
-yeah that sucks,2,#ack
-yeah i understand,2,#ack
-do you have roommates,2,#non_int
-yeah i'm sorry to hear that,2,#ack
-tell me about your kids,2,#int
-okay i think i've asked everything i need to thanks for sharing your thoughts with me,2,#ack
-that makes sense,2,#ack
-what are some things you like to do for fun who's someone that's been a positive influence in your life,1,#int
-how easy is it for you to get a good night sleep,1,#int
-when was the last time you argued with someone and what was it about,1,#int
-did you ever see combat,1,#non_int
-do you think that maybe you're being a little hard on yourself,1,#int
-how would you best friend describe you,1,#int
-what advice would you give yourself ten or twenty years ago,1,#int
-yeah how hard is that,1,#follow_up
-okay what's the best thing about being a parent,1,#int
-<research assistant speaking>,1,#ack
-what are you,1,#follow_up
-i see,1,#ack
-could you have done anything to avoid it,1,#follow_up
-mhm how did you decide to do that,1,#follow_up
-really me too,1,#ack
-awesome how did you decide to do that,1,#follow_up
-wow,1,#ack
-that's great i'd love to hear all about it,1,#follow_up
-mhm i see what you mean,1,#ack
-yeah i'm sorry to hear that,1,#ack
-that's good what do you think of today's kids,1,#non_int
-yes,1,#ack
-okay could you have done anything to avoid it,1,#follow_up
-and please feel free to tell me anything your answers are totally confidential are you okay with this,1,#ack
-uh oh,1,#ack
-how has seeing a therapist affected you,1,#follow_up
-what do you do to relax,1,#int
-there are always tradeoffs in life aren't there,1,#follow_up
-<laughter> can you give me an example of that,1,#follow_up
-yeah how hard is that,1,#follow_up
-what did you do after the military,1,#follow_up
-<laughter> do you travel a lot,1,#non_int
-yeah i see what you mean,1,#ack
-where do you live,1,#non_int
-<laughter> i see what you mean,1,#ack
-who's someone that's been a positive influence in your life,1,#int
-<laughter> okay,1,#ack
-thank you,1,#ack
-how often do you go back to your home town,1,#non_int
-it can be tough to find a good job these days,1,#ack
-uh huh uh huh,1,#ack
-how did serving in the military change you,1,#int
-yeah what do you enjoy about traveling,1,#non_int
-why don't we talk about that later,1,#follow_up
-yeah that sounds really hard,1,#ack
-yeah there are always tradeoffs in life aren't there,1,#follow_up
-nice are you still doing that,1,#follow_up
-how often to you go back to your home town,1,#non_int
-when was the last time you felt really happy,1,#int
-do you consider yourself and introvert,1,#int
-what made you decide to go and see someone,1,#follow_up
-how old were you when you joined the military,1,#follow_up
-i am from l_a,1,#ack
-cool,1,#ack
-could you say a little more about that,1,#follow_up
-that's good where are you from originally,1,#non_int
-what are some things that make you really mad,1,#int
-goodbye goodbye,1,#ack
-how easy is it for you to get a good night's sleep,1,#int
-<laughter> could you say a little more about that,1,#follow_up
-mhm what are some things you don't really like about l_a,1,#non_int
-goodbye goodbye,1,#ack
-hm,1,#ack
-goodbye,1,#ack
-how easy was it for you to go back to civilian life,1,#follow_up
-uh huh uh huh uh huh is there anything you regret is there anything you regret,1,#int
-what are some things that usually put you in a good mood,1,#int
-oh,1,#ack
-who's someone that's been a positive influence in  your life,1,#int
+Questions	Count	Label
+mhm	296	#ack
+can you tell me about that	263	#follow_up
+okay	251	#ack
+why	214	#follow_up
+all right	199	#ack
+where are you from originally	192	#non_int
+have you ever been diagnosed with p_t_s_d	190	#int
+uh huh	189	#ack
+goodbye	187	#ack
+what are some things you really like about l_a	187	#non_int
+how are you at controlling your temper	186	#int
+when was the last time you argued with someone and what was it about	184	#int
+so how are you doing today	179	#non_int
+how easy is it for you to get a good night's sleep	179	#int
+what are some things you don't really like about l_a	175	#non_int
+what are you most proud of in your life	169	#int
+yeah	167	#ack
+thanks for sharing your thoughts with me	166	#ack
+how would your best friend describe you	164	#int
+how have you been feeling lately	164	#int
+have you been diagnosed with depression	155	#int
+what's your dream job	155	#int
+who's someone that's been a positive influence in your life	152	#int
+what are you like when you don't sleep well	152	#int
+sometimes when i'm feeling tense i turn on the fish tank screensaver hey i know it's not hawaii but it's the best i've got what do you do to relax	151	#int
+tell me more about that	151	#follow_up
+have you noticed any changes in your behavior or thoughts lately	148	#int
+what's one of your most memorable experiences	148	#int
+what did you study at school	144	#non_int
+do you consider yourself more shy or outgoing	141	#int
+tell me about the hardest decision you've ever had to make	136	#int
+that's good	136	#ack
+tell me about a situation that you wish you had handled differently	134	#int
+that's great	124	#ack
+is there anything you regret	123	#int
+tell me about an event or something that you wish you could erase from your memory	123	#int
+tell me about your relationship with your family	121	#int
+okay i think i have asked everything i need to	113	#ack
+what's something you feel guilty about	112	#int
+i see what you mean	111	#ack
+tell me about something you did recently that you really enjoyed	110	#int
+what do you enjoy about traveling	109	#non_int
+do you travel a lot	109	#non_int
+are you okay with this	102	#follow_up
+when was the last time you felt really happy	99	#int
+what do you do now	96	#follow_up
+have you ever served in the military	92	#non_int
+tell me about the last time you felt really happy	88	#int
+mm	88	#ack
+what advice would you give to yourself ten or twenty years ago	85	#int
+how did you feel in that moment	81	#follow_up
+how hard is that	79	#follow_up
+are you happy you did that	79	#follow_up
+do you still go to therapy now	78	#follow_up
+i'm sure you can tell by my shoes i'm not much of a world explorer do you travel a lot	77	#non_int
+how long ago were you diagnosed	77	#follow_up
+i'd love to hear about one of your trips	75	#follow_up
+whatever comes to your mind	75	#follow_up
+what got you to seek help	74	#follow_up
+how did you decide to do that	71	#follow_up
+how do you cope with them	71	#follow_up
+what would you say are some of your best qualities	67	#int
+what are some things you wish you could change about yourself	67	#int
+are they triggered by something	67	#follow_up
+what made you decide to do that	64	#follow_up
+nice	63	#ack
+that sounds really hard	57	#ack
+like what	57	#follow_up
+what sort of changes have you noticed since you've been going to therapy	57	#int
+i'm sorry	56	#ack
+wow	55	#ack
+can you give me an example of that	55	#follow_up
+what were your symptoms	55	#follow_up
+how easy was it for you to get used to living in l_a	54	#non_int
+what did you do after the military	51	#int
+how did serving in the military change you	51	#follow_up
+laughter)	50	#ack
+how old were you when you joined the military	50	#follow_up
+are you still working in that	49	#follow_up
+did you ever see combat	49	#non_int
+what are some things that make you really mad	48	#int
+how easy was it for you to go back to civilian life	48	#int
+why'd you decide to enlist in the military	48	#int
+i'm sorry to hear that	47	#ack
+how often do you go back to your hometown	46	#non_int
+when did you move to l_a	45	#non_int
+how does it compare to l_a	45	#non_int
+when was the last time that happened	44	#follow_up
+that sucks	43	#ack
+yes	42	#ack
+do you consider yourself an introvert	40	#int
+tell me how you spend your ideal weekend	39	#non_int
+how close are you to your family	38	#int
+that's so good to hear	36	#ack
+has that gotten you in trouble	36	#follow_up
+aw	34	#ack
+why did you move to l_a	34	#non_int
+what advice would you give yourself ten or twenty years ago	33	#int
+do you feel like therapy is useful	33	#int
+what are some things that usually put you in a good mood	32	#int
+tell me about a time when someone made you feel really badly about yourself	31	#int
+do you find it easy to be a parent	31	#int
+i'd like to hear about one of your trips	31	#follow_up
+how would your best friend describe you	30	#int
+what do you do to relax	30	#int
+could you have done anything to avoid it	30	#follow_up
+why'd you move to l_a	30	#non_int
+what's the hardest thing about being a parent	30	#int
+okay i think i've asked everything i need to	30	#ack
+do you feel therapy is useful	30	#int
+who's someone that's been a positive influence in your life	29	#int
+how have you been feeling lately	28	#int
+yeah	28	#ack
+what'd you study at school	27	#non_int
+have you ever served in the military	27	#non_int
+what do you think of today's kids	27	#non_int
+what advice would you give yourself ten or twenty years ago	27	#int
+do you feel down	27	#int
+what are you most proud of in your life	26	#int
+thanks for sharing your thoughts with me	26	#ack
+what do you do when you're annoyed	26	#int
+what's the best thing about being a parent	26	#int
+what'd you study at school	25	#non_int
+that sounds like a great situation	25	#ack
+how do you know them	25	#follow_up
+why did you stop	25	#follow_up
+when was the last time you felt really happy	24	#int
+have you noticed any changes in your behavior or thoughts lately	24	#int
+that makes sense	24	#ack
+that's good	24	#ack
+what would you say are some of your best qualities	24	#int
+when was the last time you argued with someone and what was it about	23	#int
+how easy is it for you to get a good night's sleep	22	#int
+what are some things you like to do for fun	22	#int
+what's your dream job	22	#int
+do you feel that way often	22	#follow_up
+what's one of your most memorable experiences	21	#int
+how close are you to your family	21	#int
+have you been diagnosed with depression	21	#int
+right	21	#ack
+<laughter>	21	#ack
+tell me about your kids	20	#int
+where are you from originally	20	#non_int
+how are you at controlling your temper	20	#int
+how close are you to them	20	#follow_up
+tell me about something you did recently that you really enjoyed	20	#int
+what do you do when you're annoyed	19	#int
+tell me more about that	19	#follow_up
+did you think you had a problem before you found out	19	#follow_up
+how do you like your living situation	19	#non_int
+what are some ways that you're different as a parent than your parents	18	#int
+i understand	18	#ack
+do you consider yourself an introvert	18	#int
+what are you like when you don't sleep well	18	#int
+are you still working in that	17	#follow_up
+what are some things that make you really mad	17	#int
+what got you to seek help	16	#follow_up
+that's a long time	16	#ack
+that's great	16	#ack
+are you still doing that	16	#follow_up
+how did you decide to do that	16	#follow_up
+hmm	16	#ack
+it can be tough to find a good job these days	16	#ack
+really	16	#ack
+are you okay with this	15	#follow_up
+that sucks	15	#ack
+when'd you move to l_a	15	#non_int
+is going to a therapist helping you	15	#follow_up
+do you have roommates	15	#non_int
+so how are you doing today	14	#non_int
+how has seeing a therapist affected you	14	#follow_up
+how hard is that	13	#follow_up
+what do you enjoy about traveling	13	#non_int
+what do you do to relax	12	#int
+i love my job you could almost say it's virtually made for me what's your dream job	12	#int
+oh no	12	#ack
+goodbye	12	#ack
+that sounds interesting	12	#ack
+how do you cope with them	12	#follow_up
+can you tell me about that	12	#follow_up
+is there anything you regret	12	#int
+i'd love to hear about one of your trips	12	#follow_up
+tell me about that	12	#follow_up
+can you give me an example of that	11	#follow_up
+i see	11	#ack
+how long ago were you diagnosed	11	#follow_up
+that sounds like a great situation	11	#ack
+uh huh	11	#ack
+what do you do when you are annoyed	11	#int
+<laughter>	10	#ack
+are they triggered by something	10	#follow_up
+let's come back to that later	10	#ack
+could you say a little more about that	10	#follow_up
+that sounds really hard	10	#ack
+i'm sorry to hear that	10	#ack
+do you travel a lot	10	#non_int
+you were very young weren't you	10	#follow_up
+what are some things that usually put you in a good mood	9	#int
+did you think you had a problem before you found out	9	#follow_up
+what was it about	9	#follow_up
+do you have disturbing thoughts	9	#int
+awesome	9	#ack
+how did you feel in that moment	8	#follow_up
+what are some things you like to do for fun	8	#int
+why don't we talk about that later	8	#follow_up
+let's come back to that later	8	#follow_up
+that's so good to hear	8	#ack
+do you feel like therapy's useful	8	#int
+how often do you go back to your home town	8	#non_int
+there are always trade offs in life aren't there	8	#follow_up
+is it uncomfortable for you to talk about this	8	#follow_up
+how are you doing today	7	#non_int
+do you feel like therapy's useful	7	#int
+when was the last time that happened	7	#follow_up
+how do you know them	7	#follow_up
+do you think that maybe you're being a little hard on yourself	7	#follow_up
+i see what you mean	7	#ack
+do you still go to therapy now	7	#follow_up
+what's it like for you living with them	7	#follow_up
+why did you stop	7	#follow_up
+okay so how are you doing today	6	#non_int
+have you ever been diagnosed with p_t_s_d	6	#int
+i'd love to hear all about it	6	#follow_up
+what's the hardest thing about being a parent	6	#int
+where do you live	6	#non_int
+are you happy you did that	6	#follow_up
+what do you do now	6	#follow_up
+okay i think i've asked everything i need to	6	#ack
+what do you think of today's kids	6	#non_int
+what's the best thing about being a parent	6	#int
+do you find it easy to be a parent	6	#int
+i'm sorry	6	#ack
+that sounds hard	6	#ack
+what were your symptoms	5	#follow_up
+what sort of changes have you noticed since you've been going to therapy	5	#follow_up
+is it uncomfortable for you to talk about this	5	#follow_up
+what made you decide to do that	5	#follow_up
+could you have done anything to avoid it	5	#follow_up
+i'm great thanks	5	#ack
+what are some things you really like about l_a	5	#non_int
+that sounds interesting	5	#ack
+there are always trade-offs in life aren't there	5	#follow_up
+what are some things you don't really like about l_a	4	#non_int
+has that gotten you in trouble	4	#follow_up
+okay so how are you doing today	4	#non_int
+how often do you go back to your hometown	4	#non_int
+how do you like your living situation	4	#non_int
+how has seeing a therapist affected you	4	#follow_up
+i'd love to hear all about it	4	#follow_up
+how close are you to them	4	#follow_up
+why	4	#follow_up
+oh my gosh	4	#ack
+so how are you doing today	3	#non_int
+is going to a therapist helping you	3	#follow_up
+like what	3	#follow_up
+yeah i see what you mean	3	#ack
+thanks it was great chatting with you	3	#ack
+can you tell me more about that	3	#follow_up
+tell me about that	3	#follow_up
+are you still doing that	3	#follow_up
+uh oh	3	#ack
+aww	3	#ack
+how easy was it for you to get used to living in l_a	3	#non_int
+oh	3	#ack
+when was the last time you argued with someone and what was it about	3	#int
+do you feel down	3	#int
+that's a long time	2	#ack
+why'd you move to l_a	2	#non_int
+whatever comes to your mind	2	#follow_up
+thank you	2	#ack
+do you feel that way often	2	#follow_up
+why why	2	#follow_up
+that's good where are you from originally	2	#non_int
+do you consider yourself an introvert	2	#int
+you were very young weren't you	2	#follow_up
+how do you like l_a	2	#non_int
+me too	2	#ack
+i'm ellie	2	#ack
+i understand	2	#ack
+yeah that sucks	2	#ack
+yeah i understand	2	#ack
+do you have roommates	2	#non_int
+yeah i'm sorry to hear that	2	#ack
+tell me about your kids	2	#int
+okay i think i've asked everything i need to thanks for sharing your thoughts with me	2	#ack
+that makes sense	2	#ack
+what are some things you like to do for fun who's someone that's been a positive influence in your life	1	#int
+how easy is it for you to get a good night sleep	1	#int
+when was the last time you argued with someone and what was it about	1	#int
+did you ever see combat	1	#non_int
+do you think that maybe you're being a little hard on yourself	1	#int
+how would you best friend describe you	1	#int
+what advice would you give yourself ten or twenty years ago	1	#int
+yeah how hard is that	1	#follow_up
+okay what's the best thing about being a parent	1	#int
+<research assistant speaking>	1	#ack
+what are you	1	#follow_up
+i see	1	#ack
+could you have done anything to avoid it	1	#follow_up
+mhm how did you decide to do that	1	#follow_up
+really me too	1	#ack
+awesome how did you decide to do that	1	#follow_up
+wow	1	#ack
+that's great i'd love to hear all about it	1	#follow_up
+mhm i see what you mean	1	#ack
+yeah i'm sorry to hear that	1	#ack
+that's good what do you think of today's kids	1	#non_int
+yes	1	#ack
+okay could you have done anything to avoid it	1	#follow_up
+and please feel free to tell me anything your answers are totally confidential are you okay with this	1	#ack
+uh oh	1	#ack
+how has seeing a therapist affected you	1	#follow_up
+what do you do to relax	1	#int
+there are always tradeoffs in life aren't there	1	#follow_up
+<laughter> can you give me an example of that	1	#follow_up
+yeah how hard is that	1	#follow_up
+what did you do after the military	1	#follow_up
+<laughter> do you travel a lot	1	#non_int
+yeah i see what you mean	1	#ack
+where do you live	1	#non_int
+<laughter> i see what you mean	1	#ack
+who's someone that's been a positive influence in your life	1	#int
+<laughter> okay	1	#ack
+thank you	1	#ack
+how often do you go back to your home town	1	#non_int
+it can be tough to find a good job these days	1	#ack
+uh huh uh huh	1	#ack
+how did serving in the military change you	1	#int
+yeah what do you enjoy about traveling	1	#non_int
+why don't we talk about that later	1	#follow_up
+yeah that sounds really hard	1	#ack
+yeah there are always tradeoffs in life aren't there	1	#follow_up
+nice are you still doing that	1	#follow_up
+how often to you go back to your home town	1	#non_int
+when was the last time you felt really happy	1	#int
+do you consider yourself and introvert	1	#int
+what made you decide to go and see someone	1	#follow_up
+how old were you when you joined the military	1	#follow_up
+i am from l_a	1	#ack
+cool	1	#ack
+could you say a little more about that	1	#follow_up
+that's good where are you from originally	1	#non_int
+what are some things that make you really mad	1	#int
+goodbye goodbye	1	#ack
+how easy is it for you to get a good night's sleep	1	#int
+<laughter> could you say a little more about that	1	#follow_up
+mhm what are some things you don't really like about l_a	1	#non_int
+goodbye goodbye	1	#ack
+hm	1	#ack
+goodbye	1	#ack
+how easy was it for you to go back to civilian life	1	#follow_up
+uh huh uh huh uh huh is there anything you regret is there anything you regret	1	#int
+what are some things that usually put you in a good mood	1	#int
+oh	1	#ack
+who's someone that's been a positive influence in  your life	1	#int
