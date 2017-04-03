@@ -54,7 +54,7 @@ def readTranscript():
     global featureList
     transcriptFiles=glob(sys.argv[1]+'[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
     for i in range(0,len(transcriptFiles)):
-        t=pd.read_csv(transcriptFiles[i], delimiter='\t')
+        t=pd.read_csv(transcriptFiles[i], delimiter=',|\t')
         t = t.fillna("")
         captureStarted=False
         prevUtterance=""
@@ -112,8 +112,8 @@ def readTranscript():
 def readLIWC_DND():
     global listofParticipants
     answerQuestion={}
-    dFile=open('data/disc_nondisc/discriminative_LIWC.csv','w')
-    ndFile=open('data/disc_nondisc/nondiscriminative_LIWC.csv','w')
+    dFile=open('data/disc_nondisc/discriminative_LIWC.csv','a')
+    ndFile=open('data/disc_nondisc/nondiscriminative_LIWC.csv','a')
     dWriter=csv.writer(dFile)
     ndWriter=csv.writer(ndFile)
     discriminativeDF=pd.DataFrame()
@@ -133,8 +133,8 @@ def readLIWC_DND():
     reader=csv.reader(f)
     header=['video','question']
     header+=reader.next()[2:]
-    dWriter.writerow(header)
-    ndWriter.writerow(header)
+    #dWriter.writerow(header)
+    #ndWriter.writerow(header)
     listofParticipants=[int(i) for i in listofParticipants]
 
     listofParticipants.sort()
@@ -182,8 +182,8 @@ def readLIWC_DND():
 def readLIWC_PN():
     global listofParticipants
     answerQuestion={}
-    pFile=open('data/pos_neg/positive_LIWC.csv','w')
-    nFile=open('data/pos_neg/negative_LIWC.csv','w')
+    pFile=open('data/pos_neg/positive_LIWC.csv','a')
+    nFile=open('data/pos_neg/negative_LIWC.csv','a')
     pWriter=csv.writer(pFile)
     nWriter=csv.writer(nFile)
     positiveDF=pd.DataFrame()

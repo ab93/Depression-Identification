@@ -62,7 +62,7 @@ def readTranscript():
     global featureList
     transcriptFiles=glob(sys.argv[1]+'[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
     for i in range(0,len(transcriptFiles)):
-        t=pd.read_csv(transcriptFiles[i], delimiter='\t')
+        t=pd.read_csv(transcriptFiles[i], delimiter=',|\t')
         t = t.fillna("")
         captureStarted=False
         startTime=0.0
@@ -78,6 +78,7 @@ def readTranscript():
             question=question.strip()
 
             if t.iloc[j]['speaker']=='Ellie':
+                endTime=t.iloc[j]['start_time']
                 if question in nonIntimate and captureStarted:
                     if (participantNo, prevQuestion) not in featureList:
                         featureList[(participantNo, prevQuestion)]=[startTime, endTime]
@@ -86,6 +87,7 @@ def readTranscript():
                     captureStarted=False
 
                 elif question in intimate and question in questionType_DND and captureStarted:
+                    endTime=t.iloc[j]['start_time']
                     if (participantNo, prevQuestion) not in featureList:
                         featureList[(participantNo, prevQuestion)]=[startTime, endTime]
                     else:
@@ -101,6 +103,7 @@ def readTranscript():
                     captureStarted=True
 
                 elif question in intimate and question not in questionType_DND and captureStarted:
+                    endTime=t.iloc[j]['start_time']
                     if (participantNo, prevQuestion) not in featureList:
                         featureList[(participantNo, prevQuestion)]=[startTime, endTime]
                     else:
@@ -111,7 +114,8 @@ def readTranscript():
                     endTime=t.iloc[j]['stop_time']
 
             elif t.iloc[j]['speaker']=='Participant' and captureStarted:
-                endTime=t.iloc[j]['stop_time']
+                #endTime=t.iloc[j]['stop_time']
+                continue
 
 
 def readFORMANT_DND():
@@ -201,12 +205,12 @@ def readFORMANT_PN():
 
 def readCOVAREP_DND():
     groupByQuestion = {}
-    dFile = open('data/disc_nondisc/discriminative_COVAREP.csv', 'w')
-    ndFile = open('data/disc_nondisc/nondiscriminative_COVAREP.csv', 'w')
+    dFile = open('data/disc_nondisc/discriminative_COVAREP.csv', 'a')
+    ndFile = open('data/disc_nondisc/nondiscriminative_COVAREP.csv', 'a')
     dWriter = csv.writer(dFile)
     ndWriter = csv.writer(ndFile)
-    dWriter.writerow(header)
-    ndWriter.writerow(header)
+    #dWriter.writerow(header)
+    #ndWriter.writerow(header)
     for item in featureList:
         if item[0] not in groupByQuestion:
             groupByQuestion[item[0]] = [(item[1], featureList[item])]
@@ -215,7 +219,7 @@ def readCOVAREP_DND():
 
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_COVAREP.csv'
-        f = pd.read_csv(fileName, delimiter=',')
+        f = pd.read_csv(fileName, delimiter=',|\t')
 
         for instance in groupByQuestion[item]:
             startTime = instance[1][0]
@@ -243,12 +247,12 @@ def readCOVAREP_DND():
 
 def readCOVAREP_PN():
     groupByQuestion = {}
-    pFile = open('data/pos_neg/positive_COVAREP.csv', 'w')
-    nFile = open('data/pos_neg/negative_COVAREP.csv', 'w')
+    pFile = open('data/pos_neg/positive_COVAREP.csv', 'a')
+    nFile = open('data/pos_neg/negative_COVAREP.csv', 'a')
     pWriter = csv.writer(pFile)
     nWriter = csv.writer(nFile)
-    pWriter.writerow(header)
-    nWriter.writerow(header)
+    #pWriter.writerow(header)
+    #nWriter.writerow(header)
     for item in featureList:
         if item[0] not in groupByQuestion:
             groupByQuestion[item[0]] = [(item[1], featureList[item])]
@@ -257,7 +261,7 @@ def readCOVAREP_PN():
 
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_COVAREP.csv'
-        f = pd.read_csv(fileName, delimiter=',')
+        f = pd.read_csv(fileName, delimiter=',|\t')
 
         for instance in groupByQuestion[item]:
             startTime = instance[1][0]
@@ -286,7 +290,7 @@ def readCOVAREP_PN():
 if __name__ == "__main__":
     readHelperData()
     readTranscript()
-    readFORMANT_DND()
-    readFORMANT_PN()
+    #readFORMANT_DND()
+    #readFORMANT_PN()
     readCOVAREP_DND()
     readCOVAREP_PN()

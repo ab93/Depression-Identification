@@ -49,7 +49,7 @@ def readTranscript():
     global featureList
     transcriptFiles = glob(sys.argv[1] + '[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
     for i in range(0, len(transcriptFiles)):
-        t = pd.read_csv(transcriptFiles[i], delimiter='\t')
+        t = pd.read_csv(transcriptFiles[i], delimiter=',|\t')
         t = t.fillna("")
         captureStarted = False
         startTime = 0.0
@@ -105,6 +105,7 @@ def readTranscript():
                 #endTime = t.iloc[j]['stop_time']
 
 def readOPENFACE_DND():
+    print "DND"
     groupByQuestion = {}
     dFile = open('data/disc_nondisc/discriminative_OPENFACE.csv', 'w')
     ndFile = open('data/disc_nondisc/nondiscriminative_OPENFACE.csv', 'w')
@@ -126,7 +127,7 @@ def readOPENFACE_DND():
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_OPENFACE.txt'
         f = pd.read_csv(fileName, delimiter=', ')
-
+        print item
         for instance in groupByQuestion[item]:
             startTime = instance[1][0]
             endTime = instance[1][1]
@@ -150,6 +151,7 @@ def readOPENFACE_DND():
 
 
 def readOPENFACE_PN():
+    print "PN"
     groupByQuestion = {}
     pFile = open('data/pos_neg/positive_OPENFACE.csv', 'w')
     nFile = open('data/pos_neg/negative_OPENFACE.csv', 'w')
@@ -172,7 +174,7 @@ def readOPENFACE_PN():
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_OPENFACE.txt'
         f = pd.read_csv(fileName, delimiter=', ')
-
+        print item
         for instance in groupByQuestion[item]:
             startTime = instance[1][0]
             endTime = instance[1][1]
@@ -199,5 +201,5 @@ def readOPENFACE_PN():
 if __name__ == "__main__":
     readHelperData()
     readTranscript()
-    readCLM_DND()
-    readCLM_PN()
+    readOPENFACE_DND()
+    readOPENFACE_PN()
