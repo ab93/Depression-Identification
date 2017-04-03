@@ -120,12 +120,12 @@ def readTranscript():
 
 def readFORMANT_DND():
     groupByQuestion = {}
-    dFile = open('data/disc_nondisc/discriminative_FORMANT.csv', 'w')
-    ndFile = open('data/disc_nondisc/nondiscriminative_FORMANT.csv', 'w')
+    dFile = open('data/disc_nondisc/discriminative_FORMANT.csv', 'a')
+    ndFile = open('data/disc_nondisc/nondiscriminative_FORMANT.csv', 'a')
     dWriter = csv.writer(dFile)
     ndWriter = csv.writer(ndFile)
-    dWriter.writerow(header_f)
-    ndWriter.writerow(header_f)
+    #dWriter.writerow(header_f)
+    #ndWriter.writerow(header_f)
     for item in featureList:
         if item[0] not in groupByQuestion:
             groupByQuestion[item[0]] = [(item[1], featureList[item])]
@@ -134,7 +134,7 @@ def readFORMANT_DND():
 
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_FORMANT.csv'
-        f = pd.read_csv(fileName, delimiter=',')
+        f = pd.read_csv(fileName, delimiter=',|\t')
 
         for instance in groupByQuestion[item]:
             startTime = instance[1][0]
@@ -162,12 +162,12 @@ def readFORMANT_DND():
 
 def readFORMANT_PN():
     groupByQuestion = {}
-    pFile = open('data/pos_neg/positive_FORMANT.csv', 'w')
-    nFile = open('data/pos_neg/negative_FORMANT.csv', 'w')
+    pFile = open('data/pos_neg/positive_FORMANT.csv', 'a')
+    nFile = open('data/pos_neg/negative_FORMANT.csv', 'a')
     pWriter = csv.writer(pFile)
     nWriter = csv.writer(nFile)
-    pWriter.writerow(header_f)
-    nWriter.writerow(header_f)
+    #pWriter.writerow(header_f)
+    #nWriter.writerow(header_f)
     for item in featureList:
         if item[0] not in groupByQuestion:
             groupByQuestion[item[0]] = [(item[1], featureList[item])]
@@ -176,7 +176,7 @@ def readFORMANT_PN():
 
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_FORMANT.csv'
-        f = pd.read_csv(fileName, delimiter=',')
+        f = pd.read_csv(fileName, delimiter=',|\t')
 
         for instance in groupByQuestion[item]:
             startTime = instance[1][0]
@@ -290,7 +290,7 @@ def readCOVAREP_PN():
 if __name__ == "__main__":
     readHelperData()
     readTranscript()
-    #readFORMANT_DND()
-    #readFORMANT_PN()
-    readCOVAREP_DND()
-    readCOVAREP_PN()
+    readFORMANT_DND()
+    readFORMANT_PN()
+    #readCOVAREP_DND()
+    #readCOVAREP_PN()

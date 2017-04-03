@@ -55,7 +55,8 @@ def main(qtype,mode,feature_list):
 
     # Determine file_list based on Mode
     if mode == "V":
-        file_list = ["_CLM.csv","_CLM_3D.csv","_CLM_Gaze.csv","_CLM_pose.csv","_FACET.csv"]
+        #file_list = ["_CLM.csv","_CLM_3D.csv","_CLM_Gaze.csv","_CLM_pose.csv","_FACET.csv"]
+        file_list = ["_OPENFACE.csv"]
     elif mode == "A":
         file_list = ["_COVAREP.csv","_FORMANT.csv"]
     else:
