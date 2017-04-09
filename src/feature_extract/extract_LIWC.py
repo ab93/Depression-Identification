@@ -129,12 +129,12 @@ def readLIWC_DND():
                 answerQuestion[answer]=(item[0], item[1])
 
 
-    f=open('data/misc/liwc.csv')
+    f=open('data/misc/liwc_new.csv')
     reader=csv.reader(f)
     header=['video','question']
     header+=reader.next()[2:]
-    #dWriter.writerow(header)
-    #ndWriter.writerow(header)
+    dWriter.writerow(header)
+    ndWriter.writerow(header)
     listofParticipants=[int(i) for i in listofParticipants]
 
     listofParticipants.sort()
@@ -199,7 +199,7 @@ def readLIWC_PN():
                 answerQuestion[answer]=(item[0], item[1])
 
 
-    f=open('data/misc/liwc.csv')
+    f=open('data/misc/liwc_new.csv')
     reader=csv.reader(f)
     header=['video','question']
     header+=reader.next()[2:]
