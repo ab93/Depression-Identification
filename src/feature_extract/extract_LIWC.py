@@ -147,7 +147,7 @@ def readLIWC_DND():
                 liwcVectors[row[0]].append((row[1], row[2:]))
 
     #answerQuestion: answer: [participantNo, question]
-    #liwcVectors: participantNo: [(answer, vector)])
+    #liwcVectors: participantNo: [(answer, vector)]
 
     for video in liwcVectors:
         answerPair=liwcVectors[video]
@@ -165,8 +165,11 @@ def readLIWC_DND():
                 vector.insert(0,str(video))
                 nonDiscriminativeMatrix.append(vector)
 
+    print discriminativeMatrix
+    raw_input()
     discriminativeDF=pd.DataFrame(discriminativeMatrix, columns=header)
     nonDiscriminativeDF=pd.DataFrame(nonDiscriminativeMatrix, columns=header)
+    
     for k1, k2 in discriminativeDF.groupby(['video','question']):
         vec=[k1[0],k1[1]]
         x=k2.mean().values.tolist()
@@ -255,4 +258,4 @@ if __name__=="__main__":
     readHelperData()
     readTranscript()
     readLIWC_DND()
-    readLIWC_PN()
+    #readLIWC_PN()
