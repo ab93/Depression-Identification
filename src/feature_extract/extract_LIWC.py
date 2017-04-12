@@ -112,22 +112,10 @@ def readTranscript():
 def readLIWC_DND():
     global listofParticipants
     answerQuestion={}
-    dFile=open('data/disc_nondisc/discriminative_LIWC.csv','a')
-    ndFile=open('data/disc_nondisc/nondiscriminative_LIWC.csv','a')
+    dFile=open('data/disc_nondisc/discriminative_LIWC.csv','w')
+    ndFile=open('data/disc_nondisc/nondiscriminative_LIWC.csv','w')
     dWriter=csv.writer(dFile)
     ndWriter=csv.writer(ndFile)
-    discriminativeDF=pd.DataFrame()
-    nonDiscriminativeDF=pd.DataFrame()
-
-    discriminativeMatrix=[]
-    nonDiscriminativeMatrix=[]
-    for item in questionAnswers:
-        for answer in questionAnswers[item]:
-            if answer in answerQuestion:
-                pass
-            else:
-                answerQuestion[answer]=(item[0], item[1])
-
 
     f=open('data/misc/liwc_new.csv')
     reader=csv.reader(f)
@@ -145,62 +133,41 @@ def readLIWC_DND():
                 liwcVectors[row[0]]=[(row[1], row[2:])]
             else:
                 liwcVectors[row[0]].append((row[1], row[2:]))
+    #questionAnswers: [(participantNo, question)]=[list of answers]
+    #liwcVectors: participantNo: [list of (answer, vector)]
+    for item in questionAnswers:
+        participant_number=item[0]
+        current_question=item[1]
+        lines_for_this_question=[]
+        answer_length=0.0
+        for answer in questionAnswers[item]:
+            vectors=liwcVectors[participant_number]
+            for vector in vectors:
+                if answer==vector[0]:
+                    utterance_length=len(answer.split(" "))
+                    answer_length+=utterance_length
+                    feature_vector=[float(i)*utterance_length for i in vector[1]]
+                    lines_for_this_question.append(feature_vector)
+        final_vector=[sum(value)/answer_length for value in zip(*lines_for_this_question)]
+        final_vector.insert(0,current_question)
+        final_vector.insert(0,str(participant_number))
 
-    #answerQuestion: answer: [participantNo, question]
-    #liwcVectors: participantNo: [(answer, vector)]
-
-    for video in liwcVectors:
-        answerPair=liwcVectors[video]
-        for item in answerPair:
-            if item[0] in answerQuestion and questionType_DND[answerQuestion[item[0]][1]]=='D':
-                vector=[float(i) for i in item[1]]
-                vector.insert(0,answerQuestion[item[0]][1])
-                vector.insert(0,str(video))
-                discriminativeMatrix.append(vector)
+        if questionType_DND[current_question]=='D':
+            dWriter.writerow(final_vector)
+        elif questionType_DND[current_question]=='ND':
+            ndWriter.writerow(final_vector)
 
 
-            elif item[0] in answerQuestion and questionType_DND[answerQuestion[item[0]][1]]=='ND':
-                vector=[float(i) for i in item[1]]
-                vector.insert(0,answerQuestion[item[0]][1])
-                vector.insert(0,str(video))
-                nonDiscriminativeMatrix.append(vector)
 
-    print discriminativeMatrix
-    raw_input()
-    discriminativeDF=pd.DataFrame(discriminativeMatrix, columns=header)
-    nonDiscriminativeDF=pd.DataFrame(nonDiscriminativeMatrix, columns=header)
-    
-    for k1, k2 in discriminativeDF.groupby(['video','question']):
-        vec=[k1[0],k1[1]]
-        x=k2.mean().values.tolist()
-        vec+=x
-        dWriter.writerow(vec)
 
-    for k1, k2 in nonDiscriminativeDF.groupby(['video','question']):
-        vec=[k1[0],k1[1]]
-        x=k2.mean().values.tolist()
-        vec+=x
-        ndWriter.writerow(vec)
 
 def readLIWC_PN():
     global listofParticipants
     answerQuestion={}
-    pFile=open('data/pos_neg/positive_LIWC.csv','a')
-    nFile=open('data/pos_neg/negative_LIWC.csv','a')
+    pFile=open('data/pos_neg/positive_LIWC.csv','w')
+    nFile=open('data/pos_neg/negative_LIWC.csv','w')
     pWriter=csv.writer(pFile)
     nWriter=csv.writer(nFile)
-    positiveDF=pd.DataFrame()
-    negativeDF=pd.DataFrame()
-
-    positiveMatrix=[]
-    negativeMatrix=[]
-    for item in questionAnswers:
-        for answer in questionAnswers[item]:
-            if answer in answerQuestion:
-                pass
-            else:
-                answerQuestion[answer]=(item[0], item[1])
-
 
     f=open('data/misc/liwc_new.csv')
     reader=csv.reader(f)
@@ -219,43 +186,32 @@ def readLIWC_PN():
             else:
                 liwcVectors[row[0]].append((row[1], row[2:]))
 
-    #answerQuestion: answer: [participantNo, question]
-    #liwcVectors: participantNo: [(answer, vector)])
+    #questionAnswers: [(participantNo, question)]=[list of answers]
+    #liwcVectors: participantNo: [list of (answer, vector)]
+    for item in questionAnswers:
+        participant_number=item[0]
+        current_question=item[1]
+        lines_for_this_question=[]
+        answer_length=0.0
+        for answer in questionAnswers[item]:
+            vectors=liwcVectors[participant_number]
+            for vector in vectors:
+                if answer==vector[0]:
+                    utterance_length=len(answer.split(" "))
+                    answer_length+=utterance_length
+                    feature_vector=[float(i)*utterance_length for i in vector[1]]
+                    lines_for_this_question.append(feature_vector)
+        final_vector=[sum(value)/answer_length for value in zip(*lines_for_this_question)]
+        final_vector.insert(0,current_question)
+        final_vector.insert(0,str(participant_number))
 
-    for video in liwcVectors:
-        answerPair=liwcVectors[video]
-
-        for item in answerPair:
-            if item[0] in answerQuestion and questionType_PN[answerQuestion[item[0]][1]]=='P':
-                vector=[float(i) for i in item[1]]
-                vector.insert(0,answerQuestion[item[0]][1])
-                vector.insert(0,str(video))
-                positiveMatrix.append(vector)
-
-
-            elif item[0] in answerQuestion and questionType_PN[answerQuestion[item[0]][1]]=='N':
-                vector=[float(i) for i in item[1]]
-                vector.insert(0,answerQuestion[item[0]][1])
-                vector.insert(0,str(video))
-                negativeMatrix.append(vector)
-
-    positiveDF=pd.DataFrame(positiveMatrix, columns=header)
-    negativeDF=pd.DataFrame(negativeMatrix, columns=header)
-    for k1, k2 in positiveDF.groupby(['video','question']):
-        vec=[k1[0],k1[1]]
-        x=k2.mean().values.tolist()
-        vec+=x
-        pWriter.writerow(vec)
-
-    for k1, k2 in negativeDF.groupby(['video','question']):
-        vec=[k1[0],k1[1]]
-        x=k2.mean().values.tolist()
-        vec+=x
-        nWriter.writerow(vec)
-
+        if questionType_PN[current_question]=='P':
+            pWriter.writerow(final_vector)
+        elif questionType_PN[current_question]=='N':
+            nWriter.writerow(final_vector)
 
 if __name__=="__main__":
     readHelperData()
     readTranscript()
-    readLIWC_DND()
-    #readLIWC_PN()
+    #readLIWC_DND()
+    readLIWC_PN()

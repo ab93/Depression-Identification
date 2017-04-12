@@ -55,6 +55,7 @@ def liwc(words):#words is a list of words
     return liwc_features
 
 if __name__=='__main__':
+
     ext=int(sys.argv[2])
     ext1=int(sys.argv[3])
     transcriptFiles = glob(sys.argv[1] + '[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
