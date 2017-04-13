@@ -10,6 +10,9 @@ from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_classif
 from sklearn.ensemble import RandomForestClassifier
 
+'''
+
+'''
 def get_feature_df(train, file_, *files):
     # Set directory based on Train and Validation
     if train == 'train':
@@ -20,11 +23,14 @@ def get_feature_df(train, file_, *files):
         split_file = config.TEST_SPLIT_FILE
 
     # Append file columns to a single data frame
-    feature_df = pd.read_csv(file_)
+    feature_df = pd.read_csv(file_,error_bad_lines=False)
+    feature_df = feature_df.fillna(0)
     if len(files):
         for f in files[0]:
-            print f
-            feature_df = pd.concat([feature_df, pd.read_csv(f)], axis=1)
+            #print f
+            feature_df_second = pd.read_csv(f)
+            feature_df_second = feature_df_second.fillna(0)
+            feature_df = pd.concat([feature_df, feature_df_second], axis=1)
             feature_df = feature_df.T.drop_duplicates().T
 
     # Trim data frame to hole only train/validation records
@@ -102,7 +108,12 @@ def select_best_K(df,labels,K):
     # Obtain Selected K best features - indices
     X = df.as_matrix()
     y = labels
-    kbest = SelectKBest(f_classif, k=K)
+
+    if df.shape[1] < 20:
+        kbest = SelectKBest(f_classif, k='all')
+    else:
+        kbest = SelectKBest(f_classif, k=K)
+
     kbest.fit(X, y)
     score_list = kbest.scores_
 
@@ -191,7 +202,6 @@ def main(qtype,mode,classifier_type):
     # Obtain data frame containing all features from determined file list for TRAINING SET
     TRAIN = "train"
     df = get_feature_df(TRAIN,file1,files)
-
     # Obtain data frame containing all features from determined file list for VALIDATION SET
     TRAIN = "val"
     val_df = get_feature_df(TRAIN, file1, files)
@@ -233,6 +243,7 @@ def main(qtype,mode,classifier_type):
     if mode=="V":
         df = remove_low_variance(df)
     df = perform_l1(df,feature_type)
+
     df = perform_random_forest(df,feature_type,N)
     if mode!="A":
         df = select_best_K(df,feature_type,K)
@@ -310,6 +321,7 @@ if __name__ == '__main__':
     #mode = sys.argv[2] # A- acoustic, V- visual, L- linguistic
 
     # Call main function
-    #main(qtype,mode)
     feature_select("C")
     feature_select("R")
+
+    
