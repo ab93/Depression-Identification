@@ -3,6 +3,7 @@ import os
 from sklearn import preprocessing
 from ..main import config
 import numpy as np
+
 def get_normalized_features(filename):
     filename_train = filename
     data_train = pd.read_csv(filename_train)
