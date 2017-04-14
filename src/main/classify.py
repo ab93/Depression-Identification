@@ -19,6 +19,13 @@ def grid_search_meta(mode='acoustic', category='PN', normalize='normalize'):
                                                           category=category,
                                                           normalize=normalize)
 
+    print len(X_train[0])
+    print X_train[0][0].shape
+    print X_train[0][12].shape
+    print X_train[0][20].shape
+    print X_train[0][30].shape
+    raw_input()
+
     # Set y_true for validation
     y_true_val = map(int, map(np.mean, y_val[0]))
 
@@ -45,41 +52,41 @@ def grid_search_meta(mode='acoustic', category='PN', normalize='normalize'):
     # all_params = [max_ent_vals, svm_vals]
 
 
-    # with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_SVM_' + category + '.txt'),'w') as outfile:
-    #     for clf_wt in clf_weights:
-    #         for class_wt in class_weights:
-    #             for param1 in svm_vals:
-    #                 for param2 in svm_vals:
-    #                     clf_1 = SVC(class_weight={1:class_wt}, **param1)
-    #                     clf_2 = SVC(class_weight={1:class_wt}, **param2)
-    #                     meta_clf = MetaClassifier(classifiers=[clf_1, clf_2], weights=clf_wt)
-    #                     meta_clf.fit(X_train, y_train)
-    #                     f1_score = meta_clf.score(X_val, y_true_val)
-    #                     print f1_score
-    #                     if not clf_wt:
-    #                         clf_wt = [0.5, 0.5]
-    #                     outfile.write(str(clf_wt[0]) + ' ' + str(clf_wt[1]) + '\t' +
-    #                     str(param1) + '\t' + str(param2) + '\t' +
-    #                     str(class_wt) + '\t' + str(f1_score) +'\n')
-
-    with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_DT_' + category + '.txt'), 'w') as outfile:
+    with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_SVM_' + category + '.txt'),'w') as outfile:
         for clf_wt in clf_weights:
             for class_wt in class_weights:
-                for param1 in dt_vals:
-                    for param2 in dt_vals:
-                        clf_1 = DecisionTreeClassifier(class_weight={1: class_wt}, **param1)
-                        clf_2 = DecisionTreeClassifier(class_weight={1: class_wt}, **param2)
+                for param1 in svm_vals:
+                    for param2 in svm_vals:
+                        clf_1 = SVC(class_weight={1:class_wt}, **param1)
+                        clf_2 = SVC(class_weight={1:class_wt}, **param2)
                         meta_clf = MetaClassifier(classifiers=[clf_1, clf_2], weights=clf_wt)
                         meta_clf.fit(X_train, y_train)
                         f1_score = meta_clf.score(X_val, y_true_val)
+                        print f1_score
                         if not clf_wt:
                             clf_wt = [0.5, 0.5]
-                        print "f1:", f1_score, "clf_wt:"
                         outfile.write(str(clf_wt[0]) + ' ' + str(clf_wt[1]) + '\t' +
-                                      str(param1) + '\t' + str(param2) + '\t' +
-                                      str(class_wt) + '\t' + str(f1_score) + '\n')
+                        str(param1) + '\t' + str(param2) + '\t' +
+                        str(class_wt) + '\t' + str(f1_score) +'\n')
 
-    # with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_' + category + '.csv'),'w') as outfile:
+    # with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_DT_' + category + '.txt'), 'w') as outfile:
+    #     for clf_wt in clf_weights:
+    #         for class_wt in class_weights:
+    #             for param1 in dt_vals:
+    #                 for param2 in dt_vals:
+    #                     clf_1 = DecisionTreeClassifier(class_weight={1: class_wt}, **param1)
+    #                     clf_2 = DecisionTreeClassifier(class_weight={1: class_wt}, **param2)
+    #                     meta_clf = MetaClassifier(classifiers=[clf_1, clf_2], weights=clf_wt)
+    #                     meta_clf.fit(X_train, y_train)
+    #                     f1_score = meta_clf.score(X_val, y_true_val)
+    #                     if not clf_wt:
+    #                         clf_wt = [0.5, 0.5]
+    #                     print "f1:", f1_score, "clf_wt:"
+    #                     outfile.write(str(clf_wt[0]) + ' ' + str(clf_wt[1]) + '\t' +
+    #                                   str(param1) + '\t' + str(param2) + '\t' +
+    #                                   str(class_wt) + '\t' + str(f1_score) + '\n')
+
+    # with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_LR_' + category + '.csv'),'w') as outfile:
     #     for p1 in penalties:
     #         for p2 in penalties:
     #             for clf_wt in clf_weights:
@@ -106,19 +113,19 @@ def grid_search_lf(category='PN', normalize='normalize'):
 
     # For Positive Negative
     if category == 'PN':
-        clf_A_1 = DecisionTreeClassifier(class_weight={1: 4}, max_features=3, max_depth=4,
+        clf_A_1 = DecisionTreeClassifier(class_weight={1: 4}, max_depth=4,
                                          min_samples_leaf=5)
-        clf_A_2 = DecisionTreeClassifier(class_weight={1: 4}, max_features=13, max_depth=5,
+        clf_A_2 = DecisionTreeClassifier(class_weight={1: 4}, max_depth=5,
                                          min_samples_leaf=5)
 
-        clf_V_1 = DecisionTreeClassifier(class_weight={1: 4}, max_features=3, max_depth=5,
+        clf_V_1 = DecisionTreeClassifier(class_weight={1: 4}, max_depth=5,
                                          min_samples_leaf=5)
-        clf_V_2 = DecisionTreeClassifier(class_weight={1: 4}, max_features=13, max_depth=3,
+        clf_V_2 = DecisionTreeClassifier(class_weight={1: 4}, max_depth=3,
                                          min_samples_leaf=4)
 
-        clf_L_1 = DecisionTreeClassifier(class_weight={1: 4}, max_features=13, max_depth=4,
+        clf_L_1 = DecisionTreeClassifier(class_weight={1: 4}, max_depth=4,
                                          min_samples_leaf=2)
-        clf_L_2 = DecisionTreeClassifier(class_weight={1: 4}, max_features=13, max_depth=5,
+        clf_L_2 = DecisionTreeClassifier(class_weight={1: 4}, max_depth=5,
                                          min_samples_leaf=3)
 
     # For Disc Non-disc
@@ -162,9 +169,7 @@ def grid_search_lf(category='PN', normalize='normalize'):
             print "L :", lf_clf.classifiers_[2].score(Xs_val[2], y_true_val), '\n'
 
 
-
-
-def main():
+if __name__ == '__main__':
     # print "Selecting features...\n"
     # feature_select.feature_select("C")
 
@@ -175,13 +180,9 @@ def main():
     # print "Performing Grid Search for visual...\n"
     # grid_search_meta(mode='visual', category='PN', normalize=norm)
 
-    # print "Performing Grid Search for acoustic...\n"
-    # grid_search_meta(mode='acoustic', category='PN', normalize=norm)
+    print "Performing Grid Search for acoustic...\n"
+    grid_search_meta(mode='acoustic', category='PN', normalize=norm)
     # print "Performing Grid Search for linguistic...\n"
     # grid_search_meta(mode='linguistic', category='PN', normalize=norm)
-    print "Performing Grid Search for Late Fusion...\n"
-    grid_search_lf(category='PN', normalize=norm)
-
-
-if __name__ == '__main__':
-    main()
+    # print "Performing Grid Search for Late Fusion...\n"
+    # grid_search_lf(category='PN', normalize=norm)
