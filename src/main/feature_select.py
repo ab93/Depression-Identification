@@ -108,11 +108,7 @@ def select_best_K(df,labels,K):
     # Obtain Selected K best features - indices
     X = df.as_matrix()
     y = labels
-
-    if df.shape[1] < 20:
-        kbest = SelectKBest(f_classif, k='all')
-    else:
-        kbest = SelectKBest(f_classif, k=K)
+    kbest = SelectKBest(f_classif, k=K)
 
     kbest.fit(X, y)
     score_list = kbest.scores_
@@ -225,9 +221,7 @@ def main(qtype,mode,classifier_type):
     df.drop(['video', 'label','score'], inplace=True , axis=1)
 
     # Pick 'N' to pick from Random Forest method, based on Mode
-    if mode=="V":
-        N = 100
-    elif mode=="A":
+    if mode=="A":
         N = 20
     else:
         N = 50
@@ -240,14 +234,22 @@ def main(qtype,mode,classifier_type):
         feature_type = scores
 
     # Call pipeline of feature selection methods on data frame - different pipeline for each Question Type and Mode combination
-    if mode=="V":
-        df = remove_low_variance(df)
-    df = perform_l1(df,feature_type)
 
-    df = perform_random_forest(df,feature_type,N)
-    if mode!="A":
+    # if mode=="V":
+    #     df = remove_low_variance(df)
+    # df = perform_l1(df,feature_type)
+
+    # df = perform_random_forest(df,feature_type,N)
+    # if mode!="A":
+    #     df = select_best_K(df,feature_type,K)
+    if mode=="V":   
+        df = perform_random_forest(df,feature_type,N)
+    elif mode == "A":
+        df = perform_l1(df,feature_type)
+        df = perform_random_forest(df,feature_type,N)
+    else:
+        df = perform_random_forest(df,feature_type,N)
         df = select_best_K(df,feature_type,K)
-
     # Obtain Final feature list
     final_feature_list = list(df.columns.values)
     print "Final Feature List (Sorted): ",final_feature_list
