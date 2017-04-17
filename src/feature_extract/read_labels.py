@@ -22,15 +22,13 @@ def get_features(data,split,classifier_type="C"):
         return X,y
     elif split == "test":
         for video, group in grouped:
-            print video
-            raw_input()
             X_person = []
             for i in range(len(group)):
                 X_person.append(group.iloc[i].tolist()[1:])
             X.append(X_person)
         return X
 
-def features(mode,category,split,problem_type='C',normalize="regular"):
+def features(mode,category,split,problem_type='C',normalize="normalize"):
     #print mode,category,split,problem_type,normalize
     if problem_type == "C":
         directory = "classify"
@@ -46,5 +44,5 @@ def features(mode,category,split,problem_type='C',normalize="regular"):
     data = pd.read_csv(file)
     return get_features(data,split,problem_type)
 
-features("acoustic","positive","test","C","normalize")
+#features("acoustic","positive","test","C","normalize")
 

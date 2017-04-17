@@ -1,7 +1,10 @@
 import os
 import sys
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import itertools
+from sklearn.metrics import confusion_matrix
 from sklearn.linear_model import LogisticRegression
 from src.models.classifier import MetaClassifier, LateFusionClassifier
 from src.feature_extract import read_labels
@@ -21,6 +24,9 @@ from ..helpers.normalized_features import normalize_features
 import grid_search_dt_lr
 from sklearn.externals import joblib
 from copy import deepcopy
+from sklearn.metrics import roc_curve
+from sklearn.metrics import roc_auc_score
+
 def grid_search_meta(mode='acoustic',category='PN',normalize='normalize'):
     X_train, y_train, X_val, y_val = get_single_mode_data(mode=mode,
                                     category=category, normalize=normalize)
@@ -71,6 +77,8 @@ def grid_search_meta(mode='acoustic',category='PN',normalize='normalize'):
     max_f1 = 0.0
     max_clf1 = None
     max_clf2 = None
+    best_meta=None
+    best_preds=[]
     max_weights = []
     #with open(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_test_' + category + '.txt'),'w') as outfile:
     #    outwriter=csv.writer(outfile, delimiter='\t')
@@ -93,9 +101,25 @@ def grid_search_meta(mode='acoustic',category='PN',normalize='normalize'):
                                 max_f1 = f1_score
                                 max_clf1 = clf_1
                                 max_clf2 = clf_2
+                                best_meta=meta_clf
+                                best_preds=best_meta.predict(X_val)
+                                best_f1 =  best_meta.score(X_val, y_true_val)
+
                                 max_weights = temp[:]
 
                             print i,j,f1_score,temp
+
+
+
+    fpr, tpr, thresholds = roc_curve(y_true_val, best_preds)
+    roc_area = roc_auc_score(y_true_val, best_preds)
+    print "roc values "
+    print fpr, tpr, thresholds, roc_area
+    print "f1"
+    print best_f1
+
+    cnf_matrix = confusion_matrix(y_true_val, best_preds)
+    plot_confusion_matrix(cnf_matrix, classes=class_names, title="Confusion Matrix " + mode)
 
     meta_clf = MetaClassifier(classifiers=[max_clf1, max_clf2], weights=max_weights)
     meta_clf.fit(X_data, y_data)
@@ -157,7 +181,7 @@ def grid_search_meta(mode='acoustic',category='PN',normalize='normalize'):
     #                             print f1_score
 
 
-
+class_names = ["Non-Depressed","Depressed"]
 
 def grid_search_late_fusion(category='PN', normalize='normalize'):
     Xs_train, ys_train, Xs_val, ys_val = get_multi_data(category, normalize=normalize)
@@ -195,12 +219,52 @@ def grid_search_late_fusion(category='PN', normalize='normalize'):
         if(f1_score > max_f1):
             max_f1 = f1_score
             max_clf = lf_clf
+            best_preds = max_clf.predict(Xs_val)
+            best_f1 = max_clf.score(Xs_val, y_true_val)
 
+    #max_clf.fit(Xs_train,ys_train)
+
+    print "f1"
+    print best_preds
+    fpr, tpr, thresholds = roc_curve(y_true_val, best_preds)
+    roc_area = roc_auc_score(y_true_val, best_preds)
+    plot_roc_latefusion(fpr,tpr,roc_area)
+    cnf_matrix = confusion_matrix(y_true_val, best_preds)
+    plot_confusion_matrix(cnf_matrix,classes = class_names,title="Confusion Matrix Late Fusion")
     max_clf.fit(X_data, y_data)
     joblib.dump(max_clf, os.path.join(config.GRID_SEARCH_CLF_DIR + '/late_fusion_picklePN.pkl'))
 
 
+def plot_roc_latefusion(fpr,tpr,roc_area):
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.0])
+    plt.plot(fpr, tpr, lw=2, label='ROC Late Fusion(area = %0.2f)' % roc_area)
+    plt.legend(loc="best")
+    plt.show()
 
+def plot_confusion_matrix(cm, classes,title='Confusion matrix',cmap=plt.cm.Blues):
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, cm[i, j],
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    plt.savefig(title+'.png')
+    plt.show()
 
 
 def grid_search_lf(category='PN', normalize='normalize'):
@@ -249,6 +313,7 @@ def grid_search_lf(category='PN', normalize='normalize'):
             print f1_score
 
 
+
 def main():
     #print "Selecting features...\n"
     #feature_select.feature_select("C")
@@ -264,6 +329,32 @@ def main():
     print "Performing Grid Search for Late Fusion...\n"
     grid_search_late_fusion(category='PN',normalize=norm)
 
+def plot_roc_latefusion(fpr,tpr,roc_area):
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.0])
+    plt.plot(fpr, tpr, lw=2, label='ROC Late Fusion(area = %0.2f)' % roc_area)
+    plt.legend(loc="best")
+    plt.savefig("latefusion_roc.png")
+    plt.show()
+
+def plot_roc_curve(fpr_a,tpr_a,roc_area_a,fpr_v,tpr_v,roc_area_v,fpr_l,tpr_l,roc_area_l):
+
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.0])
+    plt.plot(fpr_a, tpr_a,lw=2,label='ROC Acoustic (area = %0.2f)' % roc_area_a)
+    plt.plot(fpr_v, tpr_v,lw=2,label='ROC Visual (area = %0.2f)' % roc_area_v)
+    plt.plot(fpr_l, tpr_l,lw=2,label='ROC Linguistic (area = %0.2f)' % roc_area_l)
+    plt.legend(loc="best")
+    plt.savefig('3modes_roc.png')
+    plt.show()
 
 if __name__ == '__main__':
     main()
+    #plot_roc_curve([0,1,],[0.57142857,1], 0.785714285714,[ 0,0.07692308,1],[ 0,0.85714286,1] , 0.89010989011,[ 0,0.15384615,1], [0,1,1] ,0.923076923077)
+    #plot_roc_curve([ 0.,0.07692308,1.] [ 0.,0.71428571, 1.        ],0.818681318681,[ 0.      ,    0.07692308 , 1.        ] [ 0.      ,    0.85714286,  1.        ] , 0.89010989011,[ 0.     ,     0.07692308 , 1.        ] [ 0.      ,    0.71428571  ,1.        ] , 0.818681318681)

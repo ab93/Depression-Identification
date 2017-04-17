@@ -287,7 +287,7 @@ def feature_select(classifier_type):
 
     # Call feature select function for all question types and modes
     question_types = ["D","ND","P","N"]
-    modes = ["V","A","L"]
+    modes = ["A","L"]
     for qtype in question_types:
         for mode in modes:
             print "Feature Selection for ",qtype," and ",mode

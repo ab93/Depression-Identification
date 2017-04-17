@@ -20,7 +20,7 @@ def oversample(X,y):
     return X, y
 
 
-def get_single_mode_data(mode='acoustic', category='PN', problem_type='C', normalize='regular'):
+def get_single_mode_data(mode='acoustic', category='PN', problem_type='C', normalize='normalize'):
     """
     Get training and validation data for a single mode int
     a particular category
@@ -56,7 +56,7 @@ def get_single_mode_data(mode='acoustic', category='PN', problem_type='C', norma
     return X_train, y_train, X_val, y_val
 
 
-def get_multi_data(category='PN', problem_type='C', normalize='regular'):
+def get_multi_data(category='PN', problem_type='C', normalize='normalize'):
     X_A_train, y_A_train, X_A_val, y_A_val = get_single_mode_data('acoustic', category, problem_type, normalize)
     X_V_train, y_V_train, X_V_val, y_V_val = get_single_mode_data('visual', category, problem_type, normalize)
     X_L_train, y_L_train, X_L_val, y_L_val = get_single_mode_data('linguistic', 'PN', problem_type, normalize)
