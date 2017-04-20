@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+import sys
 
 import config
 from sklearn.feature_selection import VarianceThreshold
@@ -42,7 +43,7 @@ def get_feature_df(train, count, file_, *files):
     else:
         split_df = pd.read_csv(split_file,usecols=['Participant_ID', 'PHQ_Binary','PHQ_Score'])
         if train == "train" and count != "all":
-            split_df = split_df[:count]
+            split_df = split_df.loc[:int(count)]
         feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
 
         # Populate labels accordingly
