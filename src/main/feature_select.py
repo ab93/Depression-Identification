@@ -13,7 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
 '''
 
 '''
-def get_feature_df(train, file_, *files):
+def get_feature_df(train, count, file_, *files):
     # Set directory based on Train and Validation
     if train == 'train':
         split_file = config.TRAIN_SPLIT_FILE
@@ -41,6 +41,8 @@ def get_feature_df(train, file_, *files):
 
     else:
         split_df = pd.read_csv(split_file,usecols=['Participant_ID', 'PHQ_Binary','PHQ_Score'])
+        if train == "train" and count != "all":
+            split_df = split_df[:count]
         feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
 
         # Populate labels accordingly
@@ -160,7 +162,7 @@ def perform_random_forest(df,labels,N):
     final_df = df[selected_features]
     return final_df
 
-def main(qtype,mode,classifier_type):
+def main(qtype,mode,classifier_type,count):
     # Determine file name prefixes based on Question Type passed
     if qtype=="D":
         file_prefix="discriminative"
@@ -197,13 +199,13 @@ def main(qtype,mode,classifier_type):
 
     # Obtain data frame containing all features from determined file list for TRAINING SET
     TRAIN = "train"
-    df = get_feature_df(TRAIN,file1,files)
+    df = get_feature_df(TRAIN,count,file1,files)
     # Obtain data frame containing all features from determined file list for VALIDATION SET
     TRAIN = "val"
-    val_df = get_feature_df(TRAIN, file1, files)
+    val_df = get_feature_df(TRAIN,"all", file1, files)
 
     TRAIN = "test"
-    test_df = get_feature_df(TRAIN,file1,files)
+    test_df = get_feature_df(TRAIN,"all",file1,files)
 
     # If mode is visual, drop the extra columns from file - standardizes structure of data frame between all modes
     if mode=="V":
@@ -296,7 +298,7 @@ def main(qtype,mode,classifier_type):
 
     return final_feature_list
 
-def feature_select(classifier_type):
+def feature_select(classifier_type,count):
     all_feature_lists = []
 
     # Call feature select function for all question types and modes
@@ -305,7 +307,7 @@ def feature_select(classifier_type):
     for qtype in question_types:
         for mode in modes:
             print "Feature Selection for ",qtype," and ",mode
-            feature_list = main(qtype,mode,classifier_type)
+            feature_list = main(qtype,mode,classifier_type,count)
             all_feature_lists.append(feature_list)
     print "All features: ",all_feature_lists
 
@@ -321,9 +323,9 @@ def feature_select(classifier_type):
 if __name__ == '__main__':
     #qtype = sys.argv[1] # D- discriminative, ND- nondiscriminative, P-positive, N- negative
     #mode = sys.argv[2] # A- acoustic, V- visual, L- linguistic
-
+    count = sys.argv[1]
     # Call main function
-    feature_select("C")
-    feature_select("R")
+    feature_select("C",count)
+    feature_select("R",count)
 
     
