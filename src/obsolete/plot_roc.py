@@ -1,15 +1,15 @@
-import utils
+import src.main.utils
 import itertools
 from sklearn.metrics import roc_curve
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
 import os
 import numpy as np
-import config
+import src.main.config
 import pandas as pd
-import utils
+import src.main.utils
 from sklearn.linear_model import LogisticRegression
-from ..models import classifier
+from src.models import classifier
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import confusion_matrix
 
@@ -38,7 +38,7 @@ def plot_roc_latefusion(fpr,tpr,roc_area):
 class_names = ["Non-Depressed","Depressed"]
 def late_fusion_model(clf1_a,clf2_a,clf1_v,clf2_v,clf1_l,clf2_l):
     # Read the data
-    Xs_train, ys_train, Xs_val, ys_val = utils.get_multi_data()
+    Xs_train, ys_train, Xs_val, ys_val = src.main.utils.get_multi_data()
     clf_A = classifier.MetaClassifier(classifiers=[clf1_a, clf2_a])
     clf_V = classifier.MetaClassifier(classifiers=[clf1_v, clf2_v])
     clf_L = classifier.MetaClassifier(classifiers=[clf1_l, clf2_l])
@@ -97,7 +97,7 @@ def logistic_model(mode,inter_clf_weights,clf1,clf2):
         temp.append(float(i))
     #print temp
 
-    X_train, y_train, X_val, y_val = utils.get_single_mode_data(mode=mode,normalize='normalize')
+    X_train, y_train, X_val, y_val = src.main.utils.get_single_mode_data(mode=mode, normalize='normalize')
     print X_train
     #print y_train
     #print X_val
@@ -124,7 +124,7 @@ def logistic_model(mode,inter_clf_weights,clf1,clf2):
     return clf1,clf2,f1,accuracy,fpr,tpr,thresholds,roc_area,cnf_matrix
 
 def call_logistic_model(mode):
-    classify = pd.read_csv(config.RESULTS_CLASSIFY + "/" + mode+"_test_PN.txt",sep="\t",header=None)
+    classify = pd.read_csv(src.main.config.RESULTS_CLASSIFY + "/" + mode + "_test_PN.txt", sep="\t", header=None)
     data = classify.iloc[classify[4].argmax()]
     return logistic_model(mode,data[0],data[1],data[3])
 

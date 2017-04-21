@@ -1,8 +1,8 @@
 from sklearn.externals import joblib
-import utils
+import src.main.utils
 import numpy as np
-from ..feature_extract import  read_labels
-import config
+from src.feature_extract import  read_labels
+import src.main.config
 import os
 
 def final_classifier(mode,category="PN",problem_type="C",normalize="normalize"):
@@ -25,7 +25,7 @@ def final_classifier(mode,category="PN",problem_type="C",normalize="normalize"):
         X_test = [map(np.asarray, read_labels.features(mode, cat_1, "test", problem_type, normalize)),
              map(np.asarray, read_labels.features(mode, cat_2, "test", problem_type, normalize))]
 
-    clf = joblib.load(os.path.join(config.GRID_SEARCH_CLF_DIR, mode + '_pickle' + category + '.pkl'))
+    clf = joblib.load(os.path.join(src.main.config.GRID_SEARCH_CLF_DIR, mode + '_pickle' + category + '.pkl'))
     preds_label = clf.predict(X_test)
     return preds_label
 
