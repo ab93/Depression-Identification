@@ -27,6 +27,12 @@ class TrainClassifier(object):
         max_features_ = np.arange(3, 20, 5)
         max_depths = np.arange(3, 6)
         min_samples_leaves = np.arange(2, 6)
+        dt_params = [{'max_features': x, 'max_depth': y, 'min_samples_leaf': z, 'random_state': 42}
+                     for x in max_features_ for y in max_depths
+                     for z in min_samples_leaves]# Decision Tree params
+        max_features_ = np.arange(3, 20, 5)
+        max_depths = np.arange(3, 6)
+        min_samples_leaves = np.arange(2, 6)
         dt_params = [{'max_features': x, 'max_depth': y, 'min_samples_leaf': z, 'random_state':42}
                      for x in max_features_ for y in max_depths
                      for z in min_samples_leaves]
@@ -51,10 +57,6 @@ class TrainClassifier(object):
                                                               feature_scale=self.feature_scale)
         y_true_train = map(int, map(np.mean, y_train[0]))
         y_true_val = map(int, map(np.mean, y_val[0]))
-
-        print len(x_train[0])
-        print len(y_train[0])
-        exit()
 
         with open(os.path.join(config.GRID_SEARCH_CLF_DIR,
                                self.modality + '_' + model + '_' + self.category + '.txt'), 'w') as outfile:
@@ -134,9 +136,9 @@ if __name__ == '__main__':
     # print "Selecting features...\n"
     # feature_select.feature_select("C")
 
-    print "Normalizing features...\n"
-    normalize_features()
-    norm = 'normalize'
+    # print "Normalizing features...\n"
+    # normalize_features()
+    # norm = 'normalize'
 
     # print "Performing Grid Search for visual...\n"
     # grid_search_meta(mode='visual', category='PN', normalize=norm)
@@ -148,6 +150,6 @@ if __name__ == '__main__':
     # print "Performing Grid Search for Late Fusion...\n"
     # grid_search_lf(category='PN', normalize=norm)
 
-    trn = TrainClassifier(category='PN', feature_scale=False, modality='visual')
-    trn.grid_search_meta(model='DT')
-    # trn.grid_search_late_fusion()
+    trn = TrainClassifier(category='PN', feature_scale=False, modality='linguistic')
+    # trn.grid_search_meta(model='DT')
+    trn.grid_search_late_fusion()
