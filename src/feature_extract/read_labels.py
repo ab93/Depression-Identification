@@ -2,8 +2,9 @@ import pandas as pd
 from sklearn import preprocessing
 import pprint
 
-def get_features(data,split,classifier_type="C"):
-    if classifier_type=="C":
+
+def get_features(data, split, classifier_type="C"):
+    if classifier_type == "C":
         y_label = 'label'
     else:
         y_label = 'score'
@@ -19,32 +20,31 @@ def get_features(data,split,classifier_type="C"):
                 y_person.append(group.iloc[i][y_label])
             X.append(X_person)
             y.append(y_person)
-        return X,y
+        return X, y
     elif split == "test":
         for video, group in grouped:
-            print video
-            raw_input()
             X_person = []
             for i in range(len(group)):
                 X_person.append(group.iloc[i].tolist()[1:])
             X.append(X_person)
         return X
 
-def features(mode,category,split,problem_type='C',normalize="regular"):
-    #print mode,category,split,problem_type,normalize
+
+def features(mode, category, split, problem_type='C', feature_scale=False):
+    normalize = 'normalize' if feature_scale else 'regular'
     if problem_type == "C":
         directory = "classify"
     else:
         directory = "estimate"
     if mode == "visual":
-        file = "data/selected_features/"+normalize+"/"+directory+"/"+split+"/"+category+"_visual_"+split+".csv"
+        file_ = "data/selected_features/"+normalize+"/"+directory+"/"+split+"/"+category+"_visual_"+split+".csv"
     elif mode == "acoustic":
-        file = "data/selected_features/"+normalize+"/"+directory+"/"+split+"/"+category+"_acoustic_"+split+".csv"
+        file_ = "data/selected_features/"+normalize+"/"+directory+"/"+split+"/"+category+"_acoustic_"+split+".csv"
     elif mode == "linguistic":
-        file = "data/selected_features/"+normalize+"/"+directory+"/"+split+"/"+category+"_linguistic_"+split+".csv"
+        file_ = "data/selected_features/"+normalize+"/"+directory+"/"+split+"/"+category+"_linguistic_"+split+".csv"
 
-    data = pd.read_csv(file)
-    return get_features(data,split,problem_type)
+    data = pd.read_csv(file_)
+    return get_features(data, split, problem_type)
 
-features("acoustic","positive","test","C","normalize")
+
 

@@ -1,4 +1,4 @@
-import config
+import src.main.config
 import os
 import pandas as pd
 import numpy as np
@@ -14,7 +14,7 @@ def main(mode,classifier):
         file_type = ".csv"
         seperator = ","
         column = 6
-    data = pd.read_csv(config.GRID_SEARCH_CLF_DIR+"/"+mode+"_"+classifier+"_PN"+file_type,sep=seperator,header= None)
+    data = pd.read_csv(src.main.config.GRID_SEARCH_CLF_DIR + "/" + mode + "_" + classifier + "_PN" + file_type, sep=seperator, header= None)
     result = data.sort(column,ascending=False)
     result = result.iloc[0:5]
     #print data
@@ -28,13 +28,13 @@ def write():
     result_LR = result_acoustic_LR.append(result_visual_LR)
     result_LR = result_LR.append(result_ling_LR)
     #print result_LR
-    result_LR.to_csv(config.GRID_SEARCH_CLF_DIR+"/"+"refined_LR.csv",index=None)
+    result_LR.to_csv(src.main.config.GRID_SEARCH_CLF_DIR + "/" + "refined_LR.csv", index=None)
     result_acoustic_DT = main("acoustic", "DT")
     result_visual_DT = main("visual", "DT")
     result_ling_DT = main("linguistic", "DT")
     result_DT = result_acoustic_DT.append(result_visual_DT)
     result_DT = result_DT.append(result_ling_DT)
-    result_DT.to_csv(config.GRID_SEARCH_CLF_DIR + "/" + "refined_DT.csv",index=None)
+    result_DT.to_csv(src.main.config.GRID_SEARCH_CLF_DIR + "/" + "refined_DT.csv", index=None)
     res_LR = {}
     res_DT = {}
     for i in range(result_LR.shape[1]-1):

@@ -5,12 +5,12 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from src.models.regressor import MetaRegressor, LateFusionRegressor
 from sklearn.pipeline import _name_estimators
-from ..feature_extract.read_labels import features
-import config
-import feature_select
-from utils import get_multi_data, get_single_mode_data
+from src.feature_extract.read_labels import features
+import src.main.config
+import src.main.feature_select
+from src.main.utils import get_multi_data, get_single_mode_data
 from src.feature_extract import read_labels
-from ..helpers.normalized_features import normalize_features
+from src.helpers.normalized_features import normalize_features
 from copy import deepcopy
 
 def grid_search_meta(mode='acoustic',category='PN'):
@@ -38,7 +38,7 @@ def grid_search_meta(mode='acoustic',category='PN'):
     max_reg1 = None
     max_reg2 = None
     max_weights = []
-    with open(os.path.join(config.GRID_SEARCH_REG_DIR, mode + '_' + category + '.csv'),'w') as outfile:
+    with open(os.path.join(src.main.config.GRID_SEARCH_REG_DIR, mode + '_' + category + '.csv'), 'w') as outfile:
         for reg_wt in reg_weights:
             temp = []
             for i in reg_wt:

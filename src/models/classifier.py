@@ -1,10 +1,8 @@
 import sys
-import operator
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
 from sklearn.preprocessing import LabelEncoder
-from sklearn.externals import six
-from sklearn.metrics import accuracy_score,f1_score
+from sklearn.metrics import accuracy_score, f1_score
 from sklearn.pipeline import _name_estimators
 
 
@@ -14,19 +12,14 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
     Parameters
     ----------
     classifiers : array-like, shape = [n_classifiers]
-    Note: Classifiers need to be well caliberated
-
     vote : str, {'classlabel', 'probability'}
-    Default: 'classlabel'
-
     weights : array-like, shape = [n_classifiers]
-    Optional, default: None
+    
     If a list of `int` or `float` values are
     provided, the classifiers are weighted by
     importance; Uses uniform weights if `weights=None`.
 
     method: str, {'stacking', 'majority_voting'}
-    Default: 'majority_voting'
 
     """
 
@@ -98,7 +91,6 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         maj_vote = np.argmax(weighted_proba, axis=1)
         return maj_vote
 
-
     def predict_proba(self, X_list, get_all=False):
         """ Predict class probabilities.
         Parameters
@@ -113,7 +105,6 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
                          Weighted average probability
                          for each class per sample.
         """
-
         num_clfs = len(self.classifiers_)
         preds = []
         for index, X in enumerate(X_list):
@@ -183,7 +174,7 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
             maj_vote: Predicted class
         """
         if self.vote == 'probability':
-            maj_vote = np.argmax(self.predict_proba(X),axis=1)
+            maj_vote = np.argmax(self.predict_proba(Xs),axis=1)
 
         else: # classlabel
             predictions = np.asarray([clf.predict(Xs[mode_idx]) for mode_idx,clf in enumerate(self.classifiers_)]).T
@@ -191,7 +182,6 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
             maj_vote = np.apply_along_axis(lambda x: np.argmax(np.bincount(x,
                         weights=self.weights)),axis=1,arr=predictions)
         return maj_vote
-
 
     def predict_proba(self, Xs, get_all=False):
         """
@@ -210,7 +200,6 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
         if get_all:
             return probas[0], probas[1], probas[2], avg_proba
         return avg_proba
-
 
     def score(self,Xs,y_true,scoring='f1'):
         """
