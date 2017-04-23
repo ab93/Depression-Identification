@@ -174,9 +174,8 @@ def readFORMANT_DND():
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_FORMANT.csv'
         f = pd.read_csv(fileName, delimiter=',|\t', engine='python')
-
+        print item
         for instance in groupByQuestion[item]:
-            print item
             startTime = instance[1][0]
             endTime = instance[1][1]
 
@@ -222,9 +221,8 @@ def readFORMANT_PN():
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_FORMANT.csv'
         f = pd.read_csv(fileName, delimiter=',|\t', engine='python')
-
+        print item
         for instance in groupByQuestion[item]:
-            print item
             startTime = instance[1][0]
             endTime = instance[1][1]
 
@@ -269,9 +267,8 @@ def readCOVAREP_DND():
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_COVAREP.csv'
         f = pd.read_csv(fileName, delimiter=',|\t', engine='python')
-
+        print item
         for instance in groupByQuestion[item]:
-            print item
             startTime = instance[1][0]
             endTime = instance[1][1]
 
@@ -318,9 +315,8 @@ def readCOVAREP_PN():
     for item in groupByQuestion:
         fileName = sys.argv[1] + item + '_P/' + item + '_COVAREP.csv'
         f = pd.read_csv(fileName, delimiter=',|\t', engine='python')
-
+        print item
         for instance in groupByQuestion[item]:
-            print item
             startTime = instance[1][0]
             endTime = instance[1][1]
 
