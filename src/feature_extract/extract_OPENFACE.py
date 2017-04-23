@@ -17,14 +17,13 @@ questionType_PN = {}
 discriminativeVectors = []
 nonDiscriminativeVectors = []
 '''headers for OPENFACE features'''
-header = ["video", "question", "starttime", "endtime", 'frame_mean', 'timestamp_mean', 'confidence_mean',
-          'success_mean', 'pose_Tx_mean', 'pose_Ty_mean', 'pose_Tz_mean', 'pose_Rx_mean', 'pose_Ry_mean',
+header = ["video", "question", "starttime", "endtime", 'pose_Tx_mean', 'pose_Ty_mean', 'pose_Tz_mean', 'pose_Rx_mean', 'pose_Ry_mean',
           'pose_Rz_mean', 'AU01_r_mean', 'AU02_r_mean', 'AU04_r_mean', 'AU05_r_mean', 'AU06_r_mean', 'AU07_r_mean',
           'AU09_r_mean', 'AU10_r_mean', 'AU12_r_mean', 'AU14_r_mean', 'AU15_r_mean', 'AU17_r_mean', 'AU20_r_mean',
           'AU23_r_mean', 'AU25_r_mean', 'AU26_r_mean', 'AU45_r_mean', 'AU01_c_mean', 'AU02_c_mean', 'AU04_c_mean',
           'AU05_c_mean', 'AU06_c_mean', 'AU07_c_mean', 'AU09_c_mean', 'AU10_c_mean', 'AU12_c_mean', 'AU14_c_mean',
           'AU15_c_mean', 'AU17_c_mean', 'AU20_c_mean', 'AU23_c_mean', 'AU25_c_mean', 'AU26_c_mean', 'AU28_c_mean',
-          'AU45_c_mean', 'frame_stddev', 'timestamp_stddev', 'confidence_stddev', 'success_stddev', 'pose_Tx_stddev',
+          'AU45_c_mean', 'pose_Tx_stddev',
           'pose_Ty_stddev', 'pose_Tz_stddev', 'pose_Rx_stddev', 'pose_Ry_stddev', 'pose_Rz_stddev', 'AU01_r_stddev',
           'AU02_r_stddev', 'AU04_r_stddev', 'AU05_r_stddev', 'AU06_r_stddev', 'AU07_r_stddev', 'AU09_r_stddev',
           'AU10_r_stddev', 'AU12_r_stddev', 'AU14_r_stddev', 'AU15_r_stddev', 'AU17_r_stddev', 'AU20_r_stddev',
@@ -174,6 +173,14 @@ def readOPENFACE_DND():
             vector = instance[1][:]
             vector += features_mean
             vector += features_stddev
+
+            #drop frame_mean, frame_stddev, timestamp_mean, timestamp_stddev, success_mean,
+            #success_stddev, confidence_mean, confidence_stddev as they don't make sense.
+            #vector = instance[1][0:2] + instance[1][6:47] + instance[1][51:]
+            for i in range(4):
+                del(vector[2])
+            for i in range(4):
+                del(vector[43])
             vector.insert(0, instance[0])
             vector.insert(0, item)
             vector = np.asarray(vector)
@@ -228,6 +235,13 @@ def readOPENFACE_PN():
             vector = instance[1][:]
             vector += features_mean
             vector += features_stddev
+            #drop frame_mean, frame_stddev, timestamp_mean, timestamp_stddev, success_mean,
+            #success_stddev, confidence_mean, confidence_stddev as they don't make sense.
+            for i in range(4):
+                del(vector[2])
+            for i in range(4):
+                del(vector[43])
+                
             vector.insert(0, instance[0])
             vector.insert(0, item)
             vector = np.asarray(vector)

@@ -19,8 +19,17 @@ discriminativeVectors=[]
 nonDiscriminativeVectors=[]
 questionAnswers={}
 liwcVectors={}
-
 listofParticipants=[]
+
+'''
+Reads the following data:
+IdentifyingFollowUps.csv : Reads tags for each question in the corpus where the tag is intimate, non-intimate,
+                            acknowledgement, follow-up
+DND_Annotations.csv : Reads category for each question in the corpus where the category is Discriminative, Non-discriminative
+
+PN_Annotations.csv : Reads category for each question in the corpus where the category is Positive, Negative
+'''
+
 def readHelperData():
     global followUp, ack, nonIntimate, intimate, questionType_PN, questionType_DND
     utterrances = pd.read_csv('data/misc/IdentifyingFollowUps.csv')
@@ -48,8 +57,14 @@ def readHelperData():
             nonIntimate[item[1]]=item[2]
         elif item[3]=="#int" and item[1] not in intimate:
             intimate[item[1]]=item[2]
-    
 
+'''
+Reads the transcript of each interview and collects the answer for each question asked to a participant
+This is done for all the interviews.
+At the end, the dictionary questionAnswers has a list of utterances by the participant (the utterances together make up the answer)
+and this is stored as [(300,'when was the last time you felt happy)] = ['i last felt happy','um','yesterday]
+In this manner, responses are collected for all questions, for all interviews
+'''
 def readTranscript():
     global featureList
     transcriptFiles=glob(sys.argv[1]+'[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
@@ -71,6 +86,21 @@ def readTranscript():
                 utterance=t.iloc[j]['value']
             utterance=utterance.strip()
 
+            '''
+            We start capturing a response right after Ellie asks an intimate question.
+            If a question is a follow-up question, we continue capturing participant response after Ellie
+            asks the follow-up question.
+
+            If Ellie gives an acknowledgement, we skip and go on. If we are capturing a response already, we continue
+            capturing from the next participant utterance.
+
+            If a question is a non-intimate question, then there are two cases:
+            1. Previous question was an intimate question: In this case, we have been capturing participant
+            responses. So, we stop capture and store it in the dictionary. We skip the non-intimate question
+            and wait until next time Ellie asks an intimate question or conversation ends, whichever is first.
+            2. Previous question was a non-intimate question: In this case, we skip this question and wait till
+            Ellie asks an intimate question or conversation ends, whichever is first.
+            '''
             if t.iloc[j]['speaker']=='Ellie':
                 if utterance in nonIntimate and captureStarted:
                     if (participantNo, prevUtterance) not in featureList:
@@ -109,6 +139,10 @@ def readTranscript():
             elif t.iloc[j]['speaker']=='Participant' and captureStarted:
                 responses.append(utterance)
 
+'''
+Reads LIWC features for all questions that are either Discriminative or Non-discriminative
+and writes it to file.
+'''
 def readLIWC_DND():
     global listofParticipants
     answerQuestion={}
@@ -133,8 +167,34 @@ def readLIWC_DND():
                 liwcVectors[row[0]]=[(row[1], row[2:])]
             else:
                 liwcVectors[row[0]].append((row[1], row[2:]))
+
     #questionAnswers: [(participantNo, question)]=[list of answers]
     #liwcVectors: participantNo: [list of (answer, vector)]
+    '''
+    A participant response for a question will span multiple rows in the transcript.
+    Now, we obtain the LIWC feature vector for each of these responses from the liwc_new.csv file.
+    To get the full LIWC vector for the entire response (set of utterance - think of the response as a single paragraph),
+    each value in the feature vector is multiplied by the utterance_length (number of words in one utterances).
+    Finally, for each LIWC feature, we sum the values of that feature for all utterances and divide by total 
+    number of words in the response (average over number of words).
+
+    For example,
+    i was not happy...     0.40    0.62    0.33    ...
+    yesterday...           0.3     0.00    0.20    ...
+    but...                 0.00    0.10    0.80    ...
+
+    Multiplied vectors: (line 194)
+    i was not happy...     1.60    2.48    1.32    ... (Multiplied by 4 - number of words)
+    yesterday...           0.3     0.00    0.20    ... (Multiplied by 1)
+    but no...              0.00    0.20    1.60    ... (Multiplied by 2)
+
+    Averaged vectors: (denominator=7 which is total number of words) (line 196)
+    i was not happy yesterday but no...0.27    0.38    0.44
+
+    This averaged vector is written to file. This vector is the LIWC vector for the entire response of the 
+    participant for that question. This is done in readLIWC_PN also, for the positive and negative category
+    questions.
+    '''
     for item in questionAnswers:
         participant_number=item[0]
         current_question=item[1]
@@ -157,10 +217,10 @@ def readLIWC_DND():
         elif questionType_DND[current_question]=='ND':
             ndWriter.writerow(final_vector)
 
-
-
-
-
+'''
+Reads LIWC features for all questions that are either Positive or Negative
+and writes it to file.
+'''
 def readLIWC_PN():
     global listofParticipants
     answerQuestion={}
@@ -188,6 +248,7 @@ def readLIWC_PN():
 
     #questionAnswers: [(participantNo, question)]=[list of answers]
     #liwcVectors: participantNo: [list of (answer, vector)]
+
     for item in questionAnswers:
         participant_number=item[0]
         current_question=item[1]
@@ -213,5 +274,5 @@ def readLIWC_PN():
 if __name__=="__main__":
     readHelperData()
     readTranscript()
-    #readLIWC_DND()
+    readLIWC_DND()
     readLIWC_PN()
