@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn import preprocessing
 import pprint
+from ..main import config
 
 
 def get_features(data, split, classifier_type="C"):
@@ -30,7 +31,7 @@ def get_features(data, split, classifier_type="C"):
         return X
 
 
-def features(mode, category, split, problem_type='C', feature_scale=False):
+def features(mode, category, split, problem_type='C', feature_scale=False, count="all"):
     normalize = 'normalize' if feature_scale else 'regular'
     if problem_type == "C":
         directory = "classify"
@@ -42,8 +43,12 @@ def features(mode, category, split, problem_type='C', feature_scale=False):
         file_ = "data/selected_features/"+normalize+"/"+directory+"/"+split+"/"+category+"_acoustic_"+split+".csv"
     elif mode == "linguistic":
         file_ = "data/selected_features/"+normalize+"/"+directory+"/"+split+"/"+category+"_linguistic_"+split+".csv"
-
     data = pd.read_csv(file_)
+    if split == "train" and count != "all":
+        split_file = config.TRAIN_SPLIT_FILE
+        split_df = pd.read_csv(split_file,usecols=['Participant_ID'])
+        split_df = split_df.loc[:int(count)-1]
+        data = data[data['video'].isin(split_df['Participant_ID'])]
     return get_features(data, split, problem_type)
 
 

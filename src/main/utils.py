@@ -21,7 +21,7 @@ def oversample(X,y):
     return X, y
 
 
-def get_single_mode_data(mode='acoustic', category='PN', problem_type='C', feature_scale='False'):
+def get_single_mode_data(mode='acoustic', count="all", category='PN', problem_type='C', feature_scale='False'):
     """
     Get training and validation data for a single mode int
     a particular category
@@ -45,10 +45,10 @@ def get_single_mode_data(mode='acoustic', category='PN', problem_type='C', featu
         cat_2 = "nondiscriminative"
 
     # print mode, category, problem_type, feature_scale
-    X_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale)[0]),
-               map(np.asarray, features(mode, cat_2, "train", problem_type, feature_scale)[0])]
-    y_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale)[1]),
-               map(np.asarray, features(mode, cat_2, "train", problem_type, feature_scale)[1])]
+    X_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale, count = count)[0]),
+               map(np.asarray, features(mode, cat_2, "train", problem_type, feature_scale, count = count)[0])]
+    y_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale, count = count)[1]),
+               map(np.asarray, features(mode, cat_2, "train", problem_type, feature_scale, count = count)[1])]
     X_val = [map(np.asarray, features(mode, cat_1, "val", problem_type, feature_scale)[0]),
              map(np.asarray, features(mode, cat_2, "val", problem_type, feature_scale)[0])]
     y_val = [map(np.asarray, features(mode, cat_1, "val", problem_type, feature_scale)[1]),
@@ -57,10 +57,10 @@ def get_single_mode_data(mode='acoustic', category='PN', problem_type='C', featu
     return X_train, y_train, X_val, y_val
 
 
-def get_multi_data(category='PN', problem_type='C', feature_scale='regular'):
-    X_A_train, y_A_train, X_A_val, y_A_val = get_single_mode_data('acoustic', category, problem_type, feature_scale)
-    X_V_train, y_V_train, X_V_val, y_V_val = get_single_mode_data('visual', category, problem_type, feature_scale)
-    X_L_train, y_L_train, X_L_val, y_L_val = get_single_mode_data('linguistic', 'PN', problem_type, feature_scale)
+def get_multi_data(count="all", category='PN', problem_type='C', feature_scale='regular'):
+    X_A_train, y_A_train, X_A_val, y_A_val = get_single_mode_data('acoustic', count, category, problem_type, feature_scale)
+    X_V_train, y_V_train, X_V_val, y_V_val = get_single_mode_data('visual', count, category, problem_type, feature_scale)
+    X_L_train, y_L_train, X_L_val, y_L_val = get_single_mode_data('linguistic', count, 'PN', problem_type, feature_scale)
 
     Xs = [X_A_train, X_V_train, X_L_train]
     ys = [y_A_train, y_V_train, y_L_train]

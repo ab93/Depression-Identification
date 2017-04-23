@@ -7,6 +7,7 @@ from sklearn.ensemble import AdaBoostClassifier
 import config
 from utils import get_multi_data, get_single_mode_data
 from ..helpers.normalized_features import normalize_features
+import sys
 
 
 class TrainClassifier(object):
@@ -78,8 +79,8 @@ class TrainClassifier(object):
                                           str(val_f1_score) + '\t' +
                                           str(train_f1_score) + '\n')
 
-    def grid_search_late_fusion(self):
-        Xs_train, ys_train, Xs_val, ys_val = get_multi_data(self.category, feature_scale=self.feature_scale)
+    def grid_search_late_fusion(self,count):
+        Xs_train, ys_train, Xs_val, ys_val = get_multi_data(count, self.category, feature_scale=self.feature_scale)
         y_true_val = map(int, map(np.mean, ys_val[0][0]))
         y_true_train = map(int, map(np.mean, ys_train[0][0]))
 
@@ -149,7 +150,10 @@ if __name__ == '__main__':
     # grid_search_meta(mode='linguistic', category='PN', normalize=norm)
     # print "Performing Grid Search for Late Fusion...\n"
     # grid_search_lf(category='PN', normalize=norm)
-
+    if len(sys.argv) == 2:
+        count = sys.argv[1]
+    else:
+        count = "all"
     trn = TrainClassifier(category='PN', feature_scale=False, modality='linguistic')
     # trn.grid_search_meta(model='DT')
-    trn.grid_search_late_fusion()
+    trn.grid_search_late_fusion(count)
