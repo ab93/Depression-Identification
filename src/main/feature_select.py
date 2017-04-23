@@ -380,7 +380,7 @@ def feature_select(classifier_type):
     print "All features: ",all_feature_lists
 
     # Write all feature lists into output file
-    file = os.path.join(config.SEL_FEAT, "all_selected_features.csv")
+    file = os.path.join(config.SEL_FEAT, classifier_type+"_all_selected_features.csv")
     fileOP = open(file,"w")
     for each_list in all_feature_lists:
         for feature in each_list:

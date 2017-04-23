@@ -52,10 +52,11 @@ class TrainClassifier(object):
                      'LR': LogisticRegression,
                      'AdaBoost': AdaBoostClassifier}
 
-    def grid_search_meta(self, model='DT'):
-        x_train, y_train, x_val, y_val = get_single_mode_data(mode=self.modality,
+    def grid_search_meta(self, count, model='DT'):
+        x_train, y_train, x_val, y_val = get_single_mode_data(mode=self.modality, count=count,
                                                               category=self.category,
                                                               feature_scale=self.feature_scale)
+
         y_true_train = map(int, map(np.mean, y_train[0]))
         y_true_val = map(int, map(np.mean, y_val[0]))
 
@@ -155,5 +156,5 @@ if __name__ == '__main__':
     else:
         count = "all"
     trn = TrainClassifier(category='PN', feature_scale=False, modality='linguistic')
-    # trn.grid_search_meta(model='DT')
+    trn.grid_search_meta(count, model='DT')
     trn.grid_search_late_fusion(count)
