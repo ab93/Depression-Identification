@@ -207,19 +207,21 @@ def main(qtype,mode,classifier_type):
     test_df = get_feature_df(TRAIN,file1,files)
 
     # If mode is visual, drop the extra columns from file - standardizes structure of data frame between all modes
+    '''
     if mode=="V":
         df = df.drop(['frame', 'timestamp', 'confidence', 'success'], axis=1)
         val_df = val_df.drop(['frame', 'timestamp', 'confidence', 'success'], axis=1)
         test_df = test_df.drop(['frame', 'timestamp', 'confidence', 'success'], axis=1)
-
+    '''
+    selection_df = pd.concat([df,val_df])
     # Obtain labels
-    labels = df['label'].values
-    scores = df['score'].values
+    labels = selection_df['label'].values
+    scores = selection_df['score'].values
     # Make copy of data frame
-    copy_df = df.copy() # copy_df contains values for - 'video', all features, 'label' columns
+    #copy_df = df.copy() # copy_df contains values for - 'video', all features, 'label' columns
 
     # Remove 'video' and 'label' column from data frame
-    df.drop(['video', 'label','score'], inplace=True , axis=1)
+    selection_df.drop(['video', 'label','score'], inplace=True , axis=1)
 
     # Pick 'N' to pick from Random Forest method, based on Mode
     if mode=="A":
@@ -244,23 +246,23 @@ def main(qtype,mode,classifier_type):
     # if mode!="A":
     #     df = select_best_K(df,feature_type,K)
     if mode=="V":   
-        df = perform_random_forest(df,feature_type,N)
+        selection_df = perform_random_forest(selection_df,feature_type,N)
     elif mode == "A":
-        df = perform_l1(df,feature_type)
-        df = perform_random_forest(df,feature_type,N)
+        selection_df = perform_l1(selection_df,feature_type)
+        selection_df = perform_random_forest(selection_df,feature_type,N)
     else:
-        df = perform_random_forest(df,feature_type,N)
-        df = select_best_K(df,feature_type,K)
+        selection_df = perform_random_forest(selection_df,feature_type,N)
+        selection_df = select_best_K(selection_df,feature_type,K)
     # Obtain Final feature list
-    final_feature_list = list(df.columns.values)
+    final_feature_list = list(selection_df.columns.values)
     print "Final Feature List (Sorted): ",final_feature_list
-
+    
     # Obtain data frame (for TRAIN and VALIDATION) to write into files
     final_selection = ['video']
     final_selection.extend(final_feature_list)
     final_selection.extend(['label'])
     final_selection.extend(['score'])
-    op_df = copy_df[final_selection]
+    op_df = df[final_selection]
     op_val_df = val_df[final_selection]
     final_selection.remove('label')
     final_selection.remove('score')
