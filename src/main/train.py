@@ -1,14 +1,121 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge, Lasso
 from src.models.classifier import MetaClassifier, LateFusionClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import AdaBoostClassifier
+from src.models.regressor import MetaRegressor, LateFusionRegressor
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor
 from sklearn import metrics
 import config
 from utils import get_multi_data, get_single_mode_data
 import sys
+
+
+class TrainRegressor(object):
+    def __init__(self, category, feature_scale=True, modality='acoustic'):
+        self.category = category
+        self.feature_scale = feature_scale
+        self.modality = modality
+
+        self.reg_weights = [None, [0.7, 0.3], [0.3, 0.7]]
+
+        # Ridge and Lasso params
+        alpha_vals = np.logspace(-3, 3, num=5)
+        lr_params = [{'alpha': alpha, 'normalize': False} for alpha in alpha_vals]
+
+        # Decision Tree Regressor params
+        max_features_ = np.arange(3, 20, 5)
+        max_depths = np.arange(3, 6)
+        min_samples_leaves = np.arange(2, 6)
+        dt_params = [{'max_features': x, 'max_depth': y, 'min_samples_leaf': z, 'random_state': 42}
+                     for x in max_features_ for y in max_depths
+                     for z in min_samples_leaves]
+
+        self.params = {'DT': dt_params,
+                       'Ridge': lr_params,
+                       'Lasso': lr_params}
+        self.regs = {'DT': DecisionTreeClassifier,
+                     'Ridge': Ridge,
+                     'Lasso': Lasso}
+
+    def grid_search_meta(self, count, model='DT'):
+        x_train, y_train, x_val, y_val = get_single_mode_data(mode=self.modality, count=count,
+                                                              category=self.category,
+                                                              feature_scale=self.feature_scale,
+                                                              problem_type='R')
+        y_true_train = map(int, map(np.mean, y_train[0]))
+        y_true_val = map(int, map(np.mean, y_val[0]))
+
+        print "Performing regression grid search for {}".format(self.modality)
+
+        with open(os.path.join(config.GRID_SEARCH_REG_DIR,
+                               self.modality + '_' + model + '_' + self.category + '.txt'), 'w') as outfile:
+            for reg_wt in self.reg_weights:
+                for param1 in self.params[model]:
+                    for param2 in self.params[model]:
+                        reg_1 = self.regs[model](**param1)
+                        reg_2 = self.regs[model](**param2)
+                        meta_reg = MetaRegressor(regressors=[reg_1, reg_2], weights=reg_wt)
+                        meta_reg.fit(x_train, y_train)
+                        val_score = meta_reg.score(x_val, y_true_val)
+                        train_score = meta_reg.score(x_train, y_true_train)
+                        if not reg_wt:
+                            reg_wt = [0.5, 0.5]
+                        print "val RMSE:", val_score, "train RMSE:", train_score
+                        outfile.write(str(reg_wt[0]) + ' ' + str(reg_wt[1]) + '\t' +
+                                      str(param1) + '\t' + str(param2) + '\t' +
+                                      str(val_score) + '\t' +
+                                      str(train_score) + '\n')
+
+    def grid_search_late_fusion(self, count):
+        Xs_train, ys_train, Xs_val, ys_val = get_multi_data(count, self.category, feature_scale=self.feature_scale,
+                                                            problem_type='R')
+        y_true_val = map(int, map(np.mean, ys_val[0][0]))
+
+        reg_A_1 = DecisionTreeRegressor(max_depth=5, max_features=3,
+                                        min_samples_leaf=2, random_state=42)
+        reg_A_2 = DecisionTreeRegressor(max_depth=5, max_features=13,
+                                        min_samples_leaf=5, random_state=42)
+
+        reg_V_1 = DecisionTreeRegressor(max_depth=5, max_features=8,
+                                        min_samples_leaf=2, random_state=42)
+        reg_V_2 = DecisionTreeRegressor(max_depth=5, max_features=18,
+                                        min_samples_leaf=2, random_state=42)
+
+        reg_L_1 = DecisionTreeRegressor(max_depth=5, max_features=3,
+                                        min_samples_leaf=2, random_state=42)
+        reg_L_2 = DecisionTreeRegressor(max_depth=4, max_features=3,
+                                        min_samples_leaf=2, random_state=42)
+
+        reg_A = MetaRegressor(regressors=[reg_A_1, reg_A_2])
+        reg_V = MetaRegressor(regressors=[reg_V_1, reg_V_2], weights=[0.7, 0.3])
+        reg_L = MetaRegressor(regressors=[reg_L_1, reg_L_2])
+
+        mode_weights = [None, [0.6, 0.3, 0.1], [0.3, 0.6, 0.1], [0.4, 0.4, 0.2],
+                        [0.5, 0.4, 0.1], [0.4, 0.5, 0.1], [0.25, 0.25, 0.5],
+                        [0.2, 0.7, 0.1], [0.2, 0.55, 0.25]]
+
+        with open(os.path.join(config.GRID_SEARCH_REG_DIR, '_' + self.category + '_lf.txt'), 'w') as outfile:
+            outfile.write('A_wt' + ',' + 'V_wt' + ',' + 'L_wt' + ',' + 'score' + '\n')
+            for mode_wt in mode_weights:
+                lf_reg = LateFusionRegressor(regressors=[reg_A, reg_V, reg_L], weights=mode_wt)
+                lf_reg.fit(Xs_train, ys_train)
+                score = lf_reg.score(Xs_val, y_true_val)
+                print mode_wt
+                print "LF:", lf_reg.predict(Xs_val)
+                print "A :", lf_reg.regressors_[0].predict(Xs_val[0])
+                print "V :", lf_reg.regressors_[1].predict(Xs_val[1])
+                print "L :", lf_reg.regressors_[2].predict(Xs_val[2])
+                print "Y: ", np.array(y_true_val)
+                if not mode_wt:
+                    mode_wt = [0.3, 0.3, 0.3]
+                outfile.write(str(mode_wt[0]) + ',' + str(mode_wt[1]) + ',' +
+                              str(mode_wt[2]) + ',' + str(score) + '\n')
+                print "LF:", score
+                print "A :", lf_reg.regressors_[0].score(Xs_val[0], y_true_val)
+                print "V :", lf_reg.regressors_[1].score(Xs_val[1], y_true_val)
+                print "L :", lf_reg.regressors_[2].score(Xs_val[2], y_true_val), '\n'
 
 
 class TrainClassifier(object):
@@ -55,7 +162,7 @@ class TrainClassifier(object):
         y_true_train = map(int, map(np.mean, y_train[0]))
         y_true_val = map(int, map(np.mean, y_val[0]))
 
-        print "Performing grid search for {}".format(self.modality)
+        print "Performing classification grid search for {}".format(self.modality)
 
         with open(os.path.join(config.GRID_SEARCH_CLF_DIR,
                                self.modality + '_' + model + '_' + self.category + '.txt'), 'w') as outfile:
@@ -233,17 +340,22 @@ class TrainClassifier(object):
 
 
 if __name__ == '__main__':
-
-    # print "Normalizing features...\n"
-    # normalize_features()
-    # norm = 'normalize'
+    # import argparse
+    #
+    # parser = argparse.ArgumentParser(description='Run Grid Search for Classification/Regression. ')
+    # parser.add_argument('-type', default='C', options=)
 
     if len(sys.argv) == 2:
         count = sys.argv[1]
     else:
         count = "all"
-    trn = TrainClassifier(category='PN', feature_scale=False, modality='acoustic')
+
+    # trn = TrainClassifier(category='PN', feature_scale=False, modality='acoustic')
     # trn.grid_search_meta(count, model='DT')
     # trn.grid_search_late_fusion(count)
     # trn.plot_roc()
-    trn.plot_learning_curve()
+    # trn.plot_learning_curve()
+
+    trn = TrainRegressor(category='PN', feature_scale=False, modality='acoustic')
+    # trn.grid_search_meta(count, model='Ridge')
+    trn.grid_search_late_fusion(count)
