@@ -154,8 +154,8 @@ class TrainClassifier(object):
                      'LR': LogisticRegression,
                      'AdaBoost': AdaBoostClassifier}
 
-    def grid_search_meta(self, count, model='DT'):
-        x_train, y_train, x_val, y_val = get_single_mode_data(mode=self.modality, count=count,
+    def grid_search_meta(self, count, select, model='DT'):
+        x_train, y_train, x_val, y_val = get_single_mode_data(mode=self.modality, count=count, select=select,
                                                               category=self.category,
                                                               feature_scale=self.feature_scale)
 
@@ -184,8 +184,8 @@ class TrainClassifier(object):
                                           str(val_f1_score) + '\t' +
                                           str(train_f1_score) + '\n')
 
-    def grid_search_late_fusion(self,count):
-        Xs_train, ys_train, Xs_val, ys_val = get_multi_data(count, self.category, feature_scale=self.feature_scale)
+    def grid_search_late_fusion(self,count,select):
+        Xs_train, ys_train, Xs_val, ys_val = get_multi_data(count, select, self.category, feature_scale=self.feature_scale)
         y_true_val = map(int, map(np.mean, ys_val[0][0]))
         y_true_train = map(int, map(np.mean, ys_train[0][0]))
 
@@ -340,6 +340,7 @@ class TrainClassifier(object):
 
 
 if __name__ == '__main__':
+<<<<<<< Updated upstream
     # import argparse
     #
     # parser = argparse.ArgumentParser(description='Run Grid Search for Classification/Regression. ')
@@ -359,3 +360,46 @@ if __name__ == '__main__':
     trn = TrainRegressor(category='PN', feature_scale=False, modality='acoustic')
     # trn.grid_search_meta(count, model='Ridge')
     trn.grid_search_late_fusion(count)
+=======
+    # print "Selecting features...\n"
+    # feature_select.feature_select("C")
+
+    # print "Normalizing features...\n"
+    # normalize_features(select=select)
+    # norm = 'normalize'
+
+    # print "Performing Grid Search for visual...\n"
+    # grid_search_meta(mode='visual', category='PN', normalize=norm)
+
+    # print "Performing Grid Search for acoustic...\n"
+    # grid_search_meta(mode='acoustic', category='PN', normalize=norm)
+    # print "Performing Grid Search for linguistic...\n"
+    # grid_search_meta(mode='linguistic', category='PN', normalize=norm)
+    # print "Performing Grid Search for Late Fusion...\n"
+    # grid_search_lf(category='PN', normalize=norm)
+    count = "all" # Input the number of training data to use or 'all'
+    select = "select" # Input 'select' or 'all'
+    if len(sys.argv) >= 2:
+        arg1 = sys.argv[1].split('=')
+        key = arg1[0]
+        if key == 'count':
+            count = arg1[1]
+        else:
+            select = arg1[1]
+        if len(sys.argv) >= 3:
+            arg2 = sys.argv[2].split('=')
+            key = arg2[0]
+            if key == 'count':
+                count = arg2[1]
+            else:
+                select = arg2[1]
+            if len(sys.argv)>3:
+                print "Usage: python train.py [count={count|all}] [select={select|all}]"
+
+    print count
+    print select
+    raw_input()
+    trn = TrainClassifier(category='PN', feature_scale=False, modality='linguistic')
+    trn.grid_search_meta(count, select, model='DT')
+    trn.grid_search_late_fusion(count,select)
+>>>>>>> Stashed changes
