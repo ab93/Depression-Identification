@@ -2,7 +2,6 @@ import os
 import numpy as np
 import pandas as pd
 import config as cfg
-from utils import get_multi_data, get_single_mode_data
 
 
 class Data(object):
@@ -53,6 +52,24 @@ class Data(object):
                 X.append(X_person)
             return X
 
+    def get_full_train(self, modality):
+        x_train, y_train, x_val, y_val = self.get_data(modality)
+
+        x_train[0].extend(x_val[0])
+        x_train[1].extend(x_val[1])
+
+        y_train[0].extend(y_val[0])
+        y_train[1].extend(y_val[1])
+
+        return x_train, y_train
+
+    def get_full_train_multi(self):
+        x_a_train, y_a_train = self.get_full_train('acoustic')
+        x_v_train, y_v_train = self.get_full_train('visual')
+        x_l_train, y_l_train = self.get_full_train('linguistic')
+
+        return [x_a_train, x_v_train, x_l_train], [y_a_train, y_v_train, y_l_train]
+
     def get_data(self, modality, size='all'):
         if self.category == 'PN':
             cat_1 = "positive"
@@ -87,6 +104,6 @@ class Data(object):
 
 if __name__ == '__main__':
     feat_data = Data('PN')
-    x_train, y_train, x_val, y_val = feat_data.get_data(modality='acoustic')
-    print x_train[0][0].shape
-
+    # x_train, y_train, x_val, y_val = feat_data.get_data(modality='acoustic')
+    x_train, y_train = feat_data.get_full_train(modality='acoustic')
+    print len(x_train[0])
