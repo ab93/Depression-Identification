@@ -45,10 +45,10 @@ def get_single_mode_data(mode='acoustic', count="all", category='PN', problem_ty
         cat_2 = "nondiscriminative"
 
     # print mode, category, problem_type, feature_scale
-    X_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale, count = count)[0]),
-               map(np.asarray, features(mode, cat_2, "train", problem_type, feature_scale, count = count)[0])]
-    y_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale, count = count)[1]),
-               map(np.asarray, features(mode, cat_2, "train", problem_type, feature_scale, count = count)[1])]
+    X_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale, count=count)[0]),
+               map(np.asarray, features(mode, cat_2, "train", problem_type, feature_scale, count=count)[0])]
+    y_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale, count=count)[1]),
+               map(np.asarray, features(mode, cat_2, "train", problem_type, feature_scale, count=count)[1])]
     X_val = [map(np.asarray, features(mode, cat_1, "val", problem_type, feature_scale)[0]),
              map(np.asarray, features(mode, cat_2, "val", problem_type, feature_scale)[0])]
     y_val = [map(np.asarray, features(mode, cat_1, "val", problem_type, feature_scale)[1]),

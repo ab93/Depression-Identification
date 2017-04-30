@@ -78,7 +78,7 @@ class MetaRegressor(BaseEstimator, RegressorMixin):
         weighted_pred = np.average(preds, axis=0, weights=self.weights)
         return weighted_pred
 
-    def score(self, Xs, y_true, scoring='r2'):
+    def score(self, Xs, y_true, scoring='mean_abs_error'):
         """
         Returns the R2 (Coefficient of Determination) score by default
 
@@ -139,7 +139,7 @@ class LateFusionRegressor(BaseEstimator, RegressorMixin):
         weighted_preds = np.average(preds, axis=0, weights=self.weights)
         return weighted_preds
 
-    def score(self, Xs, y_true, scoring='r2'):
+    def score(self, Xs, y_true, scoring='mean_abs_error'):
         """
         Returns the R2 (Coefficient of Determination) score by default
 
