@@ -13,11 +13,10 @@ SEL_FEAT_TRAIN_REGULAR_ESTIMATE = os.path.join('data','selected_features','regul
 SEL_FEAT_VAL_REGULAR_ESTIMATE = os.path.join('data','selected_features','regular','estimate','val')
 SEL_FEAT_TEST_REGULAR_ESTIMATE = os.path.join('data','selected_features','regular','estimate','test')
 
-
-# SEL_FEAT_TRAIN_NORMALIZED_CLASSIFY = os.path.join('data','selected_features','normalize','classify','train')
-# SEL_FEAT_VAL_NORMALIZED_CLASSIFY = os.path.join('data','selected_features','normalize','classify','val')
-# SEL_FEAT_TRAIN_NORMALIZED_ESTIMATE = os.path.join('data','selected_features','normalize','estimate','train')
-# SEL_FEAT_VAL_NORMALIZED_ESTIMATE = os.path.join('data','selected_features','normalize','estimate','val')
+SEL_FEAT_TRAIN_NORMALIZED_CLASSIFY = os.path.join('data','selected_features','normalize','classify','train')
+SEL_FEAT_VAL_NORMALIZED_CLASSIFY = os.path.join('data','selected_features','normalize','classify','val')
+SEL_FEAT_TRAIN_NORMALIZED_ESTIMATE = os.path.join('data','selected_features','normalize','estimate','train')
+SEL_FEAT_VAL_NORMALIZED_ESTIMATE = os.path.join('data','selected_features','normalize','estimate','val')
 
 RESULTS_CLASSIFY = os.path.join('results','grid_search','classification')
 RESULTS_ESTIMATE = os.path.join('results','grid_search','regression')
