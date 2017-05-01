@@ -3,6 +3,7 @@ import os
 from sklearn import preprocessing
 from ..main import config
 import numpy as np
+import sys
 
 def get_normalized_features(filename):
     filename_train = filename
@@ -76,3 +77,10 @@ def normalize_features(select = "select"):
 
 
 #normalize_features()
+
+if __name__ == '__main__':
+    select = "select"
+    if len(sys.argv) == 2:
+        select = sys.argv[1]
+    print select
+    normalize_features(select)
