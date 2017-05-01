@@ -5,7 +5,6 @@ import config as cfg
 
 
 class Data(object):
-    # TODO there is no all_features/normalize data created
     def __init__(self, category, feature_scale=False, feature_select=False, problem_type='C'):
         self.category = category
         self.problem_type = problem_type
@@ -132,7 +131,7 @@ class Data(object):
 
 
 if __name__ == '__main__':
-    feat_data = Data('PN', feature_select=True, problem_type='C')
+    feat_data = Data('PN', feature_select=False, feature_scale=True, problem_type='C')
     # x_train, y_train, x_val, y_val = feat_data.get_data(modality='acoustic')
     # x, y = feat_data.get_full_train(modality='acoustic')
     # print x[1][3].shape
@@ -141,5 +140,4 @@ if __name__ == '__main__':
     X_V_train, y_V_train, X_V_val, y_V_val = feat_data.get_data('visual')
     X_L_train, y_L_train, X_L_val, y_L_val = feat_data.get_data('linguistic')
 
-    print X_A_train[1][116].shape, X_V_train[1][116].shape, X_L_train[1][116].shape
     feat_data.concat_features(X_A_train, X_V_train, X_L_train)
