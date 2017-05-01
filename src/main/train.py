@@ -1,23 +1,23 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LogisticRegression, LinearRegression, Ridge, Lasso
+from sklearn.linear_model import LogisticRegression, Ridge, Lasso
 from src.models.classifier import MetaClassifier, LateFusionClassifier
 from src.models.regressor import MetaRegressor, LateFusionRegressor
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor
 from sklearn import metrics
 import config
-from utils import get_multi_data, get_single_mode_data
-import sys
+from feature_data import Data
 
 
 class TrainRegressor(object):
-    def __init__(self, category, feature_scale=True, modality='acoustic'):
+    def __init__(self, category, modality='acoustic', feature_scale=False, feature_select=False):
         self.category = category
         self.feature_scale = feature_scale
         self.modality = modality
-
+        self.data = Data(category=category, feature_scale=feature_scale,
+                         feature_select=feature_select, problem_type='R')
         self.reg_weights = [None, [0.7, 0.3], [0.3, 0.7]]
 
         # Ridge and Lasso params
@@ -39,11 +39,9 @@ class TrainRegressor(object):
                      'Ridge': Ridge,
                      'Lasso': Lasso}
 
-    def grid_search_meta(self, count, model='DT'):
-        x_train, y_train, x_val, y_val = get_single_mode_data(mode=self.modality, count=count,
-                                                              category=self.category,
-                                                              feature_scale=self.feature_scale,
-                                                              problem_type='R')
+    def grid_search_meta(self, model='DT'):
+        x_train, y_train, x_val, y_val = self.data.get_data(self.modality)
+
         y_true_train = map(int, map(np.mean, y_train[0]))
         y_true_val = map(int, map(np.mean, y_val[0]))
 
@@ -68,9 +66,9 @@ class TrainRegressor(object):
                                       str(val_score) + '\t' +
                                       str(train_score) + '\n')
 
-    def grid_search_late_fusion(self, count):
-        Xs_train, ys_train, Xs_val, ys_val = get_multi_data(count, self.category, feature_scale=self.feature_scale,
-                                                            problem_type='R')
+    def grid_search_late_fusion(self):
+        Xs_train, ys_train, Xs_val, ys_val = self.data.get_multi_data()
+
         y_true_val = map(int, map(np.mean, ys_val[0][0]))
 
         reg_A_1 = DecisionTreeRegressor(max_depth=5, max_features=3,
@@ -119,10 +117,13 @@ class TrainRegressor(object):
 
 
 class TrainClassifier(object):
-    def __init__(self, category, feature_scale=True, modality='acoustic'):
+    def __init__(self, category, modality='acoustic', feature_scale=False, feature_select=False):
         self.category = category
         self.feature_scale = feature_scale
         self.modality = modality
+
+        self.data = Data(category=category, feature_scale=feature_scale,
+                         feature_select=feature_select, problem_type='C')
 
         self.class_weights = np.arange(3, 6)
         self.clf_weights = [None, [0.7, 0.3], [0.3, 0.7]]
@@ -154,10 +155,8 @@ class TrainClassifier(object):
                      'LR': LogisticRegression,
                      'AdaBoost': AdaBoostClassifier}
 
-    def grid_search_meta(self, count, select, model='DT'):
-        x_train, y_train, x_val, y_val = get_single_mode_data(mode=self.modality, count=count, select=select,
-                                                              category=self.category,
-                                                              feature_scale=self.feature_scale)
+    def grid_search_meta(self, model='DT'):
+        x_train, y_train, x_val, y_val = self.data.get_data(self.modality)
 
         y_true_train = map(int, map(np.mean, y_train[0]))
         y_true_val = map(int, map(np.mean, y_val[0]))
@@ -184,8 +183,9 @@ class TrainClassifier(object):
                                           str(val_f1_score) + '\t' +
                                           str(train_f1_score) + '\n')
 
-    def grid_search_late_fusion(self,count,select):
-        Xs_train, ys_train, Xs_val, ys_val = get_multi_data(count, select, self.category, feature_scale=self.feature_scale)
+    def grid_search_late_fusion(self):
+        Xs_train, ys_train, Xs_val, ys_val = self.data.get_multi_data()
+
         y_true_val = map(int, map(np.mean, ys_val[0][0]))
         y_true_train = map(int, map(np.mean, ys_train[0][0]))
 
@@ -235,7 +235,6 @@ class TrainClassifier(object):
 
     def plot_learning_curve(self):
         steps = np.arange(56, 187, 10)
-        # steps = [186]
         if self.modality == 'acoustic':
             clf = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 4}, max_depth=5, max_features=3,
                                                                      min_samples_leaf=2, random_state=42),
@@ -255,9 +254,7 @@ class TrainClassifier(object):
 
         train_scores, val_scores = [], []
         for train_count in steps:
-            x_train, y_train, x_val, y_val = get_single_mode_data(mode=self.modality, count=train_count,
-                                                                  category=self.category,
-                                                                  feature_scale=self.feature_scale)
+            x_train, y_train, x_val, y_val = self.data.get_data(self.modality, size=train_count)
             y_true_train = map(int, map(np.mean, y_train[0]))
             y_true_val = map(int, map(np.mean, y_val[0]))
 
@@ -283,7 +280,8 @@ class TrainClassifier(object):
         plt.show()
 
     def plot_roc(self):
-        Xs_train, ys_train, Xs_val, ys_val = get_multi_data(count, self.category, feature_scale=self.feature_scale)
+        Xs_train, ys_train, Xs_val, ys_val = self.data.get_multi_data()
+
         y_true_val = map(int, map(np.mean, ys_val[0][0]))
 
         clf_A_1 = DecisionTreeClassifier(class_weight={1: 4}, max_depth=5, max_features=3,
@@ -341,65 +339,15 @@ class TrainClassifier(object):
 
 if __name__ == '__main__':
 
-    # import argparse
-    #
-    # parser = argparse.ArgumentParser(description='Run Grid Search for Classification/Regression. ')
-    # parser.add_argument('-type', default='C', options=)
-
-    if len(sys.argv) == 2:
-        count = sys.argv[1]
-    else:
-        count = "all"
-
-    # trn = TrainClassifier(category='PN', feature_scale=False, modality='acoustic')
-    # trn.grid_search_meta(count, model='DT')
-    # trn.grid_search_late_fusion(count)
+    trn = TrainClassifier(category='PN', feature_scale=False, feature_select=False, modality='acoustic')
+    # trn.grid_search_meta(model='DT')
+    # exit()
+    # trn.grid_search_late_fusion()
     # trn.plot_roc()
-    # trn.plot_learning_curve()
+    trn.plot_learning_curve()
 
-    trn = TrainRegressor(category='PN', feature_scale=False, modality='acoustic')
-    # trn.grid_search_meta(count, model='Ridge')
-    trn.grid_search_late_fusion(count)
-
-    # print "Selecting features...\n"
-    # feature_select.feature_select("C")
-
-    # print "Normalizing features...\n"
-    # normalize_features(select=select)
-    # norm = 'normalize'
-
-    # print "Performing Grid Search for visual...\n"
-    # grid_search_meta(mode='visual', category='PN', normalize=norm)
-
-    # print "Performing Grid Search for acoustic...\n"
-    # grid_search_meta(mode='acoustic', category='PN', normalize=norm)
-    # print "Performing Grid Search for linguistic...\n"
-    # grid_search_meta(mode='linguistic', category='PN', normalize=norm)
-    # print "Performing Grid Search for Late Fusion...\n"
-    # grid_search_lf(category='PN', normalize=norm)
-    count = "all" # Input the number of training data to use or 'all'
-    select = "select" # Input 'select' or 'all'
-    if len(sys.argv) >= 2:
-        arg1 = sys.argv[1].split('=')
-        key = arg1[0]
-        if key == 'count':
-            count = arg1[1]
-        else:
-            select = arg1[1]
-        if len(sys.argv) >= 3:
-            arg2 = sys.argv[2].split('=')
-            key = arg2[0]
-            if key == 'count':
-                count = arg2[1]
-            else:
-                select = arg2[1]
-            if len(sys.argv)>3:
-                print "Usage: python train.py [count={count|all}] [select={select|all}]"
-
-    print count
-    print select
-    raw_input()
-    trn = TrainClassifier(category='PN', feature_scale=False, modality='linguistic')
-    trn.grid_search_meta(count, select, model='DT')
-    trn.grid_search_late_fusion(count,select)
+    trn = TrainRegressor(category='PN', feature_scale=False, feature_select=True, modality='acoustic')
+    # trn.grid_search_meta(model='Ridge')
+    # trn.grid_search_late_fusion()
+    exit()
 

@@ -5,11 +5,12 @@ import config as cfg
 
 
 class Data(object):
-    def __init__(self, category, feature_scale=False, problem_type='C', size='all'):
+    # TODO there is no all_features/normalize data created
+    def __init__(self, category, feature_scale=False, feature_select=False, problem_type='C'):
         self.category = category
-        self.size = size
         self.problem_type = problem_type
         self.feature_scale = feature_scale
+        self.feature_select = feature_select
 
     def _scale_features(self):
         raise NotImplementedError("Not implemented yet!")
@@ -18,8 +19,12 @@ class Data(object):
         scale = 'normalize' if self.feature_scale else 'regular'
         p_type = 'classify' if self.problem_type == 'C' else 'estimate'
 
-        file_ = os.path.join(cfg.SEL_FEAT, scale, p_type, split,
-                             '{}_{}_{}.csv'.format(q_category, modality, split))
+        if self.feature_select:
+            file_ = os.path.join(cfg.SEL_FEAT, scale, p_type, split,
+                                 '{}_{}_{}.csv'.format(q_category, modality, split))
+        else:
+            file_ = os.path.join(cfg.ALL_FEAT, scale, p_type, split,
+                                 '{}_{}_{}.csv'.format(q_category, modality, split))
         
         data = pd.read_csv(file_)
         if split == "train" and size != "all":
@@ -123,19 +128,18 @@ class Data(object):
                                               x2[cat_idx][idx][:num_min_samples, :],
                                               x3[cat_idx][idx][:num_min_samples, :]))
                     x[cat_idx].append(stacked_data)
-
         return x
 
 
 if __name__ == '__main__':
-    feat_data = Data('PN')
+    feat_data = Data('PN', feature_select=True, problem_type='C')
     # x_train, y_train, x_val, y_val = feat_data.get_data(modality='acoustic')
-    # x, y = feat_data.get_full_train(modality='linguistic')
+    # x, y = feat_data.get_full_train(modality='acoustic')
     # print x[1][3].shape
 
     X_A_train, y_A_train, X_A_val, y_A_val = feat_data.get_data('acoustic')
     X_V_train, y_V_train, X_V_val, y_V_val = feat_data.get_data('visual')
     X_L_train, y_L_train, X_L_val, y_L_val = feat_data.get_data('linguistic')
 
-    # print X_A_train[1][116].shape, X_V_train[1][116].shape, X_L_train[1][116].shape
+    print X_A_train[1][116].shape, X_V_train[1][116].shape, X_L_train[1][116].shape
     feat_data.concat_features(X_A_train, X_V_train, X_L_train)
