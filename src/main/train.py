@@ -340,7 +340,7 @@ class TrainClassifier(object):
 
 
 if __name__ == '__main__':
-<<<<<<< Updated upstream
+
     # import argparse
     #
     # parser = argparse.ArgumentParser(description='Run Grid Search for Classification/Regression. ')
@@ -360,7 +360,7 @@ if __name__ == '__main__':
     trn = TrainRegressor(category='PN', feature_scale=False, modality='acoustic')
     # trn.grid_search_meta(count, model='Ridge')
     trn.grid_search_late_fusion(count)
-=======
+
     # print "Selecting features...\n"
     # feature_select.feature_select("C")
 
@@ -402,4 +402,4 @@ if __name__ == '__main__':
     trn = TrainClassifier(category='PN', feature_scale=False, modality='linguistic')
     trn.grid_search_meta(count, select, model='DT')
     trn.grid_search_late_fusion(count,select)
->>>>>>> Stashed changes
+

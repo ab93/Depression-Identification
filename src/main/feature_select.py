@@ -43,24 +43,24 @@ def get_feature_df(train, file_, *files):
             feature_df = feature_df.T.drop_duplicates().T
 
     # Trim data frame to hold only train/validation records based on split_file
-    if train == "test":
-        split_df = pd.read_csv(split_file, usecols=['participant_ID'])
-        feature_df = feature_df[feature_df['video'].isin(split_df['participant_ID'])]
-    else:
-        split_df = pd.read_csv(split_file,usecols=['Participant_ID', 'PHQ_Binary','PHQ_Score'])
-        feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
+    #if train == "test":
+        #split_df = pd.read_csv(split_file, usecols=['Participant_ID'])
+        #feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
+    #else:
+    split_df = pd.read_csv(split_file,usecols=['Participant_ID', 'PHQ_Binary','PHQ_Score'])
+    feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
 
         # Populate labels and scores accordingly from split_df
-        split_dict = split_df.set_index('Participant_ID').T.to_dict()
-        del split_df
-        labels = np.zeros(feature_df.shape[0])
-        scores = np.zeros(feature_df.shape[0])
-        for i in xrange(feature_df.shape[0]):
-            video_id = feature_df.iat[i, 0]
-            labels[i] = split_dict[video_id]['PHQ_Binary']
-            scores[i] = split_dict[video_id]['PHQ_Score']
-        feature_df['label'] = pd.Series(labels, index=feature_df.index)
-        feature_df['score'] = pd.Series(scores, index=feature_df.index)
+    split_dict = split_df.set_index('Participant_ID').T.to_dict()
+    del split_df
+    labels = np.zeros(feature_df.shape[0])
+    scores = np.zeros(feature_df.shape[0])
+    for i in xrange(feature_df.shape[0]):
+        video_id = feature_df.iat[i, 0]
+        labels[i] = split_dict[video_id]['PHQ_Binary']
+        scores[i] = split_dict[video_id]['PHQ_Score']
+    feature_df['label'] = pd.Series(labels, index=feature_df.index)
+    feature_df['score'] = pd.Series(scores, index=feature_df.index)
 
     # Drop common (unwanted) columns - question, starttime, endtime
     try:
@@ -328,8 +328,8 @@ def main(qtype,mode,classifier_type, choice = "select"):
     final_selection.extend(['score'])
     op_df = df[final_selection]
     op_val_df = val_df[final_selection]
-    final_selection.remove('label')
-    final_selection.remove('score')
+    #final_selection.remove('label')
+    #final_selection.remove('score')
     op_test_df = test_df[final_selection]
 
     # To construct Output File Name

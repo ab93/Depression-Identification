@@ -45,7 +45,7 @@ def get_single_mode_data(mode='acoustic', count="all", select="select", category
         cat_2 = "nondiscriminative"
 
     # print mode, category, problem_type, feature_scale
-<<<<<<< Updated upstream
+
     X_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale, count=count)[0]),
                map(np.asarray, features(mode, cat_2, "train", problem_type, feature_scale, count=count)[0])]
     y_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale, count=count)[1]),
@@ -54,7 +54,7 @@ def get_single_mode_data(mode='acoustic', count="all", select="select", category
              map(np.asarray, features(mode, cat_2, "val", problem_type, feature_scale)[0])]
     y_val = [map(np.asarray, features(mode, cat_1, "val", problem_type, feature_scale)[1]),
              map(np.asarray, features(mode, cat_2, "val", problem_type, feature_scale)[1])]
-=======
+
     X_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale, count = count, select = select)[0]),
                map(np.asarray, features(mode, cat_2, "train", problem_type, feature_scale, count = count, select = select)[0])]
     y_train = [map(np.asarray, features(mode, cat_1, "train", problem_type, feature_scale, count = count, select = select)[1]),
@@ -63,7 +63,7 @@ def get_single_mode_data(mode='acoustic', count="all", select="select", category
              map(np.asarray, features(mode, cat_2, "val", problem_type, feature_scale, select = select)[0])]
     y_val = [map(np.asarray, features(mode, cat_1, "val", problem_type, feature_scale, select = select)[1]),
              map(np.asarray, features(mode, cat_2, "val", problem_type, feature_scale, select = select)[1])]
->>>>>>> Stashed changes
+
 
     return X_train, y_train, X_val, y_val
 
