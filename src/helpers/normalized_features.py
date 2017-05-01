@@ -40,7 +40,7 @@ def get_normalized_features(filename):
 
     data_normalized_train[['video','label','score']] = data_train[['video','label','score']]
     data_normalized_val[['video','label','score']] = data_val[['video','label','score']]
-    data_normalized_test[['video']] = data_test[['video']]
+    data_normalized_test[['video','label','score']] = data_test[['video','label','score']]
 
 
     write_path_file_train = filename_train.replace("regular","normalize")
