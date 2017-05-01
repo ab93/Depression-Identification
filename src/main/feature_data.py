@@ -12,7 +12,7 @@ class Data(object):
         self.feature_scale = feature_scale
 
     def _scale_features(self):
-        pass
+        raise NotImplementedError("Not implemented yet!")
 
     def _select_data(self, modality, q_category, split, size='all'):
         scale = 'normalize' if self.feature_scale else 'regular'
@@ -78,6 +78,8 @@ class Data(object):
             cat_1 = "discriminative"
             cat_2 = "nondiscriminative"
 
+        print "Reading data for {}".format(modality)
+
         x_train = [map(np.asarray, self._select_data(modality, cat_1, "train", size=size)[0]),
                    map(np.asarray, self._select_data(modality, cat_2, "train", size=size)[0])]
         y_train = [map(np.asarray, self._select_data(modality, cat_1, "train", size=size)[1]),
@@ -101,9 +103,39 @@ class Data(object):
 
         return Xs, ys, Xs_val, ys_val
 
+    @staticmethod
+    def concat_features(x1, x2, x3):
+        if not len(x1) == len(x2) == len(x3) == 2:
+            raise RuntimeError('Data sizes are not equal')
+        elif not len(x1[0]) == len(x2[0]) == len(x3[0]):
+            raise RuntimeError('Number of samples not equal')
+
+        num_samples = len(x1[0])
+        x = [[], []]
+        for cat_idx in range(len(x)):
+            for idx in xrange(num_samples):
+                try:
+                    stacked_data = np.hstack((x1[cat_idx][idx], x2[cat_idx][idx], x3[cat_idx][idx]))
+                    x[cat_idx].append(stacked_data)
+                except ValueError:
+                    num_min_samples = min([data[cat_idx][idx].shape[0] for data in (x1, x2, x3)])
+                    stacked_data = np.hstack((x1[cat_idx][idx][:num_min_samples, :],
+                                              x2[cat_idx][idx][:num_min_samples, :],
+                                              x3[cat_idx][idx][:num_min_samples, :]))
+                    x[cat_idx].append(stacked_data)
+
+        return x
+
 
 if __name__ == '__main__':
     feat_data = Data('PN')
     # x_train, y_train, x_val, y_val = feat_data.get_data(modality='acoustic')
-    x_train, y_train = feat_data.get_full_train(modality='acoustic')
-    print len(x_train[0])
+    # x, y = feat_data.get_full_train(modality='linguistic')
+    # print x[1][3].shape
+
+    X_A_train, y_A_train, X_A_val, y_A_val = feat_data.get_data('acoustic')
+    X_V_train, y_V_train, X_V_val, y_V_val = feat_data.get_data('visual')
+    X_L_train, y_L_train, X_L_val, y_L_val = feat_data.get_data('linguistic')
+
+    # print X_A_train[1][116].shape, X_V_train[1][116].shape, X_L_train[1][116].shape
+    feat_data.concat_features(X_A_train, X_V_train, X_L_train)
