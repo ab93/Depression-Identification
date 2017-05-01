@@ -43,24 +43,24 @@ def get_feature_df(train, file_, *files):
             feature_df = feature_df.T.drop_duplicates().T
 
     # Trim data frame to hold only train/validation records based on split_file
-    if train == "test":
-        split_df = pd.read_csv(split_file, usecols=['participant_ID'])
-        feature_df = feature_df[feature_df['video'].isin(split_df['participant_ID'])]
-    else:
-        split_df = pd.read_csv(split_file,usecols=['Participant_ID', 'PHQ_Binary','PHQ_Score'])
-        feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
+    #if train == "test":
+        #split_df = pd.read_csv(split_file, usecols=['Participant_ID'])
+        #feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
+    #else:
+    split_df = pd.read_csv(split_file,usecols=['Participant_ID', 'PHQ_Binary','PHQ_Score'])
+    feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
 
         # Populate labels and scores accordingly from split_df
-        split_dict = split_df.set_index('Participant_ID').T.to_dict()
-        del split_df
-        labels = np.zeros(feature_df.shape[0])
-        scores = np.zeros(feature_df.shape[0])
-        for i in xrange(feature_df.shape[0]):
-            video_id = feature_df.iat[i, 0]
-            labels[i] = split_dict[video_id]['PHQ_Binary']
-            scores[i] = split_dict[video_id]['PHQ_Score']
-        feature_df['label'] = pd.Series(labels, index=feature_df.index)
-        feature_df['score'] = pd.Series(scores, index=feature_df.index)
+    split_dict = split_df.set_index('Participant_ID').T.to_dict()
+    del split_df
+    labels = np.zeros(feature_df.shape[0])
+    scores = np.zeros(feature_df.shape[0])
+    for i in xrange(feature_df.shape[0]):
+        video_id = feature_df.iat[i, 0]
+        labels[i] = split_dict[video_id]['PHQ_Binary']
+        scores[i] = split_dict[video_id]['PHQ_Score']
+    feature_df['label'] = pd.Series(labels, index=feature_df.index)
+    feature_df['score'] = pd.Series(scores, index=feature_df.index)
 
     # Drop common (unwanted) columns - question, starttime, endtime
     try:
@@ -213,7 +213,7 @@ def perform_random_forest(df,labels,N):
     final_df = df[selected_features]
     return final_df
 
-def main(qtype,mode,classifier_type):
+def main(qtype,mode,classifier_type, choice = "select"):
     '''Performs feature selection for given category and mode
 
     Parameters
@@ -221,6 +221,7 @@ def main(qtype,mode,classifier_type):
     qtype : str, {'D','ND','P','N'}
     mode : str, {'A','V','L'}
     classifier_type : str, {'C','R'}
+    choice : str, {'select','all'}
     
     Returns
     -------
@@ -306,14 +307,15 @@ def main(qtype,mode,classifier_type):
         feature_type = scores
 
     # Call pipeline of feature selection methods on data frame - different pipeline for each Question Type and Mode combination
-    if mode=="V":   
-        selection_df = perform_random_forest(selection_df,feature_type,N)
-    elif mode == "A":
-        selection_df = perform_l1(selection_df,feature_type)
-        selection_df = perform_random_forest(selection_df,feature_type,N)
-    else:
-        selection_df = perform_random_forest(selection_df,feature_type,N)
-        selection_df = select_best_K(selection_df,feature_type,K)
+    if choice == "select":
+        if mode=="V":   
+            selection_df = perform_random_forest(selection_df,feature_type,N)
+        elif mode == "A":
+            selection_df = perform_l1(selection_df,feature_type)
+            selection_df = perform_random_forest(selection_df,feature_type,N)
+        else:
+            selection_df = perform_random_forest(selection_df,feature_type,N)
+            selection_df = select_best_K(selection_df,feature_type,K)
 
     # Obtain Final feature list
     final_feature_list = list(selection_df.columns.values)
@@ -326,8 +328,8 @@ def main(qtype,mode,classifier_type):
     final_selection.extend(['score'])
     op_df = df[final_selection]
     op_val_df = val_df[final_selection]
-    final_selection.remove('label')
-    final_selection.remove('score')
+    #final_selection.remove('label')
+    #final_selection.remove('score')
     op_test_df = test_df[final_selection]
 
     # To construct Output File Name
@@ -343,13 +345,23 @@ def main(qtype,mode,classifier_type):
 
     # Write output dfs into output files - TRAIN, VALIDATION AND TEST
     if classifier_type == "C":
-        directory_path_train = config.SEL_FEAT_TRAIN_REGULAR_CLASSIFY
-        directory_path_val = config.SEL_FEAT_VAL_REGULAR_CLASSIFY
-        directory_path_test = config.SEL_FEAT_TEST_REGULAR_CLASSIFY
+        if choice == "select":
+            directory_path_train = config.SEL_FEAT_TRAIN_REGULAR_CLASSIFY
+            directory_path_val = config.SEL_FEAT_VAL_REGULAR_CLASSIFY
+            directory_path_test = config.SEL_FEAT_TEST_REGULAR_CLASSIFY
+        else:
+            directory_path_train = config.ALL_FEAT_TRAIN_REGULAR_CLASSIFY
+            directory_path_val = config.ALL_FEAT_VAL_REGULAR_CLASSIFY
+            directory_path_test = config.ALL_FEAT_TEST_REGULAR_CLASSIFY
     else:
-        directory_path_train = config.SEL_FEAT_TRAIN_REGULAR_ESTIMATE
-        directory_path_val = config.SEL_FEAT_VAL_REGULAR_ESTIMATE
-        directory_path_test = config.SEL_FEAT_TEST_REGULAR_ESTIMATE
+        if choice == "select":
+            directory_path_train = config.SEL_FEAT_TRAIN_REGULAR_ESTIMATE
+            directory_path_val = config.SEL_FEAT_VAL_REGULAR_ESTIMATE
+            directory_path_test = config.SEL_FEAT_TEST_REGULAR_ESTIMATE
+        else:
+            directory_path_train = config.ALL_FEAT_TRAIN_REGULAR_ESTIMATE
+            directory_path_val = config.ALL_FEAT_VAL_REGULAR_ESTIMATE
+            directory_path_test = config.ALL_FEAT_TEST_REGULAR_ESTIMATE
     fileOP = os.path.join(directory_path_train,file_prefix + output_file + file_suffix_train)
     op_df.to_csv(fileOP,sep=",",index=False)
     fileOP = os.path.join(directory_path_val, file_prefix + output_file + file_suffix_val)
@@ -359,12 +371,13 @@ def main(qtype,mode,classifier_type):
 
     return final_feature_list
 
-def feature_select(classifier_type):
+def feature_select(classifier_type, choice = "select"):
     '''Calls feature selection method for all categories and modes, with given classifier_type
 
     Parameters
     ----------
     classifier_type : str, {'C','R'}
+    choice : str, {'select','all'}
     '''
 
     all_feature_lists = []
@@ -375,7 +388,7 @@ def feature_select(classifier_type):
     for qtype in question_types:
         for mode in modes:
             print "Feature Selection for ",qtype," and ",mode
-            feature_list = main(qtype,mode,classifier_type)
+            feature_list = main(qtype,mode,classifier_type,choice = choice)
             all_feature_lists.append(feature_list)
     print "All features: ",all_feature_lists
 
@@ -389,6 +402,9 @@ def feature_select(classifier_type):
         fileOP.write("\n")
 
 if __name__ == '__main__':
+    choice = "select"
+    if len(sys.argv) == 2:
+        choice = sys.argv[1]
     # Call feature select function for both classification and regression
-    feature_select("C")
-    feature_select("R")
+    feature_select("C",choice = choice)
+    feature_select("R",choice = choice)
