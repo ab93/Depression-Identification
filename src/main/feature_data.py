@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 import config as cfg
-
+from copy import deepcopy
 
 class Data(object):
     def __init__(self, category, feature_scale=False, feature_select=False, problem_type='C'):
@@ -31,30 +31,23 @@ class Data(object):
             split_df = pd.read_csv(split_file, usecols=['Participant_ID'])
             split_df = split_df.loc[:int(size) - 1]
             data = data[data['video'].isin(split_df['Participant_ID'])]
-        return self._group_features(data, split)
+        return self._group_features(data)
 
-    def _group_features(self, data, split):
+    def _group_features(self, data):
         y_label = 'label' if self.problem_type == 'C' else 'score'
+        # print max(data[y_label])
         grouped = data.groupby('video')
         X = []
         y = []
-        if split != "test":
-            for video, group in grouped:
-                X_person = []
-                y_person = []
-                for i in range(len(group)):
-                    X_person.append(group.iloc[i].tolist()[1:-2])
-                    y_person.append(group.iloc[i][y_label])
-                X.append(X_person)
-                y.append(y_person)
-            return X, y
-        elif split == "test":
-            for video, group in grouped:
-                X_person = []
-                for i in range(len(group)):
-                    X_person.append(group.iloc[i].tolist()[1:])
-                X.append(X_person)
-            return X
+        for video, group in grouped:
+            X_person = []
+            y_person = []
+            for i in range(len(group)):
+                X_person.append(group.iloc[i].tolist()[1:-2])
+                y_person.append(group.iloc[i][y_label])
+            X.append(X_person)
+            y.append(y_person)
+        return X, y
 
     def get_full_train(self, modality):
         x_train, y_train, x_val, y_val = self.get_data(modality)
@@ -66,6 +59,29 @@ class Data(object):
         y_train[1].extend(y_val[1])
 
         return x_train, y_train
+
+    def get_test_data(self, modality):
+        if self.category == 'PN':
+            cat_1 = "positive"
+            cat_2 = "negative"
+        else:
+            cat_1 = "discriminative"
+            cat_2 = "nondiscriminative"
+
+        print "Reading test data for {}".format(modality)
+
+        x_test = [map(np.asarray, self._select_data(modality, cat_1, "test")[0]),
+                 map(np.asarray, self._select_data(modality, cat_2, "test")[0])]
+        y_test = [map(np.asarray, self._select_data(modality, cat_1, "test")[1]),
+                 map(np.asarray, self._select_data(modality, cat_2, "test")[1])]
+        return x_test, y_test
+
+    def get_test_data_multi(self):
+        x_a_test, y_a_test = self.get_test_data('acoustic')
+        x_v_test, y_v_test = self.get_test_data('visual')
+        x_l_test, y_l_test = self.get_test_data('linguistic')
+
+        return [x_a_test, x_v_test, x_l_test], [y_a_test, y_v_test, y_l_test]
 
     def get_full_train_multi(self):
         x_a_train, y_a_train = self.get_full_train('acoustic')
@@ -108,7 +124,7 @@ class Data(object):
         return Xs, ys, Xs_val, ys_val
 
     @staticmethod
-    def concat_features(x1, x2, x3):
+    def concat_features(x1, x2, x3, y):
         if not len(x1) == len(x2) == len(x3) == 2:
             raise RuntimeError('Data sizes are not equal')
         elif not len(x1[0]) == len(x2[0]) == len(x3[0]):
@@ -116,6 +132,7 @@ class Data(object):
 
         num_samples = len(x1[0])
         x = [[], []]
+        y = deepcopy(y)
         for cat_idx in range(len(x)):
             for idx in xrange(num_samples):
                 try:
@@ -127,15 +144,17 @@ class Data(object):
                                               x2[cat_idx][idx][:num_min_samples, :],
                                               x3[cat_idx][idx][:num_min_samples, :]))
                     x[cat_idx].append(stacked_data)
-        return x
+                    y[cat_idx][idx] = y[cat_idx][idx][:num_min_samples]
+        return x, y
 
 
 if __name__ == '__main__':
-    feat_data = Data('PN', feature_select=False, feature_scale=True, problem_type='C')
+    feat_data = Data('PN', feature_select=True, feature_scale=False, problem_type='C')
     # x_train, y_train, x_val, y_val = feat_data.get_data(modality='acoustic')
-    # x, y = feat_data.get_full_train(modality='acoustic')
-    # print x[1][3].shape
-
+    X, Y = feat_data.get_test_data(modality='acoustic')
+    # X, y = feat_data.get_full_train(modality='acoustic')
+    print X[1][0].shape
+    exit()
     X_A_train, y_A_train, X_A_val, y_A_val = feat_data.get_data('acoustic')
     X_V_train, y_V_train, X_V_val, y_V_val = feat_data.get_data('visual')
     X_L_train, y_L_train, X_L_val, y_L_val = feat_data.get_data('linguistic')
