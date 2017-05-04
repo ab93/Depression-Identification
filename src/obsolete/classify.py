@@ -1,18 +1,14 @@
 import os
-import sys
+
+import config
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+
 from src.models.classifier import MetaClassifier, LateFusionClassifier
-from src.feature_extract import read_labels
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.neighbors import KNeighborsClassifier
+from src.obsolete import read_labels
 from ..feature_extract.read_labels import features
-import config
+
 
 def oversample(X,y):
     X = np.vstack(X)
@@ -44,16 +40,16 @@ def get_classifiers():
 
 
 def get_data():
-    lin_data = read_labels.return_lin_pn([['word76','word87',
+    lin_data = read_labels.return_lin_pn([['word76', 'word87',
                                     '50cogproc_(Cognitive_Processes)',
                                     '31posemo_(Positive_Emotions)']])
-    acou_data = read_labels.return_acou_dnd([[ 'MCEP_11','F0', 'HMPDM_10','HMPDM_9','HMPDD_9','HMPDD_11'],
-                                            []])
-    vis_data = read_labels.return_vis_dnd([['x2','x3','x4','x5','x6'], 
-                                            ['Z9','Z54','Z64','Z10'], 
-                                            [], 
-                                            ['Rx','Ry','Tz'], 
-                                            ['AU17Evidence']])
+    acou_data = read_labels.return_acou_dnd([['MCEP_11', 'F0', 'HMPDM_10', 'HMPDM_9', 'HMPDD_9', 'HMPDD_11'],
+                                             []])
+    vis_data = read_labels.return_vis_dnd([['x2', 'x3', 'x4', 'x5', 'x6'],
+                                           ['Z9','Z54','Z64','Z10'],
+                                           [],
+                                           ['Rx','Ry','Tz'],
+                                           ['AU17Evidence']])
 
     # Set the data            
     X_A_train = [map(np.asarray, acou_data[0]), map(np.asarray, acou_data[2])]
@@ -255,7 +251,7 @@ def grid_search_meta(mode='acoustic',category='DND'):
 
 
 def train_classify():
-    data = read_labels.return_lin_pn([['word76','word87',
+    data = read_labels.return_lin_pn([['word76', 'word87',
                                     '50cogproc_(Cognitive_Processes)',
                                     '31posemo_(Positive_Emotions)']])
 
