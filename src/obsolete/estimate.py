@@ -1,17 +1,14 @@
 import os
-import sys
+from copy import deepcopy
+
 import numpy as np
-import pandas as pd
-from sklearn.linear_model import LinearRegression, Ridge, Lasso
-from src.models.regressor import MetaRegressor, LateFusionRegressor
-from sklearn.pipeline import _name_estimators
-from src.feature_extract.read_labels import features
+from sklearn.linear_model import Lasso
+
 import src.main.config
 import src.main.feature_select
-from src.main.utils import get_multi_data, get_single_mode_data
-from src.feature_extract import read_labels
-from src.helpers.normalized_features import normalize_features
-from copy import deepcopy
+from src.models.regressor import MetaRegressor
+from src.obsolete.utils import get_single_mode_data
+
 
 def grid_search_meta(mode='acoustic',category='PN'):
     X_train, y_train, X_val, y_val = get_single_mode_data(mode, category,

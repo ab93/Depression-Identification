@@ -1,9 +1,7 @@
-import os
-import sys
 import numpy as np
 import pandas as pd
-from ..feature_extract.read_labels import features
-import config
+
+from src.obsolete.read_labels import features
 
 
 def oversample(X,y):

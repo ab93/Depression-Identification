@@ -1,9 +1,12 @@
-from sklearn.externals import joblib
-import src.main.utils
-import numpy as np
-from src.feature_extract import  read_labels
-import src.main.config
 import os
+
+import numpy as np
+from sklearn.externals import joblib
+
+import src.main.config
+import src.obsolete.utils
+from src.obsolete import read_labels
+
 
 def final_classifier(mode,category="PN",problem_type="C",normalize="normalize"):
     if category == "PN":
@@ -23,7 +26,7 @@ def final_classifier(mode,category="PN",problem_type="C",normalize="normalize"):
     else:
 
         X_test = [map(np.asarray, read_labels.features(mode, cat_1, "test", problem_type, normalize)),
-             map(np.asarray, read_labels.features(mode, cat_2, "test", problem_type, normalize))]
+                  map(np.asarray, read_labels.features(mode, cat_2, "test", problem_type, normalize))]
 
     clf = joblib.load(os.path.join(src.main.config.GRID_SEARCH_CLF_DIR, mode + '_pickle' + category + '.pkl'))
     preds_label = clf.predict(X_test)

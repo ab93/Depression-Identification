@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn import preprocessing
 import pprint
-from ..main import config
+from src.main import config
 
 
 def get_features(data, split, classifier_type="C"):

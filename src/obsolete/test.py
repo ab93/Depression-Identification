@@ -1,11 +1,12 @@
-import src.main.utils
-import src.main.config
 import numpy as np
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+
+import src.main.config
+import src.obsolete.utils
 from src.models import classifier
 
-X_train, y_train, X_val, y_val = src.main.utils.get_single_mode_data(mode="acoustic", normalize='normalize')
+X_train, y_train, X_val, y_val = src.obsolete.utils.get_single_mode_data(mode="acoustic", normalize='normalize')
 y_true = map(int, map(np.mean, y_val[0]))
 clf1 = DecisionTreeClassifier(class_weight={1:3},max_features = 13,min_samples_leaf=5, max_depth=5)
 clf2 = LogisticRegression(C=1.0, class_weight={1: 3}, penalty='l1')
