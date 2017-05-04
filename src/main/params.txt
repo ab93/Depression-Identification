@@ -1,0 +1,87 @@
+        # DN all features
+        clf_a = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 4}, max_depth=3, max_features=8,
+                                                                   min_samples_leaf=2, random_state=42),
+                                            DecisionTreeClassifier(class_weight={1: 4}, max_depth=5, max_features=18,
+                                                                   min_samples_leaf=3, random_state=42)],
+                               weights=[0.5, 0.5])
+
+        clf_v = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 3}, max_depth=5,
+                                                                   max_features=18, min_samples_leaf=2,
+                                                                   random_state=42),
+                                            DecisionTreeClassifier(class_weight={1: 3}, max_depth=4,
+                                                                   max_features=18, min_samples_leaf=5,
+                                                                   random_state=42)],
+                               weights=[0.5, 0.5])
+
+        clf_l = MetaClassifier(classifiers=[LogisticRegression(C=0.03162, penalty='l2', class_weight={1: 4},
+                                                               random_state=42),
+                                            LogisticRegression(C=0.001, penalty='l2', class_weight={1: 4},
+                                                               random_state=42)],
+                               weights=[0.4, 0.6])
+
+
+
+
+        # PN selected features
+        clf_a = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 5}, max_depth=5, max_features=13,
+                                                                   min_samples_leaf=2, random_state=42),
+                                            DecisionTreeClassifier(class_weight={1: 5}, max_depth=5, max_features=18,
+                                                                   min_samples_leaf=2, random_state=42)],
+                               weights=[0.6, 0.4])
+
+        clf_v = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 4}, max_depth=4,
+                                                                   max_features=13, min_samples_leaf=2,
+                                                                   random_state=42),
+                                            DecisionTreeClassifier(class_weight={1: 4}, max_depth=5,
+                                                                   max_features=3, min_samples_leaf=5,
+                                                                   random_state=42)],
+                               weights=[0.6, 0.4])
+
+        clf_l = MetaClassifier(classifiers=[LogisticRegression(C=0.03162, penalty='l2', class_weight={1: 4},
+                                                               random_state=42),
+                                            LogisticRegression(C=0.001, penalty='l2', class_weight={1: 4},
+                                                               random_state=42)],
+                               weights=[0.4, 0.6])
+
+
+
+
+
+        # DN selected features
+        clf_a = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 5}, max_depth=3, max_features=3,
+                                                                   min_samples_leaf=2, random_state=42),
+                                            DecisionTreeClassifier(class_weight={1: 5}, max_depth=5, max_features=3,
+                                                                   min_samples_leaf=4, random_state=42)])
+
+        clf_v = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 5}, max_depth=4,
+                                                                   max_features=18, min_samples_leaf=4,
+                                                                   random_state=42),
+                                            DecisionTreeClassifier(class_weight={1: 5}, max_depth=5,
+                                                                   max_features=18, min_samples_leaf=5,
+                                                                   random_state=42)],
+                               weights=[0.6, 0.4])
+
+        clf_l = MetaClassifier(classifiers=[LogisticRegression(C=0.03162, penalty='l1', class_weight={1: 4},
+                                                               random_state=42),
+                                            LogisticRegression(C=0.03162, penalty='l2', class_weight={1: 4},
+                                                               random_state=42)])
+
+
+
+
+         # PN all features
+        clf_a = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 4}, max_depth=3, max_features=18,
+                                                                   min_samples_leaf=2, random_state=42),
+                                            DecisionTreeClassifier(class_weight={1: 4}, max_depth=4, max_features=13,
+                                                                   min_samples_leaf=3, random_state=42)],
+                               weights=[0.4, 0.6])
+
+        clf_v = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 3}, max_depth=3,
+                                                                   max_features=18, min_samples_leaf=5,
+                                                                   random_state=42),
+                                            DecisionTreeClassifier(class_weight={1: 3}, max_depth=5,
+                                                                   max_features=13, min_samples_leaf=4,
+                                                                   random_state=42)])
+
+        clf_l = MetaClassifier(classifiers=[LogisticRegression(C=0.03162, penalty='l2', class_weight={1: 4}),
+                                            LogisticRegression(C=0.03162, penalty='l1', class_weight={1: 4})])
