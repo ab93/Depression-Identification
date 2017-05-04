@@ -345,69 +345,6 @@ class TrainClassifier(object):
         y_true_test = map(int, map(np.mean, y_test[0][0]))
         y_true_train = map(int, map(np.mean, y_train[0][0]))
 
-        # DN all features
-        clf_a = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 4}, max_depth=3, max_features=8,
-                                                                   min_samples_leaf=2, random_state=42),
-                                            DecisionTreeClassifier(class_weight={1: 4}, max_depth=5, max_features=18,
-                                                                   min_samples_leaf=3, random_state=42)],
-                               weights=[0.5, 0.5])
-
-        clf_v = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 3}, max_depth=5,
-                                                                   max_features=18, min_samples_leaf=2,
-                                                                   random_state=42),
-                                            DecisionTreeClassifier(class_weight={1: 3}, max_depth=4,
-                                                                   max_features=18, min_samples_leaf=5,
-                                                                   random_state=42)],
-                               weights=[0.5, 0.5])
-
-        clf_l = MetaClassifier(classifiers=[LogisticRegression(C=0.03162, penalty='l2', class_weight={1: 4},
-                                                               random_state=42),
-                                            LogisticRegression(C=0.001, penalty='l2', class_weight={1: 4},
-                                                               random_state=42)],
-                               weights=[0.4, 0.6])
-
-        # PN selected features
-        clf_a = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 5}, max_depth=5, max_features=13,
-                                                                   min_samples_leaf=2, random_state=42),
-                                            DecisionTreeClassifier(class_weight={1: 5}, max_depth=5, max_features=18,
-                                                                   min_samples_leaf=2, random_state=42)],
-                               weights=[0.6, 0.4])
-
-        clf_v = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 4}, max_depth=4,
-                                                                   max_features=13, min_samples_leaf=2,
-                                                                   random_state=42),
-                                            DecisionTreeClassifier(class_weight={1: 4}, max_depth=5,
-                                                                   max_features=3, min_samples_leaf=5,
-                                                                   random_state=42)],
-                               weights=[0.6, 0.4])
-
-        clf_l = MetaClassifier(classifiers=[LogisticRegression(C=0.03162, penalty='l2', class_weight={1: 4},
-                                                               random_state=42),
-                                            LogisticRegression(C=0.001, penalty='l2', class_weight={1: 4},
-                                                               random_state=42)],
-                               weights=[0.4, 0.6])
-
-        # DN selected features
-        clf_a = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 5}, max_depth=3, max_features=3,
-                                                                   min_samples_leaf=2, random_state=42),
-                                            DecisionTreeClassifier(class_weight={1: 5}, max_depth=5, max_features=3,
-                                                                   min_samples_leaf=4, random_state=42)])
-
-        clf_v = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 5}, max_depth=4,
-                                                                   max_features=18, min_samples_leaf=4,
-                                                                   random_state=42),
-                                            DecisionTreeClassifier(class_weight={1: 5}, max_depth=5,
-                                                                   max_features=18, min_samples_leaf=5,
-                                                                   random_state=42)],
-                               weights=[0.6, 0.4])
-
-        clf_l = MetaClassifier(classifiers=[LogisticRegression(C=0.03162, penalty='l1', class_weight={1: 4},
-                                                               random_state=42),
-                                            LogisticRegression(C=0.03162, penalty='l2', class_weight={1: 4},
-                                                               random_state=42)])
-
-
-        # PN all features
         clf_a = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 4}, max_depth=3, max_features=18,
                                                                    min_samples_leaf=2, random_state=42),
                                             DecisionTreeClassifier(class_weight={1: 4}, max_depth=4, max_features=13,
@@ -424,8 +361,11 @@ class TrainClassifier(object):
         clf_l = MetaClassifier(classifiers=[LogisticRegression(C=0.03162, penalty='l2', class_weight={1: 4}),
                                             LogisticRegression(C=0.03162, penalty='l1', class_weight={1: 4})])
 
-        mode_wt = [0.2, 0.2, 0.6]
-        for mode_wt in (None, [0.3, 0.3, 0.4], [0.5, 0.2, 0.3], [0.2, 0.6, 0.2], [0.3, 0.2, 0.5]):
+        mode_weights = [None, [0.6, 0.3, 0.1], [0.3, 0.6, 0.1], [0.4, 0.4, 0.2],
+                        [0.5, 0.4, 0.1], [0.4, 0.5, 0.1], [0.25, 0.25, 0.5],
+                        [0.2, 0.7, 0.1], [0.2, 0.55, 0.25]]
+
+        for mode_wt in mode_weights:
             lf_clf = LateFusionClassifier(classifiers=[clf_a, clf_v, clf_l], weights=mode_wt)
             lf_clf.fit(x_train, y_train)
             score = lf_clf.score(x_test, y_true_test)
@@ -487,15 +427,15 @@ class TrainClassifier(object):
         plt.show()
 
     def plot_roc(self):
-        Xs_train, ys_train = self.data.get_full_train_multi()
-        Xs_val, ys_val = self.data.get_test_data_multi()
-
-        y_true_val = map(int, map(np.mean, ys_val[0][0]))
-        # y_true_train = map(int, map(np.mean, y_train[0][0]))
-
-        # Xs_train, ys_train, Xs_val, ys_val = self.data.get_multi_data()
+        # Xs_train, ys_train = self.data.get_full_train_multi()
+        # Xs_val, ys_val = self.data.get_test_data_multi()
         #
         # y_true_val = map(int, map(np.mean, ys_val[0][0]))
+        # y_true_train = map(int, map(np.mean, y_train[0][0]))
+
+        Xs_train, ys_train, Xs_val, ys_val = self.data.get_multi_data()
+
+        y_true_val = map(int, map(np.mean, ys_val[0][0]))
         probs = {}
 
         clf_A = MetaClassifier(classifiers=[DecisionTreeClassifier(class_weight={1: 4}, max_depth=3, max_features=18,
@@ -514,7 +454,6 @@ class TrainClassifier(object):
         clf_L = MetaClassifier(classifiers=[LogisticRegression(C=0.03162, penalty='l2', class_weight={1: 4}),
                                             LogisticRegression(C=0.03162, penalty='l1', class_weight={1: 4})])
 
-
         clf_A.fit(Xs_train[0], ys_train[0])
         probs['acoustic'] = clf_A.predict_proba(Xs_val[0])[:, 1]
 
@@ -523,12 +462,6 @@ class TrainClassifier(object):
 
         clf_L.fit(Xs_train[2], ys_train[2])
         probs['linguistic'] = clf_L.predict_proba(Xs_val[2])[:, 1]
-
-        # clf_A = MetaClassifier(classifiers=[clf_A_1, clf_A_2])
-
-        # clf_V = MetaClassifier(classifiers=[clf_V_1, clf_V_2], weights=[0.7, 0.3])
-
-        # clf_L = MetaClassifier(classifiers=[clf_L_1, clf_L_2])
 
         lf_clf = LateFusionClassifier(classifiers=[clf_A, clf_V, clf_L], weights=None)
         lf_clf.fit(Xs_train, ys_train)
