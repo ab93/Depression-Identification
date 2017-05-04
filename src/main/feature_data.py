@@ -4,6 +4,7 @@ import pandas as pd
 import config as cfg
 from copy import deepcopy
 
+
 class Data(object):
     def __init__(self, category, feature_scale=False, feature_select=False, problem_type='C'):
         self.category = category
@@ -35,7 +36,6 @@ class Data(object):
 
     def _group_features(self, data):
         y_label = 'label' if self.problem_type == 'C' else 'score'
-        # print max(data[y_label])
         grouped = data.groupby('video')
         X = []
         y = []
