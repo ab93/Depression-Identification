@@ -22,10 +22,14 @@ def get_feature_df(train, count, file_, *files):
         split_file = config.VAL_SPLIT_FILE
     else:
         split_file = config.TEST_SPLIT_FILE
-
+    print train
+    print file_
+    raw_input()
     # Append file columns to a single data frame
     feature_df = pd.read_csv(file_,error_bad_lines=False)
     feature_df = feature_df.fillna(0)
+    print feature_df
+    raw_input()
     if len(files):
         for f in files[0]:
             #print f
@@ -34,7 +38,7 @@ def get_feature_df(train, count, file_, *files):
             feature_df = pd.concat([feature_df, feature_df_second], axis=1)
             feature_df = feature_df.T.drop_duplicates().T
 
-    # Trim data frame to hole only train/validation records
+    # Trim data frame to hold only train/validation records
 
     if train == "test":
         split_df = pd.read_csv(split_file, usecols=['participant_ID'])
@@ -45,7 +49,9 @@ def get_feature_df(train, count, file_, *files):
         if train == "train" and count != "all":
             split_df = split_df.loc[:int(count)]
         feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
-
+        print "feature_df after"
+        print feature_df
+        raw_input()
         # Populate labels accordingly
         split_dict = split_df.set_index('Participant_ID').T.to_dict()
         del split_df
@@ -58,16 +64,16 @@ def get_feature_df(train, count, file_, *files):
         feature_df['label'] = pd.Series(labels, index=feature_df.index)
         feature_df['score'] = pd.Series(scores, index=feature_df.index)
 
-
-
-
-
     # Drop common (unwanted) columns - question, starttime, endtime
     try:
-        feature_df.drop(['question','starttime','endtime'], inplace=True, axis=1)
+        feature_df.drop(['starttime','endtime'], inplace=True, axis=1)
     except ValueError:
-        feature_df.drop(['question'], inplace=True, axis=1)
+        {}
+    print "returning feature_df "
+    print feature_df
+    raw_input()    
     return feature_df
+
 
 def remove_low_variance(df):
     # Store feature names
@@ -136,9 +142,13 @@ def select_best_K(df,labels,K):
 
 def perform_random_forest(df,labels,N):
     # Store feature names
+    print df
+    print labels
+    print N
     column_names=list(df.columns.values)
 
     # Obtain important features - indices
+
     X = df.as_matrix()
     y = labels
     forest = RandomForestClassifier(n_estimators = 100)
@@ -210,9 +220,9 @@ def main(qtype,mode,classifier_type,count):
 
     # If mode is visual, drop the extra columns from file - standardizes structure of data frame between all modes
     if mode=="V":
-        df = df.drop(['frame', 'timestamp', 'confidence', 'success'], axis=1)
-        val_df = val_df.drop(['frame', 'timestamp', 'confidence', 'success'], axis=1)
-        test_df = test_df.drop(['frame', 'timestamp', 'confidence', 'success'], axis=1)
+        df = df.drop(['frame_mean','frame_stddev', 'timestamp_mean','timestamp_stddev', 'confidence_mean','confidence_stddev', 'success_mean','success_stddev'], axis=1)
+        val_df = val_df.drop(['frame_mean','frame_stddev', 'timestamp_mean','timestamp_stddev', 'confidence_mean','confidence_stddev', 'success_mean','success_stddev'], axis=1)
+        test_df = test_df.drop(['frame_mean','frame_stddev', 'timestamp_mean','timestamp_stddev', 'confidence_mean','confidence_stddev', 'success_mean','success_stddev'], axis=1)
 
     # Obtain labels
     labels = df['label'].values
@@ -221,7 +231,7 @@ def main(qtype,mode,classifier_type,count):
     copy_df = df.copy() # copy_df contains values for - 'video', all features, 'label' columns
 
     # Remove 'video' and 'label' column from data frame
-    df.drop(['video', 'label','score'], inplace=True , axis=1)
+    df.drop(['video','question','question_number', 'label','score'], inplace=True , axis=1)
 
     # Pick 'N' to pick from Random Forest method, based on Mode
     if mode=="A":
@@ -260,6 +270,9 @@ def main(qtype,mode,classifier_type,count):
     # Obtain data frame (for TRAIN and VALIDATION) to write into files
     final_selection = ['video']
     final_selection.extend(final_feature_list)
+    final_selection.extend(['question'])
+    final_selection.extend(['question_number'])
+
     final_selection.extend(['label'])
     final_selection.extend(['score'])
     op_df = copy_df[final_selection]
