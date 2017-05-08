@@ -263,11 +263,11 @@ def readOPENFACE_PN(split_seconds):
 
 
 if __name__ == "__main__":
-    readHelperData()
-    readTranscript()
     try:
         split_seconds = int(sys.argv[2])
     except:
         print "Give folder name and split seconds"
+    readHelperData()
+    readTranscript()
     readOPENFACE_DND(split_seconds)
     readOPENFACE_PN(split_seconds)

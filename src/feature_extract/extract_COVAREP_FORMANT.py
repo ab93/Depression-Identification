@@ -383,7 +383,7 @@ if __name__ == "__main__":
     readHelperData()
     readTranscript()
     readFORMANT_DND(split_seconds)
-    #readFORMANT_PN(split_seconds)
-    #readCOVAREP_DND(split_seconds)
-    #readCOVAREP_PN(split_seconds)
+    readFORMANT_PN(split_seconds)
+    readCOVAREP_DND(split_seconds)
+    readCOVAREP_PN(split_seconds)
 
