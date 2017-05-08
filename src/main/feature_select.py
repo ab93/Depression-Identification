@@ -22,14 +22,9 @@ def get_feature_df(train, count, file_, *files):
         split_file = config.VAL_SPLIT_FILE
     else:
         split_file = config.TEST_SPLIT_FILE
-    print train
-    print file_
-    raw_input()
     # Append file columns to a single data frame
     feature_df = pd.read_csv(file_,error_bad_lines=False)
     feature_df = feature_df.fillna(0)
-    print feature_df
-    raw_input()
     if len(files):
         for f in files[0]:
             #print f
@@ -49,9 +44,6 @@ def get_feature_df(train, count, file_, *files):
         if train == "train" and count != "all":
             split_df = split_df.loc[:int(count)]
         feature_df = feature_df[feature_df['video'].isin(split_df['Participant_ID'])]
-        print "feature_df after"
-        print feature_df
-        raw_input()
         # Populate labels accordingly
         split_dict = split_df.set_index('Participant_ID').T.to_dict()
         del split_df
@@ -69,9 +61,6 @@ def get_feature_df(train, count, file_, *files):
         feature_df.drop(['starttime','endtime'], inplace=True, axis=1)
     except ValueError:
         {}
-    print "returning feature_df "
-    print feature_df
-    raw_input()    
     return feature_df
 
 
@@ -265,7 +254,7 @@ def main(qtype,mode,classifier_type,count):
         df = select_best_K(df,feature_type,K)
     # Obtain Final feature list
     final_feature_list = list(df.columns.values)
-    print "Final Feature List (Sorted): ",final_feature_list
+    #print "Final Feature List (Sorted): ",final_feature_list
 
     # Obtain data frame (for TRAIN and VALIDATION) to write into files
     final_selection = ['video']
