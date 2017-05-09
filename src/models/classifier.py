@@ -22,10 +22,9 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
 
     """
 
-    def __init__(self, classifiers, weights=[0.5, 0.5]):
+    def __init__(self, classifiers, weights=None):
         self.classifiers = classifiers
-        # if weights is None:
-        #     self.weights = [0.5, 0.5]
+
         self.weights = weights
         self.lablenc_ = LabelEncoder()
         self.classes_ = None
@@ -80,24 +79,19 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         """
         num_examples = len(X_list[0])
         confidence_matrix = np.zeros((num_examples, 2))
+        if self.weights is None:
+            self.weights = [0.5, 0.5]
 
         for cat_idx, X in enumerate(X_list):
             for p_idx, p in enumerate(X):
-                # print "cat_idx: {}, p_idx: {}".format(cat_idx, p_idx)
                 num_resp = len(p)
                 confidence = np.zeros(2)  # for the two classes
                 for r in p:
                     num_segments = r.shape[0]
-                    # print "predict: ", self.classifiers_[cat_idx].predict(r)
                     num_depressed = np.count_nonzero(self.classifiers_[cat_idx].predict(r))
                     confidence[0] += (num_segments - num_depressed) / float(num_segments)  # non-depressed
                     confidence[1] += num_depressed / float(num_segments)  # depressed
-                    # print "num_segments: {}, num_depressed: {}, confidence: {}".format(num_segments,
-                    #                                                                   num_depressed, confidence)
-                    # raw_input()
                 confidence_matrix[p_idx] += (self.weights[cat_idx] * confidence) / num_resp
-                # print confidence_matrix
-                # raw_input()
 
         predictions = np.argmax(confidence_matrix, axis=1)
         return predictions
@@ -118,6 +112,8 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
         """
         num_examples = len(X_list[0])
         confidence_matrix = np.zeros((num_examples, 2))
+        if self.weights is None:
+            self.weights = [0.5, 0.5]
 
         for cat_idx, X in enumerate(X_list):
             for p_idx, p in enumerate(X):
@@ -207,7 +203,7 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
 
     def predict_proba(self, Xs):
         """
-        Predicts new data instances.
+        Predicts the probabilities/confidence of new data instances.
 
         Args:
             Xs = [[], [], []]
@@ -260,7 +256,7 @@ if __name__ == '__main__':
     meta_clf1 = MetaClassifier(classifiers=[LogisticRegression(), LogisticRegression()])
     meta_clf2 = MetaClassifier(classifiers=[LogisticRegression(), LogisticRegression()])
     meta_clf3 = MetaClassifier(classifiers=[LogisticRegression(), LogisticRegression()])
-    lf_clf = LateFusionClassifier(classifiers=[meta_clf1, meta_clf2, meta_clf3], vote='soft')
+    lf_clf = LateFusionClassifier(classifiers=[meta_clf1, meta_clf2, meta_clf3], vote='hard')
     data, labels = [[x1, x2], [x2, x1], [x1, x1]], [[y1, y2], [y2, y1], [y1, y1]]
     lf_clf.fit(data, labels)
     print "Testing LateFusionClassifier"
