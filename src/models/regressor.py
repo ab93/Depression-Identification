@@ -3,7 +3,7 @@ import operator
 import numpy as np
 from sklearn.base import BaseEstimator, RegressorMixin, clone
 from sklearn.externals import six
-from sklearn.metrics import r2_score, mean_absolute_error
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 
 class MetaRegressor(BaseEstimator, RegressorMixin):
     """ A combined multi-class regressor
@@ -78,7 +78,7 @@ class MetaRegressor(BaseEstimator, RegressorMixin):
         weighted_pred = np.average(preds, axis=0, weights=self.weights)
         return weighted_pred
 
-    def score(self, Xs, y_true, scoring='r2'):
+    def score(self, Xs, y_true, scoring='rmse'):
         """
         Returns the R2 (Coefficient of Determination) score by default
 
@@ -96,6 +96,8 @@ class MetaRegressor(BaseEstimator, RegressorMixin):
             return r2_score(y_true,self.predict(Xs))
         elif scoring == 'mean_abs_error':
             return mean_absolute_error(y_true, self.predict(Xs))
+        elif scoring == 'rmse':
+            return np.sqrt(mean_squared_error(y_true, self.predict(Xs)))
 
 
 class LateFusionRegressor(BaseEstimator, RegressorMixin):
@@ -139,7 +141,7 @@ class LateFusionRegressor(BaseEstimator, RegressorMixin):
         weighted_preds = np.average(preds, axis=0, weights=self.weights)
         return weighted_preds
 
-    def score(self, Xs, y_true, scoring='r2'):
+    def score(self, Xs, y_true, scoring='rmse'):
         """
         Returns the R2 (Coefficient of Determination) score by default
 
@@ -157,3 +159,5 @@ class LateFusionRegressor(BaseEstimator, RegressorMixin):
             return r2_score(y_true,self.predict(Xs))
         elif scoring == 'mean_abs_error':
             return mean_absolute_error(y_true, self.predict(Xs))
+        elif scoring == 'rmse':
+            return np.sqrt(mean_squared_error(y_true, self.predict(Xs)))

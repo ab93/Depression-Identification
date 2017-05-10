@@ -1,17 +1,17 @@
-import src.main.utils
 import itertools
-from sklearn.metrics import roc_curve
+
 import matplotlib.pyplot as plt
-from sklearn.tree import DecisionTreeClassifier
-import os
 import numpy as np
-import src.main.config
 import pandas as pd
-import src.main.utils
-from sklearn.linear_model import LogisticRegression
-from src.models import classifier
-from sklearn.metrics import roc_auc_score
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_curve
+
+import src.main.config
+import src.obsolete.utils
+import src.obsolete.utils
+from src.models import classifier
+
 
 def plot_roc_curve(fpr_a,tpr_a,roc_area_a,fpr_v,tpr_v,roc_area_v,fpr_l,tpr_l,roc_area_l):
 
@@ -38,7 +38,7 @@ def plot_roc_latefusion(fpr,tpr,roc_area):
 class_names = ["Non-Depressed","Depressed"]
 def late_fusion_model(clf1_a,clf2_a,clf1_v,clf2_v,clf1_l,clf2_l):
     # Read the data
-    Xs_train, ys_train, Xs_val, ys_val = src.main.utils.get_multi_data()
+    Xs_train, ys_train, Xs_val, ys_val = src.obsolete.utils.get_multi_data()
     clf_A = classifier.MetaClassifier(classifiers=[clf1_a, clf2_a])
     clf_V = classifier.MetaClassifier(classifiers=[clf1_v, clf2_v])
     clf_L = classifier.MetaClassifier(classifiers=[clf1_l, clf2_l])
@@ -97,7 +97,7 @@ def logistic_model(mode,inter_clf_weights,clf1,clf2):
         temp.append(float(i))
     #print temp
 
-    X_train, y_train, X_val, y_val = src.main.utils.get_single_mode_data(mode=mode, normalize='normalize')
+    X_train, y_train, X_val, y_val = src.obsolete.utils.get_single_mode_data(mode=mode, normalize='normalize')
     print X_train
     #print y_train
     #print X_val

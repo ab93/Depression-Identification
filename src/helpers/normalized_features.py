@@ -3,6 +3,7 @@ import os
 from sklearn import preprocessing
 from ..main import config
 import numpy as np
+import sys
 
 def get_normalized_features(filename):
     filename_train = filename
@@ -39,7 +40,7 @@ def get_normalized_features(filename):
 
     data_normalized_train[['video','label','score']] = data_train[['video','label','score']]
     data_normalized_val[['video','label','score']] = data_val[['video','label','score']]
-    data_normalized_test[['video']] = data_test[['video']]
+    data_normalized_test[['video','label','score']] = data_test[['video','label','score']]
 
 
     write_path_file_train = filename_train.replace("regular","normalize")
@@ -57,16 +58,29 @@ def get_normalized_features(filename):
     data_normalized_val.to_csv(write_path_file_val,index=None)
     data_normalized_test.to_csv(write_path_file_test,index=None)
 
-def normalize_features():
-    list_train_classify = [os.path.join(config.SEL_FEAT_TRAIN_REGULAR_CLASSIFY, fn) for fn in next(os.walk(config.SEL_FEAT_TRAIN_REGULAR_CLASSIFY))[2]]
+def normalize_features(select = "select"):
+    if select == "select":
+        path_classify = config.SEL_FEAT_TRAIN_REGULAR_CLASSIFY
+        path_estimate = config.SEL_FEAT_TRAIN_REGULAR_ESTIMATE
+    else:
+        path_classify = config.ALL_FEAT_TRAIN_REGULAR_CLASSIFY
+        path_estimate = config.ALL_FEAT_TRAIN_REGULAR_ESTIMATE
+    list_train_classify = [os.path.join(path_classify, fn) for fn in next(os.walk(config.SEL_FEAT_TRAIN_REGULAR_CLASSIFY))[2]]
     print list_train_classify
     for i in range(len(list_train_classify)):
         get_normalized_features(list_train_classify[i])
 
-    list_train_estimate = [os.path.join(config.SEL_FEAT_TRAIN_REGULAR_ESTIMATE, fn) for fn in next(os.walk(config.SEL_FEAT_TRAIN_REGULAR_ESTIMATE))[2]]
+    list_train_estimate = [os.path.join(path_estimate, fn) for fn in next(os.walk(config.SEL_FEAT_TRAIN_REGULAR_ESTIMATE))[2]]
     print list_train_estimate
     for i in range(len(list_train_estimate)):
         get_normalized_features(list_train_estimate[i])
 
 
 #normalize_features()
+
+if __name__ == '__main__':
+    select = "select"
+    if len(sys.argv) == 2:
+        select = sys.argv[1]
+    print select
+    normalize_features(select)
