@@ -201,11 +201,11 @@ def readOPENFACE_DND(split_seconds):
     print "DND"
     groupByQuestion = {}
     if split_seconds == 0:
-        dFile = open('data/disc_nondisc/unsplit/discriminative_OPENFACE.csv', 'w')
-        ndFile = open('data/disc_nondisc/unsplit/nondiscriminative_OPENFACE.csv', 'w')
+        dFile = open('data/disc_nondisc/nonseg/discriminative_OPENFACE.csv', 'w')
+        ndFile = open('data/disc_nondisc/nonseg/nondiscriminative_OPENFACE.csv', 'w')
     else:
-        dFile = open('data/disc_nondisc/split/discriminative_OPENFACE.csv', 'w')
-        ndFile = open('data/disc_nondisc/split/nondiscriminative_OPENFACE.csv', 'w')
+        dFile = open('data/disc_nondisc/seg/discriminative_OPENFACE.csv', 'w')
+        ndFile = open('data/disc_nondisc/seg/nondiscriminative_OPENFACE.csv', 'w')
     dWriter = csv.writer(dFile)
     ndWriter = csv.writer(ndFile)
 
@@ -241,11 +241,11 @@ def readOPENFACE_PN(split_seconds):
     print "PN"
     groupByQuestion = {}
     if split_seconds == 0:
-        pFile = open('data/pos_neg/unsplit/positive_OPENFACE.csv', 'w')
-        nFile = open('data/pos_neg/unsplit/negative_OPENFACE.csv', 'w')
+        pFile = open('data/pos_neg/nonseg/positive_OPENFACE.csv', 'w')
+        nFile = open('data/pos_neg/nonseg/negative_OPENFACE.csv', 'w')
     else:
-        pFile = open('data/pos_neg/split/positive_OPENFACE.csv', 'w')
-        nFile = open('data/pos_neg/split/negative_OPENFACE.csv', 'w')
+        pFile = open('data/pos_neg/seg/positive_OPENFACE.csv', 'w')
+        nFile = open('data/pos_neg/seg/negative_OPENFACE.csv', 'w')
     pWriter = csv.writer(pFile)
     nWriter = csv.writer(nFile)
 

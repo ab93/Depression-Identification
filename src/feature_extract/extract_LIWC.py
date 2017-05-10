@@ -146,10 +146,10 @@ and writes it to file.
 def readLIWC_DND():
     global listofParticipants
     answerQuestion={}
-    dSplitFile=open('data/disc_nondisc/split/discriminative_LIWC.csv','w')
-    ndSplitFile=open('data/disc_nondisc/split/nondiscriminative_LIWC.csv','w')
-    dUnsplitFile=open('data/disc_nondisc/unsplit/discriminative_LIWC.csv','w')
-    ndUnsplitFile=open('data/disc_nondisc/unsplit/nondiscriminative_LIWC.csv','w')
+    dSplitFile=open('data/disc_nondisc/seg/discriminative_LIWC.csv','w')
+    ndSplitFile=open('data/disc_nondisc/seg/nondiscriminative_LIWC.csv','w')
+    dUnsplitFile=open('data/disc_nondisc/nonseg/discriminative_LIWC.csv','w')
+    ndUnsplitFile=open('data/disc_nondisc/nonseg/nondiscriminative_LIWC.csv','w')
     dSplitWriter=csv.writer(dSplitFile)
     ndSplitWriter=csv.writer(ndSplitFile)
     dUnsplitWriter=csv.writer(dUnsplitFile)
@@ -234,10 +234,10 @@ and writes it to file.
 def readLIWC_PN():
     global listofParticipants
     answerQuestion={}
-    pSplitFile=open('data/pos_neg/split/positive_LIWC.csv','w')
-    nSplitFile=open('data/pos_neg/split/negative_LIWC.csv','w')
-    pUnsplitFile=open('data/pos_neg/unsplit/positive_LIWC.csv','w')
-    nUnsplitFile=open('data/pos_neg/unsplit/negative_LIWC.csv','w')
+    pSplitFile=open('data/pos_neg/seg/positive_LIWC.csv','w')
+    nSplitFile=open('data/pos_neg/seg/negative_LIWC.csv','w')
+    pUnsplitFile=open('data/pos_neg/nonseg/positive_LIWC.csv','w')
+    nUnsplitFile=open('data/pos_neg/nonseg/negative_LIWC.csv','w')
     pSplitWriter=csv.writer(pSplitFile)
     nSplitWriter=csv.writer(nSplitFile)
     pUnsplitWriter=csv.writer(pUnsplitFile)

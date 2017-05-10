@@ -213,11 +213,11 @@ def readFORMANT_DND(split_seconds):
     print 'FORMANT DND'
     groupByQuestion = {}
     if split_seconds == 0:
-        dFile = open('data/disc_nondisc/unsplit/discriminative_FORMANT.csv', 'w')
-        ndFile = open('data/disc_nondisc/unsplit/nondiscriminative_FORMANT.csv', 'w')
+        dFile = open('data/disc_nondisc/nonseg/discriminative_FORMANT.csv', 'w')
+        ndFile = open('data/disc_nondisc/nonseg/nondiscriminative_FORMANT.csv', 'w')
     else:
-        dFile = open('data/disc_nondisc/split/discriminative_FORMANT.csv', 'w')
-        ndFile = open('data/disc_nondisc/split/nondiscriminative_FORMANT.csv', 'w')
+        dFile = open('data/disc_nondisc/seg/discriminative_FORMANT.csv', 'w')
+        ndFile = open('data/disc_nondisc/seg/nondiscriminative_FORMANT.csv', 'w')
     dWriter = csv.writer(dFile)
     ndWriter = csv.writer(ndFile)
     dWriter.writerow(header_f)
@@ -250,11 +250,11 @@ def readFORMANT_PN(split_seconds):
     groupByQuestion = {}
     gender=pd.Series.from_csv('data/misc/gender.csv').to_dict()
     if split_seconds == 0:
-        pFile = open('data/pos_neg/unsplit/positive_FORMANT.csv', 'w')
-        nFile = open('data/pos_neg/unsplit/negative_FORMANT.csv', 'w')
+        pFile = open('data/pos_neg/nonseg/positive_FORMANT.csv', 'w')
+        nFile = open('data/pos_neg/nonseg/negative_FORMANT.csv', 'w')
     else:
-        pFile = open('data/pos_neg/split/positive_FORMANT.csv', 'w')
-        nFile = open('data/pos_neg/split/negative_FORMANT.csv', 'w')
+        pFile = open('data/pos_neg/seg/positive_FORMANT.csv', 'w')
+        nFile = open('data/pos_neg/seg/negative_FORMANT.csv', 'w')
     pWriter = csv.writer(pFile)
     nWriter = csv.writer(nFile)
     pWriter.writerow(header_f)
@@ -286,11 +286,11 @@ def readCOVAREP_DND(split_seconds):
     print 'COVAREP DND'
     groupByQuestion = {}
     if split_seconds == 0:    
-        dFile = open('data/disc_nondisc/unsplit/discriminative_COVAREP.csv', 'w')
-        ndFile = open('data/disc_nondisc/unsplit/nondiscriminative_COVAREP.csv', 'w')
+        dFile = open('data/disc_nondisc/nonseg/discriminative_COVAREP.csv', 'w')
+        ndFile = open('data/disc_nondisc/nonseg/nondiscriminative_COVAREP.csv', 'w')
     else:
-        dFile = open('data/disc_nondisc/split/discriminative_COVAREP.csv', 'w')
-        ndFile = open('data/disc_nondisc/split/nondiscriminative_COVAREP.csv', 'w')
+        dFile = open('data/disc_nondisc/seg/discriminative_COVAREP.csv', 'w')
+        ndFile = open('data/disc_nondisc/seg/nondiscriminative_COVAREP.csv', 'w')
     dWriter = csv.writer(dFile)
     ndWriter = csv.writer(ndFile)
     dWriter.writerow(header)
@@ -323,11 +323,11 @@ def readCOVAREP_PN(split_seconds):
     groupByQuestion = {}
     gender=pd.Series.from_csv('data/misc/gender.csv').to_dict()
     if split_seconds == 0:
-        pFile = open('data/pos_neg/unsplit/positive_COVAREP.csv', 'w')
-        nFile = open('data/pos_neg/unsplit/negative_COVAREP.csv', 'w')
+        pFile = open('data/pos_neg/nonseg/positive_COVAREP.csv', 'w')
+        nFile = open('data/pos_neg/nonseg/negative_COVAREP.csv', 'w')
     else:
-        pFile = open('data/pos_neg/split/positive_COVAREP.csv', 'w')
-        nFile = open('data/pos_neg/split/negative_COVAREP.csv', 'w')
+        pFile = open('data/pos_neg/seg/positive_COVAREP.csv', 'w')
+        nFile = open('data/pos_neg/seg/negative_COVAREP.csv', 'w')
     pWriter = csv.writer(pFile)
     nWriter = csv.writer(nFile)
     pWriter.writerow(header)
