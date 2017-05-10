@@ -11,15 +11,11 @@ class MetaClassifier(BaseEstimator, ClassifierMixin):
     Parameters
     ----------
     classifiers : array-like, shape = [n_classifiers]
-    vote : str, {'classlabel', 'probability'}
     weights : array-like, shape = [n_classifiers]
     
     If a list of `int` or `float` values are
     provided, the classifiers are weighted by
     importance; Uses uniform weights if `weights=None`.
-
-    method: str, {'stacking', 'majority_voting'}
-
     """
 
     def __init__(self, classifiers, weights=None):
@@ -232,6 +228,7 @@ class LateFusionClassifier(BaseEstimator, ClassifierMixin):
 
 
 if __name__ == '__main__':
+    # TODO only for temporary testing. Remove this part
     x1 = [[np.array([[1, 2, 3], [4, 5, 6]]), np.array([[7, 8, 9]])],
           [np.array([[1, 5, 1], [0, 9, 2]])]]
 
