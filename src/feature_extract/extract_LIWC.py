@@ -54,7 +54,7 @@ def readTranscript():
     global featureList
     transcriptFiles=glob(sys.argv[1]+'[0-9][0-9][0-9]_P/[0-9][0-9][0-9]_TRANSCRIPT.csv')
     for i in range(0,len(transcriptFiles)):
-        t=pd.read_csv(transcriptFiles[i], delimiter=',|\t')
+        t=pd.read_csv(transcriptFiles[i], delimiter=',|\t',engine = 'python')
         t = t.fillna("")
         captureStarted=False
         prevUtterance=""
@@ -112,17 +112,23 @@ def readTranscript():
 def readLIWC_DND():
     global listofParticipants
     answerQuestion={}
-    dFile=open('data/disc_nondisc/discriminative_LIWC.csv','w')
-    ndFile=open('data/disc_nondisc/nondiscriminative_LIWC.csv','w')
-    dWriter=csv.writer(dFile)
-    ndWriter=csv.writer(ndFile)
+    dSplitFile=open('data/disc_nondisc/split/discriminative_LIWC.csv','w')
+    ndSplitFile=open('data/disc_nondisc/split/nondiscriminative_LIWC.csv','w')
+    dUnsplitFile=open('data/disc_nondisc/unsplit/discriminative_LIWC.csv','w')
+    ndUnsplitFile=open('data/disc_nondisc/unsplit/nondiscriminative_LIWC.csv','w')
+    dSplitWriter=csv.writer(dSplitFile)
+    ndSplitWriter=csv.writer(ndSplitFile)
+    dUnsplitWriter=csv.writer(dUnsplitFile)
+    ndUnsplitWriter=csv.writer(ndUnsplitFile)
 
     f=open('data/misc/liwc_new.csv')
     reader=csv.reader(f)
     header=['video','question']
     header+=reader.next()[2:]
-    dWriter.writerow(header)
-    ndWriter.writerow(header)
+    dSplitWriter.writerow(header)
+    dUnsplitWriter.writerow(header)
+    ndSplitWriter.writerow(header)
+    ndUnsplitWriter.writerow(header)
     listofParticipants=[int(i) for i in listofParticipants]
 
     listofParticipants.sort()
@@ -153,9 +159,13 @@ def readLIWC_DND():
         final_vector.insert(0,str(participant_number))
 
         if questionType_DND[current_question]=='D':
-            dWriter.writerow(final_vector)
+            dSplitWriter.writerow(final_vector)
+            dUnsplitWriter.writerow(final_vector)
+
         elif questionType_DND[current_question]=='ND':
-            ndWriter.writerow(final_vector)
+            ndSplitWriter.writerow(final_vector)
+            ndUnsplitWriter.writerow(final_vector)
+
 
 
 
@@ -164,17 +174,23 @@ def readLIWC_DND():
 def readLIWC_PN():
     global listofParticipants
     answerQuestion={}
-    pFile=open('data/pos_neg/positive_LIWC.csv','w')
-    nFile=open('data/pos_neg/negative_LIWC.csv','w')
-    pWriter=csv.writer(pFile)
-    nWriter=csv.writer(nFile)
+    pSplitFile=open('data/pos_neg/split/positive_LIWC.csv','w')
+    nSplitFile=open('data/pos_neg/split/negative_LIWC.csv','w')
+    pUnsplitFile=open('data/pos_neg/unsplit/positive_LIWC.csv','w')
+    nUnsplitFile=open('data/pos_neg/unsplit/negative_LIWC.csv','w')
+    pSplitWriter=csv.writer(pSplitFile)
+    nSplitWriter=csv.writer(nSplitFile)
+    pUnsplitWriter=csv.writer(pUnsplitFile)
+    nUnsplitWriter=csv.writer(nUnsplitFile)
 
     f=open('data/misc/liwc_new.csv')
     reader=csv.reader(f)
     header=['video','question']
     header+=reader.next()[2:]
-    pWriter.writerow(header)
-    nWriter.writerow(header)
+    pSplitWriter.writerow(header)
+    pUnsplitWriter.writerow(header)
+    nSplitWriter.writerow(header)
+    nUnsplitWriter.writerow(header)
     listofParticipants=[int(i) for i in listofParticipants]
 
     listofParticipants.sort()
@@ -206,12 +222,14 @@ def readLIWC_PN():
         final_vector.insert(0,str(participant_number))
 
         if questionType_PN[current_question]=='P':
-            pWriter.writerow(final_vector)
+            pSplitWriter.writerow(final_vector)
+            pUnsplitWriter.writerow(final_vector)
         elif questionType_PN[current_question]=='N':
-            nWriter.writerow(final_vector)
+            nSplitWriter.writerow(final_vector)
+            nUnsplitWriter.writerow(final_vector)
 
 if __name__=="__main__":
     readHelperData()
     readTranscript()
-    #readLIWC_DND()
+    readLIWC_DND()
     readLIWC_PN()
