@@ -3,8 +3,8 @@ import os
 TRAIN_SPLIT_FILE = os.path.join('data','classification_data','training_split.csv')
 TEST_SPLIT_FILE = os.path.join('data','classification_data','test_split.csv')
 VAL_SPLIT_FILE = os.path.join('data','classification_data','dev_split.csv')
-D_ND_DIR = os.path.join('data','disc_nondisc')
-POS_NEG_DIR = os.path.join('data','pos_neg')
+D_ND_DIR = os.path.join('data', 'disc_nondisc', 'seg')
+POS_NEG_DIR = os.path.join('data', 'pos_neg', 'seg')
 
 SEL_FEAT_TRAIN_REGULAR_CLASSIFY = os.path.join('data','selected_features','regular','classify','train')
 SEL_FEAT_TEST_REGULAR_CLASSIFY = os.path.join('data','selected_features','regular','classify','test')
@@ -12,6 +12,12 @@ SEL_FEAT_VAL_REGULAR_CLASSIFY = os.path.join('data','selected_features','regular
 SEL_FEAT_TRAIN_REGULAR_ESTIMATE = os.path.join('data','selected_features','regular','estimate','train')
 SEL_FEAT_VAL_REGULAR_ESTIMATE = os.path.join('data','selected_features','regular','estimate','val')
 SEL_FEAT_TEST_REGULAR_ESTIMATE = os.path.join('data','selected_features','regular','estimate','test')
+
+# TODO remove regular. Do it in feature data
+ALL_FEAT_REGULAR_C = os.path.join('data', 'all_features', 'regular', 'classify')
+ALL_FEAT_REGULAR_R = os.path.join('data', 'all_features', 'regular', 'estimate')
+SEL_FEAT_REGULAR_C = os.path.join('data', 'selected_features', 'regular', 'classify')
+SEL_FEAT_REGULAR_R = os.path.join('data', 'selected_features', 'regular', 'estimate')
 
 ALL_FEAT_TRAIN_REGULAR_CLASSIFY = os.path.join('data','all_features','regular','classify','train')
 ALL_FEAT_TEST_REGULAR_CLASSIFY = os.path.join('data','all_features','regular','classify','test')
