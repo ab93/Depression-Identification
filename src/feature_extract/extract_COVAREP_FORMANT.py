@@ -15,7 +15,7 @@ gender=pd.Series.from_csv('data/misc/gender.csv').to_dict()
 
 '''headers for COVAREP features'''
 
-header = ["video", "question","question_number" "starttime", "endtime", 'F0_mean', 'VUV_mean', 'NAQ_mean', 'QOQ_mean', 'H1H2_mean',
+header = ["video", "question","question_number", "starttime", "endtime", 'F0_mean', 'VUV_mean', 'NAQ_mean', 'QOQ_mean', 'H1H2_mean',
           'PSP_mean', 'MDQ_mean', 'peakSlope_mean', 'Rd_mean', 'Rd_conf_mean', 'creak_mean', 'MCEP_0_mean',
           'MCEP_1_mean', 'MCEP_2_mean', 'MCEP_3_mean', 'MCEP_4_mean', 'MCEP_5_mean', 'MCEP_6_mean', 'MCEP_7_mean',
           'MCEP_8_mean', 'MCEP_9_mean', 'MCEP_10_mean', 'MCEP_11_mean', 'MCEP_12_mean', 'MCEP_13_mean', 'MCEP_14_mean',
