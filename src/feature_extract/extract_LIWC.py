@@ -14,6 +14,7 @@ intimate = {}
 featureList={}
 questionType_DND={}
 questionType_PN={}
+question_number_mapping = {}
 
 discriminativeVectors=[]
 nonDiscriminativeVectors=[]
@@ -57,6 +58,10 @@ def readHelperData():
             nonIntimate[item[1]]=item[2]
         elif item[3]=="#int" and item[1] not in intimate:
             intimate[item[1]]=item[2]
+    count = 0
+    for question in questionType_DND:
+        question_number_mapping[question] = count
+        count += 1
 
 '''
 Reads the transcript of each interview and collects the answer for each question asked to a participant
@@ -157,7 +162,7 @@ def readLIWC_DND():
 
     f=open('data/misc/liwc_new.csv')
     reader=csv.reader(f)
-    header=['video','question']
+    header=['video','question','question_number']
     header+=reader.next()[2:]
     dSplitWriter.writerow(header)
     dUnsplitWriter.writerow(header)
@@ -215,8 +220,9 @@ def readLIWC_DND():
                     feature_vector=[float(i)*utterance_length for i in vector[1]]
                     lines_for_this_question.append(feature_vector)
         final_vector=[sum(value)/answer_length for value in zip(*lines_for_this_question)]
-        final_vector.insert(0,current_question)
         final_vector.insert(0,str(participant_number))
+        final_vector.insert(1,current_question)
+        final_vector.insert(2, question_number_mapping[current_question])
 
         if questionType_DND[current_question]=='D':
             dSplitWriter.writerow(final_vector)
@@ -245,7 +251,7 @@ def readLIWC_PN():
 
     f=open('data/misc/liwc_new.csv')
     reader=csv.reader(f)
-    header=['video','question']
+    header=['video','question','question_number']
     header+=reader.next()[2:]
     pSplitWriter.writerow(header)
     pUnsplitWriter.writerow(header)
@@ -279,8 +285,9 @@ def readLIWC_PN():
                     feature_vector=[float(i)*utterance_length for i in vector[1]]
                     lines_for_this_question.append(feature_vector)
         final_vector=[sum(value)/answer_length for value in zip(*lines_for_this_question)]
-        final_vector.insert(0,current_question)
         final_vector.insert(0,str(participant_number))
+        final_vector.insert(1,current_question)
+        final_vector.insert(2, question_number_mapping[current_question])
 
         if questionType_PN[current_question]=='P':
             pSplitWriter.writerow(final_vector)
